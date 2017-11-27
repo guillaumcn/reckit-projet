@@ -1,7 +1,10 @@
+import { NgForm } from '@angular/forms';
 import {Component, OnInit} from '@angular/core';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {LoadingService} from '../../loading/loading.service';
+import { ViewChild } from '@angular/core';
+import { ToastService } from '../../toast.service';
 
 @Component({
   selector: 'app-login',
@@ -11,9 +14,7 @@ import {LoadingService} from '../../loading/loading.service';
 
 export class LoginComponent implements OnInit {
 
-  // créé sur Firebase
-  emailTyped = '';
-  passwordTyped = '';
+  @ViewChild('loginForm') loginForm: NgForm;
 
   constructor(private authService: AuthService,
               private router: Router,
@@ -25,12 +26,16 @@ export class LoginComponent implements OnInit {
   }
 
   connexion() {
-    this.loadingService.isLoading = true;
-    this.authService.login(this.emailTyped, this.passwordTyped);
+    if (this.loginForm.valid) {
+      this.loadingService.isLoading = true;
+      this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
+      this.loginForm.reset();
+    }
   }
 
   connexionGoogle() {
     this.loadingService.isLoading = true;
     this.authService.signInWithGoogle();
+    this.loginForm.reset();
   }
 }

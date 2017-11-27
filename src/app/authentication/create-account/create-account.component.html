@@ -2,22 +2,22 @@
 <div class="container">
   <p align="center">Créer un compte</p>
   <div class="row">
-    <form class="col s12">
+    <form class="col s12"  #signinForm="ngForm">
       <div class="row">
         <div class="input-field">
-          <input id="email" name="email" type="email" class="validate" [(ngModel)]="emailTyped">
+          <input id="email" name="email" type="email" class="validate" ngModel email required>
           <label for="email">Email</label>
         </div>
       </div>
       <div class="row">
         <div class="input-field">
-          <input id="password" name="password" type="password" class="validate" [(ngModel)]="passwordTyped">
+          <input id="password" name="password" type="password" class="validate" ngModel required>
           <label for="password">Password</label>
         </div>
       </div>
       <div class="row">
         <div class="input-field">
-          <input id="pass2" name="pass2" type="password" class="validate" [(ngModel)]="pass2Typed">
+          <input id="pass2" name="pass2" type="password" class="validate" ngModel required>
           <label for="pass2">Password validation</label>
         </div>
       </div>

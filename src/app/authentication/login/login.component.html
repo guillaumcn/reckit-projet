@@ -2,17 +2,17 @@
 <div class="container">
   <p align="center">S'authentifier</p>
   <div class="row">
-    <form class="col s12">
+    <form class="col s12" #loginForm="ngForm">
       <div class="row">
         <div class="input-field">
-          <input id="email" name="email" type="email" class="validate" [(ngModel)]="emailTyped">
-          <label [ngClass]="{'active' : emailTyped !== ''}" for="email">Email</label>
+          <input id="email" name="email" type="email" class="validate" email ngModel required>
+          <label for="email">Email</label>
         </div>
       </div>
       <div class="row">
         <div class="input-field">
-          <input id="password" name="password" type="password" class="validate" [(ngModel)]="passwordTyped">
-          <label [ngClass]="{'active' : passwordTyped !== ''}" for="password">Password</label>
+          <input id="password" name="password" type="password" class="validate" ngModel required>
+          <label for="password">Password</label>
         </div>
       </div>
       <div class="row">

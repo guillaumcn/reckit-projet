@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import {AuthService} from '../auth.service';
 import {LoadingService} from '../../loading/loading.service';
+import { NgForm } from '@angular/forms';
 
 
 @Component({
@@ -10,9 +11,7 @@ import {LoadingService} from '../../loading/loading.service';
 })
 export class CreateAccountComponent implements OnInit {
 
-  emailTyped: string;
-  passwordTyped: string;
-  pass2Typed: string;
+  @ViewChild('signinForm') signinForm: NgForm;
 
   constructor(private authService: AuthService,
     private loadingService: LoadingService) {
@@ -22,8 +21,11 @@ export class CreateAccountComponent implements OnInit {
   }
 
   createAccount() {
+    if (this.signinForm.valid) {
       this.loadingService.isLoading = true;
-      this.authService.signup(this.emailTyped, this.passwordTyped, this.pass2Typed);
+      this.authService.signup(this.signinForm.value.email, this.signinForm.value.password, this.signinForm.value.pass2);
+      this.signinForm.reset();
+    }
   }
 
 }
