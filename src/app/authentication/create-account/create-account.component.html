@@ -1,0 +1,30 @@
+<br>
+<div class="container">
+  <p align="center">Créer un compte</p>
+  <div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field">
+          <input id="email" name="email" type="email" class="validate" [(ngModel)]="emailTyped">
+          <label for="email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field">
+          <input id="password" name="password" type="password" class="validate" [(ngModel)]="passwordTyped">
+          <label for="password">Password</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field">
+          <input id="pass2" name="pass2" type="password" class="validate" [(ngModel)]="pass2Typed">
+          <label for="pass2">Password validation</label>
+        </div>
+      </div>
+      <button class="btn indigo darken-1 waves-effect waves-light col s8 offset-s2" type="button" name="action"
+              (click)="createAccount()">Créer un compte
+        <i class="material-icons right">send</i>
+      </button>
+    </form>
+  </div>
+</div>

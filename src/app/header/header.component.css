@@ -1,0 +1,24 @@
+.brand-logo {
+  margin-left: 20px;
+word-break:keep-all!important;
+}
+
+a{
+  cursor: pointer;
+}
+
+@media only screen and (max-width:991px) {
+
+  .brand-logo{
+    font-size: 20px !important;
+  }
+
+}
+
+@media only screen and (max-width:450px) {
+
+  .brand-logo{
+    font-size: 15px !important;
+  }
+
+}

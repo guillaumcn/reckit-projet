@@ -1,0 +1,32 @@
+<br>
+<div class="container">
+  <p align="center">S'authentifier</p>
+  <div class="row">
+    <form class="col s12">
+      <div class="row">
+        <div class="input-field">
+          <input id="email" name="email" type="email" class="validate" [(ngModel)]="emailTyped">
+          <label [ngClass]="{'active' : emailTyped !== ''}" for="email">Email</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field">
+          <input id="password" name="password" type="password" class="validate" [(ngModel)]="passwordTyped">
+          <label [ngClass]="{'active' : passwordTyped !== ''}" for="password">Password</label>
+        </div>
+      </div>
+      <div class="row">
+        <button class="btn indigo darken-1 waves-effect waves-light col s4 offset-s4" type="button" name="action" (click)="connexion()">
+          Login
+          <i class="material-icons right">send</i>
+        </button>
+      </div>
+      <div class="row">
+        <button class="btn indigo darken-1 waves-effect waves-light col s8 offset-s2" type="button" name="action"
+                (click)="connexionGoogle()"><i class="fa fa-google" aria-hidden="true"></i>Login avec Google
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
