@@ -38,4 +38,10 @@ export class LoginComponent implements OnInit {
     this.authService.signInWithGoogle();
     this.loginForm.reset();
   }
+
+  connexionFacebook(){
+    this.loadingService.isLoading = true;
+    this.authService.signInWithFacebook();
+    this.loginForm.reset();
+  }
 }

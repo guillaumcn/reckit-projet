@@ -82,6 +82,16 @@ export class AuthService {
     });
   }
 
+  signInWithFacebook() {
+    this.firebaseAuth.auth.signInWithPopup(
+      new firebase.auth.FacebookAuthProvider()
+    ).then(user => {
+    }).catch(err => {
+      this.loadingService.isLoading = false;
+    });
+  }
+
+
   logout() {
     this.firebaseAuth.auth.signOut().then(value => {
       this.router.navigate(['/authentication']);
