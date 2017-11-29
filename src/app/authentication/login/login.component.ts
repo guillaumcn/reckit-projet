@@ -28,7 +28,7 @@ export class LoginComponent implements OnInit {
   connexion() {
     if (this.loginForm.valid) {
       this.loadingService.isLoading = true;
-      this.authService.login(this.loginForm.value.email, this.loginForm.value.password);
+      this.authService.signInWithEmailPassword(this.loginForm.value.email, this.loginForm.value.password);
       this.loginForm.reset();
     }
   }
@@ -39,7 +39,7 @@ export class LoginComponent implements OnInit {
     this.loginForm.reset();
   }
 
-  connexionFacebook(){
+  connexionFacebook() {
     this.loadingService.isLoading = true;
     this.authService.signInWithFacebook();
     this.loginForm.reset();

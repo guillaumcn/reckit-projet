@@ -15,15 +15,12 @@ export class AuthService {
   userDetails: firebase.User = null;
   connectionChanged = new Subject<firebase.User>();
 
-  tempProviderCredentials: firebase.auth.AuthCredential = null;
-
 
   constructor(private firebaseAuth: AngularFireAuth, private router: Router,
     private loadingService: LoadingService, private toastService: ToastService) {
 
     firebaseAuth.authState.subscribe(
       (user) => {
-        this.loadingService.isLoading = false;
         if (user) {
           // If user.providerData[0]['providerId'] !== 'password', no need to verify email
           if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
@@ -34,13 +31,6 @@ export class AuthService {
               this.toastService.toast('Connecté en tant que ' + user.email);
             }
             this.router.navigate(['/records']);
-
-            if (this.tempProviderCredentials != null) {
-              this.userDetails.linkWithCredential(this.tempProviderCredentials).then((result) => {
-                this.toastService.toast('Comptes liés avec succés');
-              });
-              this.tempProviderCredentials = null;
-            }
           } else {
             this.logout();
             this.toastService.toast('Merci de valider votre adresse mail');
@@ -53,12 +43,13 @@ export class AuthService {
     );
   }
 
-  signup(email: string, password: string, pass2: string) {
+  signupWithEmailPassword(email: string, password: string, pass2: string) {
     if (password === pass2) {
       this.firebaseAuth
         .auth
         .createUserWithEmailAndPassword(email, password)
         .then(user => {
+          this.loadingService.isLoading = false;
           user.sendEmailVerification();
           this.toastService.toast('Compte ' + email + ' créé !');
         })
@@ -74,9 +65,10 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string) {
+  signInWithEmailPassword(email: string, password: string) {
     this.firebaseAuth.auth.signInWithEmailAndPassword(email, password)
       .then(value => {
+        this.loadingService.isLoading = false;
       }).catch(err => {
         this.loadingService.isLoading = false;
       });
@@ -87,10 +79,11 @@ export class AuthService {
     this.firebaseAuth.auth.signInWithPopup(
       googleProvider
     ).then(user => {
+      this.loadingService.isLoading = false;
     }).catch(err => {
       this.loadingService.isLoading = false;
       if (err.code === 'auth/account-exists-with-different-credential') {
-        this.prepareForSocialLinking(err);
+        this.toastService.toast('Email déjà utilisé');
       }
     });
   }
@@ -100,30 +93,11 @@ export class AuthService {
     this.firebaseAuth.auth.signInWithPopup(
       facebookProvider
     ).then(user => {
+      this.loadingService.isLoading = false;
     }).catch(err => {
       this.loadingService.isLoading = false;
       if (err.code === 'auth/account-exists-with-different-credential') {
-        this.prepareForSocialLinking(err);
-      }
-    });
-  }
-
-  prepareForSocialLinking(errorData) {
-    this.firebaseAuth.auth.fetchProvidersForEmail(errorData.email).then((result) => {
-      if (result[0] === 'password') {
-        this.tempProviderCredentials = errorData.credential;
-        this.toastService.toast('Vous possedez déjà un compte. Connectez vous avec' +
-        ' Email/Password pour lier votre compte ' + errorData.credential.providerId);
-      }
-      if (result[0] === 'google.com') {
-        this.tempProviderCredentials = errorData.credential;
-        this.toastService.toast('Vous possedez déjà un compte. Connectez vous avec' +
-         ' Google pour lier votre compte ' + errorData.credential.providerId);
-      }
-      if (result[0] === 'facebook.com') {
-        this.tempProviderCredentials = errorData.credential;
-        this.toastService.toast('Vous possedez déjà un compte. Connectez vous avec' +
-         ' Facebook pour lier votre compte ' + errorData.credential.providerId);
+        this.toastService.toast('Email déjà utilisé');
       }
     });
   }
