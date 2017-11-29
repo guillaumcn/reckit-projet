@@ -16,11 +16,14 @@
         </div>
       </div>
       <div class="row">
+        <a class="col s8 offset-s2 link" style="text-align: center" [routerLink]="['/authentication/create-account']">Pas encore inscrit ? Créez un compte</a>
         <button class="btn indigo darken-1 waves-effect waves-light col s4 offset-s4" type="button" name="action" (click)="connexion()">
           Login
           <i class="material-icons right">send</i>
         </button>
       </div>
+      <hr>
+      <br>
       <div class="row">
         <button class="btn indigo darken-1 waves-effect waves-light col s8 offset-s2" type="button" name="action"
                 (click)="connexionGoogle()"><i class="fa fa-google" aria-hidden="true"></i>Login avec Google
