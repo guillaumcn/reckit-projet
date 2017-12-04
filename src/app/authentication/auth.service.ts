@@ -21,7 +21,7 @@ export class AuthService {
       (user) => {
         if (user) {
           // If user.providerData[0]['providerId'] !== 'password', no need to verify email
-          //if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
+          if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
             this.userDetails = user;
             if (user.displayName != null) {
               this.toastService.toast('Connecté en tant que ' + user.displayName);
@@ -33,18 +33,19 @@ export class AuthService {
             this.logout();
             this.toastService.toast('Merci de valider votre adresse mail');
           }
+        }
       }
     );
   }
 
-  signup(lastName: string, firstName: string, email: string, password: string, pass2: string){
+  signup(lastName: string, firstName: string, email: string, password: string, pass2: string) {
     if (password === pass2) {
       this.firebaseAuth
         .auth
         .createUserWithEmailAndPassword(email, password)
         .then(user => {
           user.updateProfile({
-            displayName: firstName + " " + lastName,
+            displayName: firstName + ' ' + lastName,
           });
           this.loadingService.isLoading = false;
           user.sendEmailVerification();
