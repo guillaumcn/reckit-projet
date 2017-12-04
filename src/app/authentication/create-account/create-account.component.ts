@@ -23,7 +23,7 @@ export class CreateAccountComponent implements OnInit {
   createAccount() {
     if (this.signinForm.valid) {
       this.loadingService.isLoading = true;
-      this.authService.signup(this.signinForm.value.email, this.signinForm.value.password, this.signinForm.value.pass2);
+      this.authService.signupWithEmailPassword(this.signinForm.value.email, this.signinForm.value.password, this.signinForm.value.pass2);
       this.signinForm.reset();
     }
   }
