@@ -13,8 +13,6 @@ import { Subject } from 'rxjs/Subject';
 @Injectable()
 export class AuthService {
   userDetails: firebase.User = null;
-  connectionChanged = new Subject<firebase.User>();
-
 
   constructor(private firebaseAuth: AngularFireAuth, private router: Router,
     private loadingService: LoadingService, private toastService: ToastService) {
@@ -23,7 +21,7 @@ export class AuthService {
       (user) => {
         if (user) {
           // If user.providerData[0]['providerId'] !== 'password', no need to verify email
-          if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
+          //if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
             this.userDetails = user;
             if (user.displayName != null) {
               this.toastService.toast('Connecté en tant que ' + user.displayName);
@@ -35,12 +33,33 @@ export class AuthService {
             this.logout();
             this.toastService.toast('Merci de valider votre adresse mail');
           }
-        } else {
-          this.userDetails = null;
-        }
-        this.connectionChanged.next(this.userDetails);
       }
     );
+  }
+
+  signup(lastName: string, firstName: string, email: string, password: string, pass2: string){
+    if (password === pass2) {
+      this.firebaseAuth
+        .auth
+        .createUserWithEmailAndPassword(email, password)
+        .then(user => {
+          user.updateProfile({
+            displayName: firstName + " " + lastName,
+          });
+          this.loadingService.isLoading = false;
+          user.sendEmailVerification();
+          this.toastService.toast('Compte ' + email + ' créé !');
+        })
+        .catch(err => {
+          this.loadingService.isLoading = false;
+          if (err.code === 'auth/email-already-in-use') {
+            this.toastService.toast('Email déjà utilisé');
+          }
+        });
+    } else {
+      this.toastService.toast('Les deux mots de passe renseignés sont différents');
+      this.loadingService.isLoading = false;
+    }
   }
 
   signupWithEmailPassword(email: string, password: string, pass2: string) {

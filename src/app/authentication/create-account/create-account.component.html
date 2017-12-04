@@ -5,6 +5,18 @@
     <form class="col s12"  #signinForm="ngForm">
       <div class="row">
         <div class="input-field">
+          <input id="lastName" name="lastName" type="text" class="validate" ngModel required>
+          <label for="lastName">Nom</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field">
+          <input id="firstName" name="firstName" type="text" class="validate" ngModel required>
+          <label for="firstName">Prénom</label>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field">
           <input id="email" name="email" type="email" class="validate" ngModel email required>
           <label for="email">Email</label>
         </div>
