@@ -88,21 +88,6 @@ export class AuthService {
     });
   }
 
-  signInWithFacebook() {
-    const facebookProvider = new firebase.auth.FacebookAuthProvider();
-    this.firebaseAuth.auth.signInWithPopup(
-      facebookProvider
-    ).then(user => {
-      this.loadingService.isLoading = false;
-    }).catch(err => {
-      this.loadingService.isLoading = false;
-      if (err.code === 'auth/account-exists-with-different-credential') {
-        this.toastService.toast('Email déjà utilisé');
-      }
-    });
-  }
-
-
   logout() {
     this.firebaseAuth.auth.signOut().then(value => {
       this.router.navigate(['/authentication']);

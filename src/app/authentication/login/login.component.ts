@@ -39,9 +39,4 @@ export class LoginComponent implements OnInit {
     this.loginForm.reset();
   }
 
-  connexionFacebook() {
-    this.loadingService.isLoading = true;
-    this.authService.signInWithFacebook();
-    this.loginForm.reset();
-  }
 }
