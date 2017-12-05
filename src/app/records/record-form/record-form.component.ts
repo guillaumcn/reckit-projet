@@ -53,7 +53,7 @@ export class RecordFormComponent implements OnInit {
           if (this.selectedRecord.tags == null) {
             this.chips = [];
           } else {
-            this.chips = this.selectedRecord.tags;
+            this.chips = this.selectedRecord.tags.slice();
           }
           this.updateChips();
         } else {
@@ -169,13 +169,6 @@ export class RecordFormComponent implements OnInit {
       const chip = this.chips[i];
       newChipsData.data.push({tag: chip});
     }
-    /*const newChipsInit = {
-      data: [{
-        tag: 'Apple2',
-      }, {
-        tag: 'Google2',
-      }],
-    };*/
     this.chipsActions.emit({action: 'material_chip', params: [newChipsData]});
   }
 }
