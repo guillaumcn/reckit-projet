@@ -14,19 +14,20 @@ export class RecordService {
 
   // Chaque élément du tableau de Record[] est une ligne de Firebase
   recordListRef: AngularFireList<Record>;
-  fireBaseObservable: Observable<Record[]>;
+  recordFirebaseObservable: Observable<Record[]>;
   storageRef: Reference;
 
   recordSelected: Subject<Record> = new Subject();
 
   temporaryFile: File = null;
+  temporaryDuration = 0;
 
   selectOptions: string[] = ['Cours', 'Réunion', 'Conférence', 'Discours'];
 
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService) {
     this.recordListRef = this.db.list<Record>('/records');
-    this.fireBaseObservable = this.recordListRef.snapshotChanges().map(actions => {
+    this.recordFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
         const data = action.payload.val() as Record;
         const key = action.payload.key;
@@ -36,7 +37,7 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, orator: string, duration: number, type: string, tags: string[]) {
+  addRecord(name: string, oratorMail: string, duration: number, type: string, tags: string[]) {
     this.loadingService.isLoading = true;
     if (this.temporaryFile == null) {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
@@ -45,7 +46,7 @@ export class RecordService {
         name: name,
         recorder: this.authService.userDetails.displayName,
         recorderMail: this.authService.userDetails.email,
-        orator: orator,
+        oratorMail: oratorMail,
         duration: duration,
         type: type,
         tags: tags
@@ -67,13 +68,13 @@ export class RecordService {
 
   }
 
-  updateRecord(key: string, name: string, orator: string, duration: number, type: string, tags: string[]) {
+  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, tags: string[]) {
     this.loadingService.isLoading = true;
     this.recordListRef.update(key, {
       name: name,
       recorder: this.authService.userDetails.displayName,
       recorderMail: this.authService.userDetails.email,
-      orator: orator,
+      oratorMail: oratorMail,
       duration: duration,
       type: type,
       tags: tags

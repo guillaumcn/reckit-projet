@@ -1,11 +1,11 @@
-import {Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {RecordService} from '../record.service';
 import {NgForm} from '@angular/forms';
 import {Record} from '../record.model';
-import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
-import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import {LoadingService} from '../../loading/loading.service';
 import {MaterializeAction} from 'angular2-materialize';
+import {UsersService} from '../../users.service';
+import {User} from '../../user.model';
 
 @Component({
   selector: 'app-record-form',
@@ -18,13 +18,8 @@ export class RecordFormComponent implements OnInit {
   defaultType = 'Cours';
   selectOptions: string[];
   selectedRecord: Record = null;
-  currentDuration = 0;
 
-  wavesurfer: WaveSurfer = null;
-  recorder: MicRecorder = null;
-  isRecording = false;
-  currentTime = 0;
-  interval = null;
+  oratorList = {};
 
   chipsPlaceholder = {
     placeholder: 'Enter your tags',
@@ -33,7 +28,15 @@ export class RecordFormComponent implements OnInit {
   chipsActions = new EventEmitter<string | MaterializeAction>();
   chips: string[] = [];
 
-  constructor(public recordService: RecordService, private loadingService: LoadingService) { }
+  constructor(public recordService: RecordService, private usersService: UsersService) {
+    usersService.usersQueryObservable.subscribe((searchResult) => {
+      this.oratorList = {};
+      for (let i = 0; i < searchResult.length; i++) {
+        const u: User = searchResult[i];
+        this.oratorList[u.email] = null;
+      }
+    });
+  }
 
   ngOnInit() {
     this.selectOptions = this.recordService.selectOptions;
@@ -45,7 +48,7 @@ export class RecordFormComponent implements OnInit {
             recordData: {
               name: record.name,
               recorder: record.recorder,
-              orator: record.orator,
+              oratorMail: record.oratorMail,
               type: record.type,
               recorderMail: record.recorderMail
             }
@@ -63,41 +66,13 @@ export class RecordFormComponent implements OnInit {
         }
       }
     );
-
-    // Wave surfer basique
-    this.wavesurfer = WaveSurfer.create({
-      container: '#waveform',
-      waveColor: 'violet',
-      progressColor: 'purple'
-    });
-
-    this.recorder = new MicRecorder({
-      bitRate: 128
-    });
-
-    this.recordService.recordSelected.subscribe((record) => {
-      if (record != null) {
-        fetch(record.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-          this.recordService.temporaryFile = blob as File;
-          this.currentDuration = record.duration;
-          this.wavesurfer.load(URL.createObjectURL(this.recordService.temporaryFile));
-          this.loadingService.isLoading = false;
-        });
-      } else {
-        this.recordService.temporaryFile = null;
-        this.currentDuration = 0;
-        this.wavesurfer.load(null);
-      }
-    });
-
-    this.recordService.temporaryFile = null;
   }
 
   onCreate() {
     if (this.recordForm.valid) {
       this.recordService.addRecord(
         this.recordForm.value.recordData.name,
-        this.recordForm.value.recordData.orator,
+        this.recordForm.value.recordData.oratorMail,
         this.recordForm.value.recordData.duration,
         this.recordForm.value.recordData.type,
         this.chips
@@ -110,7 +85,7 @@ export class RecordFormComponent implements OnInit {
       this.recordService.updateRecord(
         this.selectedRecord.key,
         this.recordForm.value.recordData.name,
-        this.recordForm.value.recordData.orator,
+        this.recordForm.value.recordData.oratorMail,
         this.recordForm.value.recordData.duration,
         this.recordForm.value.recordData.type,
         this.chips
@@ -118,41 +93,8 @@ export class RecordFormComponent implements OnInit {
     }
   }
 
-  playPause() {
-    this.wavesurfer.playPause();
-  }
-
-  startStopRecording() {
-    if (!this.isRecording) {
-      this.recorder.start().then(() => {
-        this.interval = setInterval(() => {
-          this.currentTime++;
-        }, 1000);
-        this.isRecording = true;
-      }).catch((e) => {
-        console.error(e);
-      });
-    } else {
-      clearInterval(this.interval);
-      this.recorder.stop().getMp3().then(([buffer, blob]) => {
-
-        this.isRecording = false;
-
-        const file = new File(buffer, Date.now() + '.mp3', {
-          type: blob.type,
-          lastModified: Date.now()
-        });
-
-        this.currentDuration = this.currentTime;
-        this.recordService.temporaryFile = file;
-        this.wavesurfer.load(URL.createObjectURL(file));
-        this.currentTime = 0;
-
-      }).catch((e) => {
-        alert('We could not retrieve your message');
-        console.log(e);
-      });
-    }
+  searchUsers($event) {
+    this.usersService.query.next($event.target.value);
   }
 
   add(chip) {

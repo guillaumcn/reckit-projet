@@ -15,7 +15,7 @@ export class RecordListComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.recordService.fireBaseObservable.subscribe(
+    this.recordService.recordFirebaseObservable.subscribe(
       (records) => {
         this.records = records;
       }

@@ -9,13 +9,14 @@ import { LoadingService } from '../loading/loading.service';
 import { ToastService } from '../toast.service';
 import { Location } from '@angular/common';
 import { Subject } from 'rxjs/Subject';
+import {UsersService} from '../users.service';
 
 @Injectable()
 export class AuthService {
   userDetails: firebase.User = null;
 
   constructor(private firebaseAuth: AngularFireAuth, private router: Router,
-    private loadingService: LoadingService, private toastService: ToastService) {
+    private loadingService: LoadingService, private toastService: ToastService, private usersService: UsersService) {
 
     firebaseAuth.authState.subscribe(
       (user) => {
@@ -47,28 +48,7 @@ export class AuthService {
           user.updateProfile({
             displayName: firstName + ' ' + lastName,
           });
-          this.loadingService.isLoading = false;
-          user.sendEmailVerification();
-          this.toastService.toast('Compte ' + email + ' créé !');
-        })
-        .catch(err => {
-          this.loadingService.isLoading = false;
-          if (err.code === 'auth/email-already-in-use') {
-            this.toastService.toast('Email déjà utilisé');
-          }
-        });
-    } else {
-      this.toastService.toast('Les deux mots de passe renseignés sont différents');
-      this.loadingService.isLoading = false;
-    }
-  }
-
-  signupWithEmailPassword(email: string, password: string, pass2: string) {
-    if (password === pass2) {
-      this.firebaseAuth
-        .auth
-        .createUserWithEmailAndPassword(email, password)
-        .then(user => {
+          this.usersService.addUserData(email, firstName + ' ' + lastName);
           this.loadingService.isLoading = false;
           user.sendEmailVerification();
           this.toastService.toast('Compte ' + email + ' créé !');
@@ -98,8 +78,9 @@ export class AuthService {
     const googleProvider = new firebase.auth.GoogleAuthProvider();
     this.firebaseAuth.auth.signInWithPopup(
       googleProvider
-    ).then(user => {
+    ).then(result => {
       this.loadingService.isLoading = false;
+      this.usersService.addUserData(result.user.email, result.user.displayName);
     }).catch(err => {
       this.loadingService.isLoading = false;
       if (err.code === 'auth/account-exists-with-different-credential') {

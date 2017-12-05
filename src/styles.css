@@ -1,3 +1,7 @@
 .dropdown-content li > a, .dropdown-content li > span {
   color: #0d47a1 !important;
 }
+
+.autocomplete-content {
+  position: absolute; z-index:30 !important;
+}

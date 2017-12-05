@@ -3,7 +3,7 @@ export interface Record {
   fileUrl?: string;
   name: string;
   recorder: string;
-  orator: string;
+  oratorMail: string;
   duration: number;
   type: string;
   recorderMail: string;

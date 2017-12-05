@@ -23,6 +23,8 @@ import {RecordFormComponent} from './records/record-form/record-form.component';
 import {RecordListComponent} from './records/record-list/record-list.component';
 import {RecordItemComponent} from './records/record-list/record-item/record-item.component';
 import {RecordService} from './records/record.service';
+import { RecorderComponent } from './records/record-form/recorder/recorder.component';
+import {UsersService} from './users.service';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import {RecordService} from './records/record.service';
     RecordsComponent,
     RecordFormComponent,
     RecordListComponent,
-    RecordItemComponent
+    RecordItemComponent,
+    RecorderComponent
 ],
   imports: [
     BrowserModule,
@@ -51,7 +54,8 @@ import {RecordService} from './records/record.service';
     AuthGuard,
     ToastService,
     LoadingService,
-    RecordService
+    RecordService,
+    UsersService
   ],
   bootstrap: [AppComponent]
 })
