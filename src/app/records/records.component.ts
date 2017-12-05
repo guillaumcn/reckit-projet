@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { AuthService } from '../authentication/auth.service';
-import * as firebase from 'firebase/app';
-import { AngularFireAuth } from 'angularfire2/auth';
+import {AuthService} from '../authentication/auth.service';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-records',
@@ -10,17 +9,10 @@ import { AngularFireAuth } from 'angularfire2/auth';
 })
 export class RecordsComponent implements OnInit {
 
-  constructor(private authService: AuthService, private firebaseAuth: AngularFireAuth) { 
-    firebaseAuth.authState.subscribe(
-      (user) => {
-        if (user) {
-          console.log("Utilisateur : " + user.displayName);
-        }
-      });
-  }
+  constructor(private authService: AuthService, private router: Router) { }
 
   ngOnInit() {
-    
+
   }
 
 }

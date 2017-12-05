@@ -19,6 +19,10 @@ import {LoadingService} from './loading/loading.service';
 import { CreateAccountComponent } from './authentication/create-account/create-account.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import { RecordsComponent } from './records/records.component';
+import {RecordFormComponent} from './records/record-form/record-form.component';
+import {RecordListComponent} from './records/record-list/record-list.component';
+import {RecordItemComponent} from './records/record-list/record-item/record-item.component';
+import {RecordService} from './records/record.service';
 
 @NgModule({
   declarations: [
@@ -29,7 +33,9 @@ import { RecordsComponent } from './records/records.component';
     CreateAccountComponent,
     AuthenticationComponent,
     RecordsComponent,
-    RecordsComponent
+    RecordFormComponent,
+    RecordListComponent,
+    RecordItemComponent
 ],
   imports: [
     BrowserModule,
@@ -44,7 +50,8 @@ import { RecordsComponent } from './records/records.component';
     AuthService,
     AuthGuard,
     ToastService,
-    LoadingService
+    LoadingService,
+    RecordService
   ],
   bootstrap: [AppComponent]
 })
