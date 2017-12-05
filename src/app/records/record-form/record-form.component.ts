@@ -1,11 +1,11 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {RecordService} from '../record.service';
 import {NgForm} from '@angular/forms';
 import {Record} from '../record.model';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
 import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
-import {ToastService} from '../../toast.service';
 import {LoadingService} from '../../loading/loading.service';
+import {MaterializeAction} from 'angular2-materialize';
 
 @Component({
   selector: 'app-record-form',
@@ -26,8 +26,14 @@ export class RecordFormComponent implements OnInit {
   currentTime = 0;
   interval = null;
 
-  constructor(public recordService: RecordService, private loadingService: LoadingService) {
-  }
+  chipsPlaceholder = {
+    placeholder: 'Enter your tags',
+    secondaryPlaceholder: '+ Tag',
+  };
+  chipsActions = new EventEmitter<string | MaterializeAction>();
+  chips: string[] = [];
+
+  constructor(public recordService: RecordService, private loadingService: LoadingService) { }
 
   ngOnInit() {
     this.selectOptions = this.recordService.selectOptions;
@@ -44,8 +50,16 @@ export class RecordFormComponent implements OnInit {
               recorderMail: record.recorderMail
             }
           });
+          if (this.selectedRecord.tags == null) {
+            this.chips = [];
+          } else {
+            this.chips = this.selectedRecord.tags;
+          }
+          this.updateChips();
         } else {
           this.recordForm.reset();
+          this.chips = [];
+          this.updateChips();
         }
       }
     );
@@ -85,7 +99,8 @@ export class RecordFormComponent implements OnInit {
         this.recordForm.value.recordData.name,
         this.recordForm.value.recordData.orator,
         this.recordForm.value.recordData.duration,
-        this.recordForm.value.recordData.type
+        this.recordForm.value.recordData.type,
+        this.chips
       );
     }
   }
@@ -97,7 +112,9 @@ export class RecordFormComponent implements OnInit {
         this.recordForm.value.recordData.name,
         this.recordForm.value.recordData.orator,
         this.recordForm.value.recordData.duration,
-        this.recordForm.value.recordData.type);
+        this.recordForm.value.recordData.type,
+        this.chips
+      );
     }
   }
 
@@ -108,7 +125,9 @@ export class RecordFormComponent implements OnInit {
   startStopRecording() {
     if (!this.isRecording) {
       this.recorder.start().then(() => {
-        this.interval = setInterval(() => {this.currentTime++; }, 1000);
+        this.interval = setInterval(() => {
+          this.currentTime++;
+        }, 1000);
         this.isRecording = true;
       }).catch((e) => {
         console.error(e);
@@ -134,5 +153,29 @@ export class RecordFormComponent implements OnInit {
         console.log(e);
       });
     }
+  }
+
+  add(chip) {
+    this.chips.push(chip.tag);
+  }
+
+  delete(chip) {
+    this.chips.splice(this.chips.indexOf(chip.tag), 1);
+  }
+
+  updateChips() {
+    const newChipsData = {data: []};
+    for (let i = 0; i < this.chips.length; i++) {
+      const chip = this.chips[i];
+      newChipsData.data.push({tag: chip});
+    }
+    /*const newChipsInit = {
+      data: [{
+        tag: 'Apple2',
+      }, {
+        tag: 'Google2',
+      }],
+    };*/
+    this.chipsActions.emit({action: 'material_chip', params: [newChipsData]});
   }
 }

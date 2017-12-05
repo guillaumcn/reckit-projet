@@ -7,4 +7,5 @@ export interface Record {
   duration: number;
   type: string;
   recorderMail: string;
+  tags: string[];
 }

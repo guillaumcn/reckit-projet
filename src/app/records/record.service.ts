@@ -36,7 +36,7 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, orator: string, duration: number, type: string) {
+  addRecord(name: string, orator: string, duration: number, type: string, tags: string[]) {
     this.loadingService.isLoading = true;
     if (this.temporaryFile == null) {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
@@ -47,7 +47,8 @@ export class RecordService {
         recorderMail: this.authService.userDetails.email,
         orator: orator,
         duration: duration,
-        type: type
+        type: type,
+        tags: tags
       }).then((data) => {
         const uploadTask = this.storageRef.child('/records/' + data.key + '.mp3').put(this.temporaryFile);
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
@@ -66,7 +67,7 @@ export class RecordService {
 
   }
 
-  updateRecord(key: string, name: string, orator: string, duration: number, type: string) {
+  updateRecord(key: string, name: string, orator: string, duration: number, type: string, tags: string[]) {
     this.loadingService.isLoading = true;
     this.recordListRef.update(key, {
       name: name,
@@ -74,7 +75,8 @@ export class RecordService {
       recorderMail: this.authService.userDetails.email,
       orator: orator,
       duration: duration,
-      type: type
+      type: type,
+      tags: tags
     }).then((data) => {
       const uploadTask = this.storageRef.child('/records/' + key + '.mp3').put(this.temporaryFile);
       uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {

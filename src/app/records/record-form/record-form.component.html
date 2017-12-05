@@ -26,8 +26,12 @@
         <label for="type">Type</label>
       </div>
     </div>
-
-
+    <div class="row">
+      <div class="input-field col s12">
+        <i class="material-icons prefix">local_offer</i>
+        <div class="chips" materialize="material_chip" [materializeParams]="[chipsPlaceholder]" (chip.add)="add($event.detail)" (chip.delete)="delete($event.detail)" [materializeActions]="chipsActions"></div>
+      </div>
+    </div>
   </div>
 </form>
 
