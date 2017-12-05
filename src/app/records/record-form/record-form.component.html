@@ -1,0 +1,61 @@
+<form class="col s6" #f="ngForm">
+  <div class="row" ngModelGroup="recordData">
+    <div class="row">
+      <div class="input-field col s6">
+        <i class="material-icons prefix">label_outline</i>
+        <input id="name" type="text" name="name" ngModel required/>
+        <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.name != ''}" for="name">Name</label>
+      </div>
+      <div class="input-field col s6">
+        <i class="material-icons prefix">mic_none</i>
+        <input id="orator" type="text" name="orator" ngModel required/>
+        <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.orator != ''}" for="orator">Orateur</label>
+      </div>
+    </div>
+    <div class="row">
+      <div class="input-field col s6">
+        <i class="material-icons prefix">timer</i>
+        <input id="duration" type="number" name="duration" [(ngModel)]="currentDuration" required readonly/>
+      </div>
+      <div class="input-field col s6">
+        <i class="material-icons prefix">unfold_more</i>
+        <select materialize="material_select" [materializeSelectOptions]="selectOptions" id="type" name="type"
+                [ngModel]="defaultType">
+          <option *ngFor="let option of selectOptions" [value]="option">{{option}}</option>
+        </select>
+        <label for="type">Type</label>
+      </div>
+    </div>
+
+
+  </div>
+</form>
+
+
+
+<div class="col s6">
+  <div class="row">
+    <div id="waveform"></div>
+    <h5 *ngIf="recordService.temporaryFile == null">Vous pouvez commencer à enregistrer.</h5>
+  </div>
+  <div class="row" *ngIf="recordService.temporaryFile != null">
+    <button class="btn col s4 offset-s4 indigo darken-1" (click)="playPause()">Jouer</button>
+  </div>
+  <div class="row">
+    <button class="btn col s4 offset-s4 indigo darken-1" [ngClass]="{'m-progress': isRecording == true}" (click)="startStopRecording()"><span *ngIf="!isRecording">Enregistrer</span><span *ngIf="isRecording">{{currentTime}}</span></button>
+  </div>
+
+</div>
+
+
+
+<div class="col s12">
+  <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
+     [ngClass]="{' disabled' : selectedRecord != null}"
+     type="submit" (click)="onCreate()">Créer</a>
+  <span id="arrow_back" class="col s2 offset-s1" (click)="recordService.recordSelected.next(null)"><i *ngIf="selectedRecord != null"
+                                                                                class="material-icons prefix">delete_sweep</i></span>
+  <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
+     [ngClass]="{' disabled' :selectedRecord == null}"
+     type="submit" (click)="onUpdate()">Modifier</a>
+</div>
