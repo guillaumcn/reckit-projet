@@ -4,7 +4,7 @@
       <div class="input-field col s6">
         <i class="material-icons prefix">label_outline</i>
         <input id="name" type="text" name="name" ngModel required/>
-        <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.name != ''}" for="name">Name</label>
+        <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.name != ''}" for="name">Nom</label>
       </div>
       <div class="input-field col s6">
         <i class="material-icons prefix">mic_none</i>
@@ -17,7 +17,7 @@
         <i class="material-icons prefix">timer</i>
         <input id="duration" type="number" name="duration" [(ngModel)]="currentDuration" required readonly/>
       </div>
-      <div class="input-field col s6">
+      <div class="input-field col s6 custom-select">
         <i class="material-icons prefix">unfold_more</i>
         <select materialize="material_select" [materializeSelectOptions]="selectOptions" id="type" name="type"
                 [ngModel]="defaultType">

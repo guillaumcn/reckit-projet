@@ -59,7 +59,7 @@ export class RecordService {
           },
           () => {
             this.loadingService.isLoading = false;
-            this.toastService.toast('Enregistrement créé avec succés');
+            this.toastService.toast('Enregistrement créé avec succès');
             this.recordSelected.next(null);
           });
       });
@@ -87,7 +87,7 @@ export class RecordService {
         },
         () => {
           this.loadingService.isLoading = false;
-          this.toastService.toast('Enregistrement modifié avec succés');
+          this.toastService.toast('Enregistrement modifié avec succès');
           this.recordSelected.next(null);
         });
     });
@@ -98,7 +98,7 @@ export class RecordService {
     this.recordListRef.remove(key).then(() => {
       this.storageRef.child('/records/' + key + '.mp3').delete().then(() => {
         this.loadingService.isLoading = false;
-        this.toastService.toast('Enregistrement supprimé avec succés');
+        this.toastService.toast('Enregistrement supprimé avec succès');
         this.recordSelected.next(null);
       });
     });
