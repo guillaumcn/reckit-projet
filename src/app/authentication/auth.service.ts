@@ -48,7 +48,7 @@ export class AuthService {
           user.updateProfile({
             displayName: firstName + ' ' + lastName,
           });
-          this.usersService.addUserData(email, firstName + ' ' + lastName);
+          this.usersService.updateUserData(user.uid, email, firstName + ' ' + lastName);
           this.loadingService.isLoading = false;
           user.sendEmailVerification();
           this.toastService.toast('Compte ' + email + ' créé !');
@@ -80,7 +80,7 @@ export class AuthService {
       googleProvider
     ).then(result => {
       this.loadingService.isLoading = false;
-      this.usersService.addUserData(result.user.email, result.user.displayName);
+      this.usersService.updateUserData(result.user.uid, result.user.email, result.user.displayName);
     }).catch(err => {
       this.loadingService.isLoading = false;
       if (err.code === 'auth/account-exists-with-different-credential') {
