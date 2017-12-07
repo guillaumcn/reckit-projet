@@ -31,7 +31,9 @@
     <div class="row">
       <div class="input-field col s12">
         <i class="material-icons prefix">local_offer</i>
-        <div class="chips" materialize="material_chip" [materializeParams]="[chipsPlaceholder]" (chip.add)="add($event.detail)" (chip.delete)="delete($event.detail)" [materializeActions]="chipsActions"></div>
+        <div class="chips" id="chips" materialize="material_chip" (chip.add)="add($event.detail)" (chip.delete)="delete($event.detail)" [materializeActions]="chipsActions" #chips></div>
+        <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.oratorMail != ''}" for="chips">Tags</label>
+        <span *ngIf="this.chipsDiv.nativeElement.classList.contains('focus')" class="badge chipsEnter">Appuyez sur entrée pour valider</span>
       </div>
     </div>
   </div>

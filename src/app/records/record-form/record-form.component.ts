@@ -1,8 +1,7 @@
-import {Component, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
 import {RecordService} from '../record.service';
 import {NgForm} from '@angular/forms';
 import {Record} from '../record.model';
-import {LoadingService} from '../../loading/loading.service';
 import {MaterializeAction} from 'angular2-materialize';
 import {UsersService} from '../../users.service';
 import {User} from '../../user.model';
@@ -21,12 +20,9 @@ export class RecordFormComponent implements OnInit {
 
   oratorList = {};
 
-  chipsPlaceholder = {
-    placeholder: 'Enter your tags',
-    secondaryPlaceholder: '+ Tag',
-  };
   chipsActions = new EventEmitter<string | MaterializeAction>();
   chips: string[] = [];
+  @ViewChild('chips') chipsDiv: ElementRef;
 
   constructor(public recordService: RecordService, private usersService: UsersService) {
     usersService.usersQueryObservable.subscribe((searchResult) => {
