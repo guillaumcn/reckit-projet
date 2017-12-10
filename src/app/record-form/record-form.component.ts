@@ -83,7 +83,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.recordService.addRecord(
         this.recordForm.value.recordData.name,
         this.recordForm.value.recordData.oratorMail,
-        this.recordForm.value.recordData.duration,
+        this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
         this.chips
       );
@@ -96,7 +96,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.selectedRecord.key,
         this.recordForm.value.recordData.name,
         this.recordForm.value.recordData.oratorMail,
-        this.recordForm.value.recordData.duration,
+        this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
         this.chips
       );
@@ -124,7 +124,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.chipsActions.emit({action: 'material_chip', params: [newChipsData]});
   }
 
-  prettyPrintDuration(duration: number) {
+  prettyPrintDuration(duration: number): string {
     let result = '';
     const hours = Math.floor(duration / (60 * 60));
 
