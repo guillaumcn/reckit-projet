@@ -18,7 +18,8 @@
       <div class="row">
         <div class="input-field col s6">
           <i class="material-icons prefix">timer</i>
-          <input id="duration" type="number" name="duration" [(ngModel)]="recordService.temporaryDuration" required readonly/>
+          <input id="duration" type="text" name="duration" [value]="prettyPrintDuration(recordService.temporaryDuration)" required readonly/>
+          <label [ngClass]="{'active' : true}" for="duration">Durée</label>
         </div>
         <div class="input-field col s6 custom-select">
           <i class="material-icons prefix">unfold_more</i>

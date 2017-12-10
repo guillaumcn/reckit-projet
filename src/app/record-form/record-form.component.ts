@@ -123,4 +123,30 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     }
     this.chipsActions.emit({action: 'material_chip', params: [newChipsData]});
   }
+
+  prettyPrintDuration(duration: number) {
+    let result = '';
+    const hours = Math.floor(duration / (60 * 60));
+
+    const divisor_for_minutes = duration % (60 * 60);
+    const minutes = Math.floor(divisor_for_minutes / 60);
+
+    const divisor_for_seconds = divisor_for_minutes % 60;
+    const seconds = Math.ceil(divisor_for_seconds);
+
+    if (hours < 10) {
+      result += '0';
+    }
+    result += hours + ':';
+    if (minutes < 10) {
+      result += '0';
+    }
+    result += minutes + ':';
+    if (seconds < 10) {
+      result += '0';
+    }
+    result += seconds;
+
+    return result;
+  }
 }
