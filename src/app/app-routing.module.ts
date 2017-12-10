@@ -4,17 +4,19 @@ import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
 import {AuthGuard} from './auth-guard.service';
 import { AuthenticationComponent } from './authentication/authentication.component';
-import { RecordsComponent } from './records/records.component';
+import {RecordFormComponent} from './record-form/record-form.component';
+import {RecordListComponent} from './record-list/record-list.component';
 
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: 'records', pathMatch: 'full'},
+  {path: '', redirectTo: 'record-form', pathMatch: 'full'},
   {path: 'authentication', component: AuthenticationComponent, children: [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'login', component: LoginComponent},
     {path: 'create-account', component: CreateAccountComponent},
   ]},
-  {path: 'records', component: RecordsComponent, canActivate: [AuthGuard]}
+  {path: 'record-form', component: RecordFormComponent, canActivate: [AuthGuard]},
+  {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]}
 ];
 
 @NgModule({

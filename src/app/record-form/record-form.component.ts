@@ -1,22 +1,24 @@
-import {Component, ElementRef, EventEmitter, OnInit, ViewChild} from '@angular/core';
+import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {RecordService} from '../record.service';
 import {NgForm} from '@angular/forms';
 import {Record} from '../record.model';
 import {MaterializeAction} from 'angular2-materialize';
-import {UsersService} from '../../users.service';
-import {User} from '../../user.model';
+import {UsersService} from '../users.service';
+import {User} from '../user.model';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-record-form',
   templateUrl: './record-form.component.html',
   styleUrls: ['./record-form.component.css']
 })
-export class RecordFormComponent implements OnInit {
+export class RecordFormComponent implements OnInit, OnDestroy {
 
   @ViewChild('f') recordForm: NgForm;
   defaultType = 'Cours';
-  selectOptions: string[];
   selectedRecord: Record = null;
+
+  subscriptions: Subscription[] = [];
 
   oratorList = {};
 
@@ -25,43 +27,54 @@ export class RecordFormComponent implements OnInit {
   @ViewChild('chips') chipsDiv: ElementRef;
 
   constructor(public recordService: RecordService, private usersService: UsersService) {
-    usersService.usersQueryObservable.subscribe((searchResult) => {
-      this.oratorList = {};
-      for (let i = 0; i < searchResult.length; i++) {
-        const u: User = searchResult[i];
-        this.oratorList[u.email] = null;
-      }
-    });
+
   }
 
   ngOnInit() {
-    this.selectOptions = this.recordService.selectOptions;
-    this.recordService.recordSelected.subscribe(
-      (record) => {
-        this.selectedRecord = record;
-        if (record != null) {
-          this.recordForm.form.patchValue({
-            recordData: {
-              name: record.name,
-              recorder: record.recorder,
-              oratorMail: record.oratorMail,
-              type: record.type,
-              recorderMail: record.recorderMail
+
+    this.recordService.unselectRecord();
+
+    this.subscriptions.push(
+      this.recordService.recordSelected.subscribe(
+        (record) => {
+          this.selectedRecord = record;
+
+          if (this.selectedRecord != null) {
+            this.recordForm.form.patchValue({
+              recordData: {
+                name: this.selectedRecord.name,
+                oratorMail: this.selectedRecord.oratorMail,
+                type: this.selectedRecord.type
+              }
+            });
+            if (this.selectedRecord.tags == null) {
+              this.chips = [];
+            } else {
+              this.chips = this.selectedRecord.tags.slice();
             }
-          });
-          if (this.selectedRecord.tags == null) {
-            this.chips = [];
+            this.updateChips();
           } else {
-            this.chips = this.selectedRecord.tags.slice();
+            this.recordForm.reset();
+            this.chips = [];
+            this.updateChips();
           }
-          this.updateChips();
-        } else {
-          this.recordForm.reset();
-          this.chips = [];
-          this.updateChips();
         }
-      }
-    );
+      ));
+
+    this.subscriptions.push(
+      this.usersService.usersQueryObservable.subscribe((searchResult) => {
+        this.oratorList = {};
+        for (let i = 0; i < searchResult.length; i++) {
+          const u: User = searchResult[i];
+          this.oratorList[u.email] = null;
+        }
+      }));
+  }
+
+  ngOnDestroy() {
+    this.subscriptions.forEach((subscription: Subscription) => {
+      subscription.unsubscribe();
+    });
   }
 
   onCreate() {

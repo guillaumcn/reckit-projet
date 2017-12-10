@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
 import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import {RecordService} from '../../record.service';
-import {LoadingService} from '../../../loading/loading.service';
+import {LoadingService} from '../../loading/loading.service';
 
 @Component({
   selector: 'app-recorder',
@@ -37,7 +37,7 @@ export class RecorderComponent implements OnInit {
           this.recordService.temporaryFile = blob as File;
           this.recordService.temporaryDuration = record.duration;
           this.wavesurfer.load(URL.createObjectURL(this.recordService.temporaryFile));
-          this.loadingService.isLoading = false;
+          this.loadingService.stopLoading();
         });
       } else {
         this.recordService.temporaryFile = null;

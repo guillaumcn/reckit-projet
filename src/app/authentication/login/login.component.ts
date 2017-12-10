@@ -27,14 +27,14 @@ export class LoginComponent implements OnInit {
 
   connexion() {
     if (this.loginForm.valid) {
-      this.loadingService.isLoading = true;
+      this.loadingService.startLoading();
       this.authService.signInWithEmailPassword(this.loginForm.value.email, this.loginForm.value.password);
       this.loginForm.reset();
     }
   }
 
   connexionGoogle() {
-    this.loadingService.isLoading = true;
+    this.loadingService.startLoading();
     this.authService.signInWithGoogle();
     this.loginForm.reset();
   }

@@ -30,6 +30,7 @@
     "materialize-css": "^0.100.2",
     "mic-recorder-to-mp3": "^2.1.1",
     "rxjs": "^5.4.2",
+    "waveform-data": "^2.0.1",
     "wavesurfer.js": "^2.0.0-beta01",
     "zone.js": "^0.8.14"
   },

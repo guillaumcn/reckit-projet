@@ -29,7 +29,7 @@ export class AuthService {
             } else {
               this.toastService.toast('Connecté en tant que ' + user.email);
             }
-            this.router.navigate(['/records']);
+            this.router.navigate(['/record-form']);
           } else {
             this.logout();
             this.toastService.toast('Merci de valider votre adresse mail');
@@ -49,28 +49,28 @@ export class AuthService {
             displayName: firstName + ' ' + lastName,
           });
           this.usersService.updateUserData(user.uid, email, firstName + ' ' + lastName);
-          this.loadingService.isLoading = false;
+          this.loadingService.stopLoading();
           user.sendEmailVerification();
           this.toastService.toast('Compte ' + email + ' créé !');
         })
         .catch(err => {
-          this.loadingService.isLoading = false;
+          this.loadingService.stopLoading();
           if (err.code === 'auth/email-already-in-use') {
             this.toastService.toast('Email déjà utilisé');
           }
         });
     } else {
       this.toastService.toast('Les deux mots de passe renseignés sont différents');
-      this.loadingService.isLoading = false;
+      this.loadingService.stopLoading();
     }
   }
 
   signInWithEmailPassword(email: string, password: string) {
     this.firebaseAuth.auth.signInWithEmailAndPassword(email, password)
       .then(value => {
-        this.loadingService.isLoading = false;
+        this.loadingService.stopLoading();
       }).catch(err => {
-        this.loadingService.isLoading = false;
+        this.loadingService.stopLoading();
       });
   }
 
@@ -79,10 +79,10 @@ export class AuthService {
     this.firebaseAuth.auth.signInWithPopup(
       googleProvider
     ).then(result => {
-      this.loadingService.isLoading = false;
+      this.loadingService.stopLoading();
       this.usersService.updateUserData(result.user.uid, result.user.email, result.user.displayName);
     }).catch(err => {
-      this.loadingService.isLoading = false;
+      this.loadingService.stopLoading();
       if (err.code === 'auth/account-exists-with-different-credential') {
         this.toastService.toast('Email déjà utilisé');
       }

@@ -18,12 +18,11 @@ import { LoadingComponent } from './loading/loading.component';
 import {LoadingService} from './loading/loading.service';
 import { CreateAccountComponent } from './authentication/create-account/create-account.component';
 import { AuthenticationComponent } from './authentication/authentication.component';
-import { RecordsComponent } from './records/records.component';
-import {RecordFormComponent} from './records/record-form/record-form.component';
-import {RecordListComponent} from './records/record-list/record-list.component';
-import {RecordItemComponent} from './records/record-list/record-item/record-item.component';
-import {RecordService} from './records/record.service';
-import { RecorderComponent } from './records/record-form/recorder/recorder.component';
+import {RecordFormComponent} from './record-form/record-form.component';
+import {RecordListComponent} from './record-list/record-list.component';
+import {RecordItemComponent} from './record-list/record-item/record-item.component';
+import {RecordService} from './record.service';
+import { RecorderComponent } from './record-form/recorder/recorder.component';
 import {UsersService} from './users.service';
 
 @NgModule({
@@ -34,7 +33,6 @@ import {UsersService} from './users.service';
     LoadingComponent,
     CreateAccountComponent,
     AuthenticationComponent,
-    RecordsComponent,
     RecordFormComponent,
     RecordListComponent,
     RecordItemComponent,

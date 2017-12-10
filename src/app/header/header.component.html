@@ -6,13 +6,15 @@
       <i class="material-icons">menu</i>
     </a>
     <ul *ngIf="authService.isLoggedIn()" class="right hide-on-med-and-down">
-      <li [routerLinkActive]="['active']"><a [routerLink]="['/records']">Gestion</a></li>
+      <li [routerLinkActive]="['active']"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
+      <li [routerLinkActive]="['active']"><a [routerLink]="['/record-list']">Enregistrements</a></li>
       <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
     </ul>
   </div>
 </nav>
 
 <ul *ngIf="authService.isLoggedIn()" class="side-nav" id="sidenav">
-  <li [routerLinkActive]="['active']"><a [routerLink]="['/records']">Gestion</a></li>
+  <li [routerLinkActive]="['active']"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
+  <li [routerLinkActive]="['active']"><a [routerLink]="['/record-list']">Enregistrements</a></li>
   <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
 </ul>
