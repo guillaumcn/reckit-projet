@@ -6,6 +6,7 @@ import {MaterializeAction} from 'angular2-materialize';
 import {UsersService} from '../users.service';
 import {User} from '../user.model';
 import {Subscription} from 'rxjs/Subscription';
+import {LoadingService} from '../loading/loading.service';
 
 @Component({
   selector: 'app-record-form',
@@ -26,7 +27,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   chips: string[] = [];
   @ViewChild('chips') chipsDiv: ElementRef;
 
-  constructor(public recordService: RecordService, private usersService: UsersService) {
+  constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
   }
 

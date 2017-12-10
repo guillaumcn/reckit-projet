@@ -12,6 +12,7 @@
   </div>
 </div>
 
+<p *ngIf="loadingService.isUploading">Envoi du fichier : {{loadingService.uploadProgression}} %</p>
 
 <div *ngIf="loadingService.isUploading" class="progress">
   <div class="determinate" [ngStyle]="{'width' : loadingService.uploadProgression + '%'}"></div>

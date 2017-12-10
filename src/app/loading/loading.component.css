@@ -14,3 +14,9 @@
   position:fixed;
   bottom: 0;
 }
+
+p {
+  position:fixed;
+  bottom: 15px;
+  right:15px;
+}

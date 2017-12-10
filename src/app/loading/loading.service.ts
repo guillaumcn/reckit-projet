@@ -11,6 +11,7 @@ export class LoadingService {
   constructor() {
     this.isLoading = false;
     this.isUploading = false;
+    this.uploadProgression = 0;
   }
 
   startLoading() {
