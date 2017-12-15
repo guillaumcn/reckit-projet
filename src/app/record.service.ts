@@ -10,6 +10,7 @@ import {LoadingService} from './loading/loading.service';
 import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
+import JSZip from 'jszip/dist/jszip.js';
 
 @Injectable()
 export class RecordService {
@@ -19,7 +20,7 @@ export class RecordService {
   recordFirebaseObservable: Observable<Record[]>;
   storageRef: Reference;
 
-  recordSelected: Subject<Record> = new Subject();
+  recordToEdit: Subject<Record> = new Subject();
 
   temporaryFile: File = null;
   temporaryDuration = 0;
@@ -40,11 +41,12 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, oratorMail: string, duration: number, type: string, tags: string[]) {
+  addRecord(name: string, oratorMail: string, duration: number, type: string, file: File, tags: string[]) {
     if (this.temporaryFile == null) {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
     } else {
       this.loadingService.startLoading();
+
       this.recordListRef.push({
         name: name,
         recorder: this.authService.userDetails.displayName,
@@ -54,9 +56,49 @@ export class RecordService {
         type: type,
         tags: tags
       }).then((data) => {
+        const zip = new JSZip();
+        zip.file(data.key + '.mp3', this.temporaryFile);
+        zip.file(data.key + '.pdf', file);
+        zip.generateAsync({type: 'blob'}).then((content) => {
+          const uploadTask = this.storageRef.child('/records/' + data.key + '.zip').put(content);
+          this.uneditRecord();
+          this.loadingService.stopLoading();
+          this.loadingService.startUploading();
+          uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
+              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              this.loadingService.progressUploading(progress);
+            },
+            (error) => {
+              // upload failed
+              console.log(error);
+            },
+            () => {
+              this.loadingService.stopUploading();
+              this.toastService.toast('Enregistrement créé avec succès');
+            });
+        });
+      });
+    }
+  }
+
+  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, file: File, tags: string[]) {
+    this.loadingService.startLoading();
+    this.recordListRef.update(key, {
+      name: name,
+      recorder: this.authService.userDetails.displayName,
+      recorderMail: this.authService.userDetails.email,
+      oratorMail: oratorMail,
+      duration: duration,
+      type: type,
+      tags: tags
+    }).then((data) => {
+      const zip = new JSZip();
+      zip.file(key + '.mp3', this.temporaryFile);
+      zip.file(key + '.pdf', file);
+      zip.generateAsync({type: 'blob'}).then((content) => {
+        const uploadTask = this.storageRef.child('/records/' + key + '.zip').put(content);
+        this.uneditRecord();
         this.loadingService.stopLoading();
-        const uploadTask = this.storageRef.child('/records/' + data.key + '.mp3').put(this.temporaryFile);
-        this.unselectRecord();
         this.loadingService.startUploading();
         uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
             const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
@@ -68,66 +110,35 @@ export class RecordService {
           },
           () => {
             this.loadingService.stopUploading();
-            this.toastService.toast('Enregistrement créé avec succès');
+            this.toastService.toast('Enregistrement modifié avec succès');
           });
       });
-    }
-
-  }
-
-  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, tags: string[]) {
-    this.loadingService.startLoading();
-    this.recordListRef.update(key, {
-      name: name,
-      recorder: this.authService.userDetails.displayName,
-      recorderMail: this.authService.userDetails.email,
-      oratorMail: oratorMail,
-      duration: duration,
-      type: type,
-      tags: tags
-    }).then((data) => {
-      this.loadingService.stopLoading();
-      const uploadTask = this.storageRef.child('/records/' + key + '.mp3').put(this.temporaryFile);
-      this.unselectRecord();
-      this.loadingService.startUploading();
-      uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          this.loadingService.progressUploading(progress);
-        },
-        (error) => {
-          // upload failed
-          console.log(error);
-        },
-        () => {
-          this.loadingService.stopUploading();
-          this.toastService.toast('Enregistrement modifié avec succès');
-        });
     });
   }
 
   removeRecord(key: string) {
     this.loadingService.startLoading();
     this.recordListRef.remove(key).then(() => {
-      this.storageRef.child('/records/' + key + '.mp3').delete().then(() => {
+      this.storageRef.child('/records/' + key + '.zip').delete().then(() => {
         this.loadingService.stopLoading();
         this.toastService.toast('Enregistrement supprimé avec succès');
-        this.unselectRecord();
+        this.uneditRecord();
       });
     });
   }
 
-  unselectRecord() {
-    this.recordSelected.next(null);
+  uneditRecord() {
+    this.recordToEdit.next(null);
     this.temporaryFile = null;
     this.temporaryDuration = 0;
   }
 
-  selectRecord(record: Record) {
+  editRecord(record: Record) {
     this.router.navigate(['/record-form']).then(() => {
       this.loadingService.startLoading();
-      this.storageRef.child('/records/' + record.key + '.mp3').getDownloadURL().then((url) => {
+      this.storageRef.child('/records/' + record.key + '.zip').getDownloadURL().then((url) => {
         record.fileUrl = url;
-        this.recordSelected.next(record);
+        this.recordToEdit.next(record);
       });
     });
   }

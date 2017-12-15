@@ -1,12 +1,14 @@
-import {Component, ElementRef, EventEmitter, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
 import {RecordService} from '../record.service';
 import {NgForm} from '@angular/forms';
 import {Record} from '../record.model';
-import {MaterializeAction} from 'angular2-materialize';
 import {UsersService} from '../users.service';
 import {User} from '../user.model';
 import {Subscription} from 'rxjs/Subscription';
 import {LoadingService} from '../loading/loading.service';
+import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
+import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
+import JSZip from 'jszip/dist/jszip.js';
 
 @Component({
   selector: 'app-record-form',
@@ -23,9 +25,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   oratorList = {};
 
-  chipsActions = new EventEmitter<string | MaterializeAction>();
-  chips: string[] = [];
-  @ViewChild('chips') chipsDiv: ElementRef;
+  tags: string[] = [];
+
+  wavesurfer: WaveSurfer = null;
+  recorder: MicRecorder = null;
+  isRecording = false;
+  interval = null;
+
+  file: File = null;
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
@@ -33,10 +40,21 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
-    this.recordService.unselectRecord();
+    this.recorder = new MicRecorder({
+      bitRate: 128
+    });
+
+    this.wavesurfer = WaveSurfer.create({
+      container: '#waveform',
+      waveColor: 'blue',
+      progressColor: '#0000AA',
+      height: 300
+    });
+
+    this.recordService.uneditRecord();
 
     this.subscriptions.push(
-      this.recordService.recordSelected.subscribe(
+      this.recordService.recordToEdit.subscribe(
         (record) => {
           this.selectedRecord = record;
 
@@ -48,16 +66,30 @@ export class RecordFormComponent implements OnInit, OnDestroy {
                 type: this.selectedRecord.type
               }
             });
+
             if (this.selectedRecord.tags == null) {
-              this.chips = [];
+              this.tags = [];
             } else {
-              this.chips = this.selectedRecord.tags.slice();
+              this.tags = this.selectedRecord.tags.slice();
             }
-            this.updateChips();
+
+            fetch(record.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
+              this.recordService.temporaryFile = blob as File;
+              this.recordService.temporaryDuration = record.duration;
+              const zip = new JSZip();
+              zip.loadAsync(this.recordService.temporaryFile).then(() => {
+                zip.file(record.key + '.mp3').async('blob').then((mp3Blob) => {
+                  this.wavesurfer.load(URL.createObjectURL(mp3Blob as File));
+                  this.loadingService.stopLoading();
+                });
+              });
+            });
           } else {
             this.recordForm.reset();
-            this.chips = [];
-            this.updateChips();
+            this.tags = [];
+            this.recordService.temporaryFile = null;
+            this.recordService.temporaryDuration = 0;
+            this.wavesurfer.load(null);
           }
         }
       ));
@@ -70,6 +102,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
           this.oratorList[u.email] = null;
         }
       }));
+
+    this.recordService.temporaryFile = null;
   }
 
   ngOnDestroy() {
@@ -85,7 +119,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordForm.value.recordData.oratorMail,
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
-        this.chips
+        this.file,
+        this.tags
       );
     }
   }
@@ -98,7 +133,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordForm.value.recordData.oratorMail,
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
-        this.chips
+        this.file,
+        this.tags
       );
     }
   }
@@ -107,21 +143,15 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.usersService.query.next($event.target.value);
   }
 
-  add(chip) {
-    this.chips.push(chip.tag);
-  }
-
-  delete(chip) {
-    this.chips.splice(this.chips.indexOf(chip.tag), 1);
-  }
-
-  updateChips() {
-    const newChipsData = {data: []};
-    for (let i = 0; i < this.chips.length; i++) {
-      const chip = this.chips[i];
-      newChipsData.data.push({tag: chip});
+  addTag(tagInput) {
+    if (this.tags.indexOf(tagInput.value) === -1) {
+      this.tags.push(tagInput.value);
+      tagInput.value = '';
     }
-    this.chipsActions.emit({action: 'material_chip', params: [newChipsData]});
+  }
+
+  deleteTag(index) {
+    this.tags.splice(index, 1);
   }
 
   prettyPrintDuration(duration: number): string {
@@ -148,5 +178,47 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     result += seconds;
 
     return result;
+  }
+
+  getFile(event) {
+    this.file = event.target.files[0];
+  }
+
+  startStopRecording() {
+    if (!this.isRecording) {
+      this.recorder.start().then(() => {
+        this.recordService.temporaryDuration = 0;
+        this.interval = setInterval(() => {
+          this.recordService.temporaryDuration++;
+        }, 1000);
+        this.isRecording = true;
+      }).catch((e) => {
+        console.error(e);
+      });
+    } else {
+      clearInterval(this.interval);
+      this.recorder.stop().getMp3().then(([buffer, blob]) => {
+
+        this.isRecording = false;
+
+        const file = new File(buffer, Date.now() + '.mp3', {
+          type: blob.type,
+          lastModified: Date.now()
+        });
+
+        this.recordService.temporaryFile = file;
+        this.wavesurfer.load(URL.createObjectURL(file));
+
+      }).catch((e) => {
+        alert('We could not retrieve your message');
+        console.log(e);
+      });
+    }
+  }
+
+  playPause() {
+    if (this.recordService.temporaryFile != null) {
+      this.wavesurfer.playPause();
+    }
   }
 }

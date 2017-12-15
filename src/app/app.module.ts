@@ -22,7 +22,6 @@ import {RecordFormComponent} from './record-form/record-form.component';
 import {RecordListComponent} from './record-list/record-list.component';
 import {RecordItemComponent} from './record-list/record-item/record-item.component';
 import {RecordService} from './record.service';
-import { RecorderComponent } from './record-form/recorder/recorder.component';
 import {UsersService} from './users.service';
 
 @NgModule({
@@ -35,8 +34,7 @@ import {UsersService} from './users.service';
     AuthenticationComponent,
     RecordFormComponent,
     RecordListComponent,
-    RecordItemComponent,
-    RecorderComponent
+    RecordItemComponent
 ],
   imports: [
     BrowserModule,

@@ -1,5 +1,6 @@
-<li class="collection-item row" (click)="onSelect()">
+<li class="collection-item row" (click)="playRecord()">
   <span class="col s6">{{record.name}} - {{record.oratorMail}}</span>
-  <span class="col s3">{{record.type}}</span><span class="col s2">{{prettyPrintDuration(record.duration)}}</span>
+  <span class="col s2">{{record.type}}</span><span class="col s2">{{prettyPrintDuration(record.duration)}}</span>
+  <i (click)="onEdit()" class="material-icons col s1">edit</i>
   <i (click)="removeRecord()" class="material-icons col s1">remove_circle</i>
 </li>

@@ -21,8 +21,8 @@ export class RecordItemComponent implements OnInit {
     this.recordService.removeRecord(this.record.key);
   }
 
-  onSelect() {
-    this.recordService.selectRecord(this.record);
+  onEdit() {
+    this.recordService.editRecord(this.record);
   }
 
   prettyPrintDuration(duration: number) {

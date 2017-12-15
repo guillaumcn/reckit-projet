@@ -1,62 +1,88 @@
-<div class="row">
-  <div class="col s8">
-    <div class="valign-wrapper">
-      <app-recorder></app-recorder>
-    </div>
-  </div>
-
-  <form class="col s4" #f="ngForm">
-    <div class="row" ngModelGroup="recordData">
+<form class="row" #f="ngForm">
+  <div ngModelGroup="recordData">
+    <div class="col s9">
+      <div class="valign-wrapper">
+        <div class="row">
+          <div id="waveform" class="z-depth-2"></div>
+        </div>
+      </div>
       <div class="row">
-        <div class="input-field col s12">
+        <div class="input-field col s3">
+          <i class="material-icons prefix">timer</i>
+          <input id="duration" type="text" name="duration"
+                 [value]="prettyPrintDuration(recordService.temporaryDuration)" required readonly/>
+          <label [ngClass]="{'active' : true}" for="duration">Durée</label>
+        </div>
+        <div class="input-field col s5 offset-s3">
           <i class="material-icons prefix">label_outline</i>
           <input id="name" type="text" name="name" ngModel required/>
           <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.name != ''}" for="name">Nom</label>
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">mic_none</i>
-          <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off" materialize="autocomplete" [materializeParams]="[{'data': oratorList}]" ngModel email required/>
-          <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.oratorMail != ''}" for="oratorMail">Mail Orateur</label>
-        </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s6">
-          <i class="material-icons prefix">timer</i>
-          <input id="duration" type="text" name="duration" [value]="prettyPrintDuration(recordService.temporaryDuration)" required readonly/>
-          <label [ngClass]="{'active' : true}" for="duration">Durée</label>
-        </div>
-        <div class="input-field col s6 custom-select">
+        <div class="input-field col s3 custom-select">
           <i class="material-icons prefix">unfold_more</i>
-          <select materialize="material_select" [materializeSelectOptions]="recordService.selectOptions" id="type" name="type"
+          <select materialize="material_select" [materializeSelectOptions]="recordService.selectOptions" id="type"
+                  name="type"
                   [ngModel]="defaultType">
             <option *ngFor="let option of recordService.selectOptions" [value]="option">{{option}}</option>
           </select>
           <label for="type">Type</label>
         </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s12">
-          <i class="material-icons prefix">local_offer</i>
-          <div class="chips" id="chips" materialize="material_chip" (chip.add)="add($event.detail)" (chip.delete)="delete($event.detail)" [materializeActions]="chipsActions" #chips></div>
-          <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.oratorMail != ''}" for="chips">Tags</label>
-          <small *ngIf="this.chipsDiv.nativeElement.classList.contains('focus')" class="badge chipsEnter">Appuyez sur entrer pour valider</small>
+        <div class="input-field col s5 offset-s3">
+          <i class="material-icons prefix">mic_none</i>
+          <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off"
+                 materialize="autocomplete" [materializeParams]="[{'data': oratorList}]" ngModel email required/>
+          <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.oratorMail != ''}" for="oratorMail">Mail
+            Orateur</label>
         </div>
       </div>
+      <div class="row">
+        <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
+          {{file == null ? 'Ajouter un fichier' : file.name}}
+          <input type="file" id="file" name="file" (change)="getFile($event)" ngModel>
+        </div>
+        <button (click)="playPause()" class="buttonPlay col s1 offset-s2" [ngClass]="{'paused' : wavesurfer.isPlaying()}"></button>
+        <button (click)="startStopRecording()" class="col s1 recButton" [ngClass]="isRecording ? 'Rec' : 'notRec'"></button>
+        <button class="btn indigo darken-1 offset-s2 col s3">Annoter</button>
+      </div>
     </div>
-  </form>
+
+    <div class="col s3">
+      <div class="tagform z-depth-2">
+        <div *ngFor="let chip of tags; let i = index" class="row">
+          <i class="material-icons col s1 offset-s1">local_offer</i>
+          <span class="col s6 offset-s1">{{chip}}</span>
+          <i class="material-icons col s1" (click)="deleteTag(i)">delete</i>
+        </div>
+        <div class="row input-field">
+          <input placeholder="Ajouter un tag..." class="col s8 offset-s1" type="text" #newTagInput/>
+          <i class="material-icons col s2 addTagIcon" (click)="addTag(newTagInput)">add_box</i>
+        </div>
+      </div>
+      <br>
+      <hr>
+      <br>
+      <a *ngIf="selectedRecord == null" class="waves-effect waves-light btn col s10 indigo darken-1"
+         [ngClass]="{' disabled' : loadingService.isUploading}"
+         type="submit" (click)="onCreate()">Créer</a>
+      <a *ngIf="selectedRecord != null" class="waves-effect waves-light btn col s10 indigo darken-1"
+         [ngClass]="{' disabled' : loadingService.isUploading}"
+         type="submit" (click)="onUpdate()">Modifier</a>
+      <i (click)="recordService.uneditRecord()" class="material-icons prefix col s2 resetForm">delete_sweep</i>
+    </div>
 
 
-
-  <div class="col s12">
-    <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
-       [ngClass]="{' disabled' : selectedRecord != null || loadingService.isUploading}"
-       type="submit" (click)="onCreate()">Créer</a>
-    <span id="arrow_back" class="col s2 offset-s1" (click)="recordService.unselectRecord()"><i *ngIf="selectedRecord != null"
-                                                                                                        class="material-icons prefix">delete_sweep</i></span>
-    <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
-       [ngClass]="{' disabled' :selectedRecord == null || loadingService.isUploading}"
-       type="submit" (click)="onUpdate()">Modifier</a>
+    <!--<div class="col s12">
+      <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
+         [ngClass]="{' disabled' : selectedRecord != null || loadingService.isUploading}"
+         type="submit" (click)="onCreate()">Créer</a>
+      <span id="arrow_back" class="col s2 offset-s1" (click)="recordService.uneditRecord()"><i
+        *ngIf="selectedRecord != null"
+        class="material-icons prefix">delete_sweep</i></span>
+      <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
+         [ngClass]="{' disabled' :selectedRecord == null || loadingService.isUploading}"
+         type="submit" (click)="onUpdate()">Modifier</a>
+    </div>-->
   </div>
-</div>
+</form>

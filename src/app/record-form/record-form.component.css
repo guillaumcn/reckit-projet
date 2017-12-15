@@ -1,12 +1,13 @@
 form {
   margin-top: 15px;
 }
+
 /* label focus color */
-.input-field input:focus + label{
+.input-field input:focus + label {
   color: #0d47a1 !important;
 }
 
-.material-icons.prefix.active{
+.material-icons.prefix.active {
   color: black !important;
 }
 
@@ -16,7 +17,7 @@ form {
   box-shadow: 0 1px 0 0 #0d47a1 !important;
 }
 
- option {
+option {
   color: #0d47a1 !important;
 }
 
@@ -40,7 +41,7 @@ input:-webkit-autofill {
 }
 
 /* label focus color */
-.chips.focus + label{
+.chips.focus + label {
   color: #0d47a1 !important;
 }
 
@@ -54,4 +55,181 @@ input:-webkit-autofill {
   flex-direction: column !important;
   justify-content: center !important;
   align-items: initial !important;
+}
+
+.tagform {
+  border: 3px black solid;
+  padding-top: 15px;
+}
+
+.tagform i {
+  cursor: pointer;
+}
+
+.addTagIcon {
+  margin-top: 15px;
+}
+
+h5 {
+  text-align: center;
+}
+
+@-webkit-keyframes ld {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@-moz-keyframes ld {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@-o-keyframes ld {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+@keyframes ld {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  50% {
+    transform: rotate(180deg) scale(1.1);
+  }
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+
+.m-progress {
+  position: relative;
+  opacity: .8;
+  text-shadow: none !important;
+  cursor: pointer;
+}
+
+.m-progress:hover,
+.m-progress:active,
+.m-progress:focus {
+  outline: none !important;
+  box-shadow: none;
+}
+
+.m-progress:before {
+  content: '';
+
+  display: inline-block;
+
+  position: absolute;
+  background: transparent;
+  border: 1px solid #fff;
+  border-top-color: transparent;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+
+  box-sizing: border-box;
+
+  top: 50%;
+  left: 50%;
+  margin-top: -12px;
+  margin-left: -12px;
+
+  width: 24px;
+  height: 24px;
+
+  -webkit-animation: ld 1s ease-in-out infinite;
+  -moz-animation: ld 1s ease-in-out infinite;
+  -o-animation: ld 1s ease-in-out infinite;
+  animation: ld 1s ease-in-out infinite;
+}
+
+#waveform {
+  width: 95%;
+  border: 3px black solid;
+}
+
+.addFileButton {
+  margin-top: 0 !important;
+}
+
+.recButton {
+  width: 35px !important;
+  height: 35px !important;
+  font-size: 0;
+  background-color: red;
+  border: 0;
+  border-radius: 35px;
+  outline: none;
+}
+
+.notRec {
+  background-color: darkred;
+}
+
+.Rec {
+  animation-name: pulse;
+  animation-duration: 1.5s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+}
+
+@keyframes pulse{
+  0%{
+    box-shadow: 0px 0px 5px 0px rgba(173,0,0,.3);
+  }
+  65%{
+    box-shadow: 0px 0px 5px 13px rgba(173,0,0,.3);
+  }
+  90%{
+    box-shadow: 0px 0px 5px 13px rgba(173,0,0,0);
+  }
+}
+
+.buttonPlay {
+  background: transparent;
+  box-sizing: border-box;
+  width: 35px !important;
+  height: 35px !important;
+
+  border-color: transparent transparent transparent #202020;
+  transition: 100ms all ease;
+  cursor: pointer;
+
+  border-style: solid;
+  border-width: 18px 0 18px 30px;
+}
+
+.buttonPlay.paused {
+  border-style: double !important;
+  border-width: 0px 0 0px 28px !important;
+}
+
+.buttonPlay:hover {
+  border-color: transparent transparent transparent #404040 !important;
+}
+
+.resetForm {
+  margin-top: 5px !important;
+  cursor: pointer;
 }
