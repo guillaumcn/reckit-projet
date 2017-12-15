@@ -1,10 +1,11 @@
 <div class="row">
   <div id="waveform"></div>
   <h5 *ngIf="recordService.temporaryFile == null">Vous pouvez commencer à enregistrer.</h5>
-</div>
-<div class="row" *ngIf="recordService.temporaryFile != null">
-  <button class="btn col s4 offset-s4 indigo darken-1" (click)="playPause()">Jouer</button>
-</div>
-<div class="row">
-  <button class="btn col s4 offset-s4 indigo darken-1" [ngClass]="{'m-progress': isRecording == true}" (click)="startStopRecording()"><span *ngIf="!isRecording">Enregistrer</span><span *ngIf="isRecording">{{currentTime}}</span></button>
-</div>
+ </div>
+ <div class="row" *ngIf="recordService.temporaryFile != null">
+   <button class="btn col s4 offset-s4 indigo darken-1" (click)="playPause()">Jouer</button>
+ </div>
+ <div class="row">
+   <button class="btn col s4 offset-s4 indigo darken-1" [ngClass]="{'m-progress': isRecording == true}" (click)="startStopRecording()"><span *ngIf="!isRecording">Enregistrer</span><span *ngIf="isRecording">{{currentTime}}</span></button>
+ </div>
+

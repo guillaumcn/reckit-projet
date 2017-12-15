@@ -1,5 +1,11 @@
 <div class="row">
-  <form class="col s6" #f="ngForm">
+  <div class="col s8">
+    <div class="valign-wrapper">
+      <app-recorder></app-recorder>
+    </div>
+  </div>
+
+  <form class="col s4" #f="ngForm">
     <div class="row" ngModelGroup="recordData">
       <div class="row">
         <div class="input-field col s12">
@@ -35,17 +41,11 @@
           <i class="material-icons prefix">local_offer</i>
           <div class="chips" id="chips" materialize="material_chip" (chip.add)="add($event.detail)" (chip.delete)="delete($event.detail)" [materializeActions]="chipsActions" #chips></div>
           <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.oratorMail != ''}" for="chips">Tags</label>
-          <span *ngIf="this.chipsDiv.nativeElement.classList.contains('focus')" class="badge chipsEnter">Appuyez sur entrée pour valider</span>
+          <small *ngIf="this.chipsDiv.nativeElement.classList.contains('focus')" class="badge chipsEnter">Appuyez sur entrer pour valider</small>
         </div>
       </div>
     </div>
   </form>
-
-
-
-  <div class="col s6">
-    <app-recorder></app-recorder>
-  </div>
 
 
 

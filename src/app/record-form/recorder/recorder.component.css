@@ -64,3 +64,7 @@ h5 {
   -o-animation:      ld 1s ease-in-out infinite;
   animation:         ld 1s ease-in-out infinite;
 }
+
+#waveform {
+  width: 95%;
+}

@@ -48,3 +48,10 @@ input:-webkit-autofill {
   position: absolute !important;
   right: 0 !important;
 }
+
+.valign-wrapper {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: initial !important;
+}
