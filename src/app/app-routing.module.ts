@@ -6,6 +6,7 @@ import {AuthGuard} from './auth-guard.service';
 import { AuthenticationComponent } from './authentication/authentication.component';
 import {RecordFormComponent} from './record-form/record-form.component';
 import {RecordListComponent} from './record-list/record-list.component';
+import {RecordDetailComponent} from './record-detail/record-detail.component';
 
 
 const appRoutes: Routes = [
@@ -16,7 +17,8 @@ const appRoutes: Routes = [
     {path: 'create-account', component: CreateAccountComponent},
   ]},
   {path: 'record-form', component: RecordFormComponent, canActivate: [AuthGuard]},
-  {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]}
+  {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]},
+  {path: 'record-detail', component: RecordDetailComponent, canActivate: [AuthGuard]},
 ];
 
 @NgModule({

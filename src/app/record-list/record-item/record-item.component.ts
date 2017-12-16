@@ -25,6 +25,10 @@ export class RecordItemComponent implements OnInit {
     this.recordService.editRecord(this.record);
   }
 
+  onRecordDetail() {
+    this.recordService.viewRecordDetails(this.record);
+  }
+
   prettyPrintDuration(duration: number) {
     let result = '';
     const hours = Math.floor(duration / (60 * 60));

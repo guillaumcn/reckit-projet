@@ -71,18 +71,5 @@
          type="submit" (click)="onUpdate()">Modifier</a>
       <i (click)="recordService.uneditRecord()" class="material-icons prefix col s2 resetForm">delete_sweep</i>
     </div>
-
-
-    <!--<div class="col s12">
-      <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
-         [ngClass]="{' disabled' : selectedRecord != null || loadingService.isUploading}"
-         type="submit" (click)="onCreate()">Créer</a>
-      <span id="arrow_back" class="col s2 offset-s1" (click)="recordService.uneditRecord()"><i
-        *ngIf="selectedRecord != null"
-        class="material-icons prefix">delete_sweep</i></span>
-      <a class="waves-effect waves-light btn col s3 offset-s1 indigo darken-1"
-         [ngClass]="{' disabled' :selectedRecord == null || loadingService.isUploading}"
-         type="submit" (click)="onUpdate()">Modifier</a>
-    </div>-->
   </div>
 </form>

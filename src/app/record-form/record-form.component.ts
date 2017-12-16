@@ -54,7 +54,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.recordService.uneditRecord();
 
     this.subscriptions.push(
-      this.recordService.recordToEdit.subscribe(
+      this.recordService.recordSelected.subscribe(
         (record) => {
           this.selectedRecord = record;
 
@@ -74,11 +74,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
             }
 
             fetch(record.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-              this.recordService.temporaryFile = blob as File;
               this.recordService.temporaryDuration = record.duration;
               const zip = new JSZip();
-              zip.loadAsync(this.recordService.temporaryFile).then(() => {
-                zip.file(record.key + '.mp3').async('blob').then((mp3Blob) => {
+              zip.loadAsync(blob as File).then(() => {
+                zip.file(record.name + '.mp3').async('blob').then((mp3Blob) => {
+                  this.recordService.temporaryFile = mp3Blob as File;
                   this.wavesurfer.load(URL.createObjectURL(mp3Blob as File));
                   this.loadingService.stopLoading();
                 });
@@ -90,6 +90,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
             this.recordService.temporaryFile = null;
             this.recordService.temporaryDuration = 0;
             this.wavesurfer.load(null);
+            this.file = null;
           }
         }
       ));

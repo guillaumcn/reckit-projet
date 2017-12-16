@@ -58,7 +58,7 @@ input:-webkit-autofill {
 }
 
 .tagform {
-  border: 3px black solid;
+  border: 2px black solid;
   padding-top: 15px;
 }
 
@@ -166,7 +166,7 @@ h5 {
 
 #waveform {
   width: 95%;
-  border: 3px black solid;
+  border: 2px black solid;
 }
 
 .addFileButton {

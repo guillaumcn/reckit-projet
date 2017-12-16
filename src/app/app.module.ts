@@ -23,6 +23,7 @@ import {RecordListComponent} from './record-list/record-list.component';
 import {RecordItemComponent} from './record-list/record-item/record-item.component';
 import {RecordService} from './record.service';
 import {UsersService} from './users.service';
+import { RecordDetailComponent } from './record-detail/record-detail.component';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import {UsersService} from './users.service';
     AuthenticationComponent,
     RecordFormComponent,
     RecordListComponent,
-    RecordItemComponent
+    RecordItemComponent,
+    RecordDetailComponent
 ],
   imports: [
     BrowserModule,

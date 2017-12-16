@@ -20,7 +20,7 @@ export class RecordService {
   recordFirebaseObservable: Observable<Record[]>;
   storageRef: Reference;
 
-  recordToEdit: Subject<Record> = new Subject();
+  recordSelected: Subject<Record> = new Subject();
 
   temporaryFile: File = null;
   temporaryDuration = 0;
@@ -57,8 +57,10 @@ export class RecordService {
         tags: tags
       }).then((data) => {
         const zip = new JSZip();
-        zip.file(data.key + '.mp3', this.temporaryFile);
-        zip.file(data.key + '.pdf', file);
+        zip.file(name + '.mp3', this.temporaryFile);
+        if (file != null) {
+          zip.file(file.name, file);
+        }
         zip.generateAsync({type: 'blob'}).then((content) => {
           const uploadTask = this.storageRef.child('/records/' + data.key + '.zip').put(content);
           this.uneditRecord();
@@ -93,8 +95,10 @@ export class RecordService {
       tags: tags
     }).then((data) => {
       const zip = new JSZip();
-      zip.file(key + '.mp3', this.temporaryFile);
-      zip.file(key + '.pdf', file);
+      zip.file(name + '.mp3', this.temporaryFile);
+      if (file != null) {
+        zip.file(file.name, file);
+      }
       zip.generateAsync({type: 'blob'}).then((content) => {
         const uploadTask = this.storageRef.child('/records/' + key + '.zip').put(content);
         this.uneditRecord();
@@ -128,7 +132,7 @@ export class RecordService {
   }
 
   uneditRecord() {
-    this.recordToEdit.next(null);
+    this.recordSelected.next(null);
     this.temporaryFile = null;
     this.temporaryDuration = 0;
   }
@@ -138,7 +142,17 @@ export class RecordService {
       this.loadingService.startLoading();
       this.storageRef.child('/records/' + record.key + '.zip').getDownloadURL().then((url) => {
         record.fileUrl = url;
-        this.recordToEdit.next(record);
+        this.recordSelected.next(record);
+      });
+    });
+  }
+
+  viewRecordDetails(record: Record) {
+    this.router.navigate(['/record-detail']).then(() => {
+      this.loadingService.startLoading();
+      this.storageRef.child('/records/' + record.key + '.zip').getDownloadURL().then((url) => {
+        record.fileUrl = url;
+        this.recordSelected.next(record);
       });
     });
   }

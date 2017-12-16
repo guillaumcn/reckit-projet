@@ -1,0 +1,22 @@
+<div class="row frame">
+  <div class="col s7">
+    <h5 class="center">{{selectedRecord ? selectedRecord.name : ''}}</h5>
+  </div>
+  <div class="col s5 rightpanel">
+    <h5 class="center">{{selectedRecord ? prettyPrintDuration(selectedRecord.duration) : ''}}</h5>
+    <div class="row">
+      <div id="waveform"></div>
+    </div>
+    <div *ngFor="let fileName of filesName" class="row">
+      <i class="material-icons col s1">attachment</i>
+      <span class="col s9">{{fileName}}</span>
+      <i class="material-icons col s1">file_download</i>
+    </div>
+    <br>
+    <br>
+    <div *ngFor="let tag of tags" class="row">
+      <i class="material-icons col s1 offset-s1">local_offer</i>
+      <span class="col s10">{{tag}}</span>
+    </div>
+  </div>
+</div>
