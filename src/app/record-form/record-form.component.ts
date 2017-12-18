@@ -32,7 +32,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   isRecording = false;
   interval = null;
 
-  file: File = null;
+  files: File[] = [];
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
@@ -77,9 +77,16 @@ export class RecordFormComponent implements OnInit, OnDestroy {
               this.recordService.temporaryDuration = record.duration;
               const zip = new JSZip();
               zip.loadAsync(blob as File).then(() => {
+                zip.forEach((relativePath) => {
+                  zip.file(relativePath).async('blob').then((fileblob) => {
+                    if (relativePath !== record.name + '.mp3') {
+                      this.files.push(new File([fileblob], relativePath));
+                    }
+                  });
+                });
                 zip.file(record.name + '.mp3').async('blob').then((mp3Blob) => {
-                  this.recordService.temporaryFile = mp3Blob as File;
-                  this.wavesurfer.load(URL.createObjectURL(mp3Blob as File));
+                  this.recordService.temporaryMP3 = mp3Blob as File;
+                  this.wavesurfer.load(URL.createObjectURL(mp3Blob));
                   this.loadingService.stopLoading();
                 });
               });
@@ -87,10 +94,10 @@ export class RecordFormComponent implements OnInit, OnDestroy {
           } else {
             this.recordForm.reset();
             this.tags = [];
-            this.recordService.temporaryFile = null;
+            this.recordService.temporaryMP3 = null;
             this.recordService.temporaryDuration = 0;
             this.wavesurfer.load(null);
-            this.file = null;
+            this.files = [];
           }
         }
       ));
@@ -104,7 +111,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         }
       }));
 
-    this.recordService.temporaryFile = null;
+    this.recordService.temporaryMP3 = null;
   }
 
   ngOnDestroy() {
@@ -120,7 +127,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordForm.value.recordData.oratorMail,
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
-        this.file,
+        this.files,
         this.tags
       );
     }
@@ -134,7 +141,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordForm.value.recordData.oratorMail,
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
-        this.file,
+        this.files,
         this.tags
       );
     }
@@ -181,8 +188,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     return result;
   }
 
-  getFile(event) {
-    this.file = event.target.files[0];
+  getFiles(event) {
+    this.files = event.target.files;
   }
 
   startStopRecording() {
@@ -207,7 +214,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
           lastModified: Date.now()
         });
 
-        this.recordService.temporaryFile = file;
+        this.recordService.temporaryMP3 = file;
         this.wavesurfer.load(URL.createObjectURL(file));
 
       }).catch((e) => {
@@ -218,7 +225,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   }
 
   playPause() {
-    if (this.recordService.temporaryFile != null) {
+    if (this.recordService.temporaryMP3 != null) {
       this.wavesurfer.playPause();
     }
   }

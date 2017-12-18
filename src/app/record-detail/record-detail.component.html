@@ -7,10 +7,10 @@
     <div class="row">
       <div id="waveform"></div>
     </div>
-    <div *ngFor="let fileName of filesName" class="row">
-      <i class="material-icons col s1">attachment</i>
-      <span class="col s9">{{fileName}}</span>
-      <i class="material-icons col s1">file_download</i>
+    <div *ngFor="let file of files; let i = index" class="row">
+      <i class="material-icons col s1 offset-s1">attachment</i>
+      <span class="col s8">{{file.name}}</span>
+      <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(i)">file_download</i>
     </div>
     <br>
     <br>

@@ -11,6 +11,7 @@ import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import JSZip from 'jszip/dist/jszip.js';
+import {forEach} from '@angular/router/src/utils/collection';
 
 @Injectable()
 export class RecordService {
@@ -22,7 +23,7 @@ export class RecordService {
 
   recordSelected: Subject<Record> = new Subject();
 
-  temporaryFile: File = null;
+  temporaryMP3: File = null;
   temporaryDuration = 0;
 
   selectOptions: string[] = ['Cours', 'Réunion', 'Conférence', 'Discours'];
@@ -41,8 +42,8 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, oratorMail: string, duration: number, type: string, file: File, tags: string[]) {
-    if (this.temporaryFile == null) {
+  addRecord(name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[]) {
+    if (this.temporaryMP3 == null) {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
     } else {
       this.loadingService.startLoading();
@@ -57,9 +58,9 @@ export class RecordService {
         tags: tags
       }).then((data) => {
         const zip = new JSZip();
-        zip.file(name + '.mp3', this.temporaryFile);
-        if (file != null) {
-          zip.file(file.name, file);
+        zip.file(name + '.mp3', this.temporaryMP3);
+        for (let i = 0; i < files.length; i++) {
+          zip.file(files[i].name, files[i]);
         }
         zip.generateAsync({type: 'blob'}).then((content) => {
           const uploadTask = this.storageRef.child('/records/' + data.key + '.zip').put(content);
@@ -83,7 +84,7 @@ export class RecordService {
     }
   }
 
-  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, file: File, tags: string[]) {
+  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[]) {
     this.loadingService.startLoading();
     this.recordListRef.update(key, {
       name: name,
@@ -95,9 +96,9 @@ export class RecordService {
       tags: tags
     }).then((data) => {
       const zip = new JSZip();
-      zip.file(name + '.mp3', this.temporaryFile);
-      if (file != null) {
-        zip.file(file.name, file);
+      zip.file(name + '.mp3', this.temporaryMP3);
+      for (let i = 0; i < files.length; i++) {
+        zip.file(files[i].name, files[i]);
       }
       zip.generateAsync({type: 'blob'}).then((content) => {
         const uploadTask = this.storageRef.child('/records/' + key + '.zip').put(content);
@@ -133,7 +134,7 @@ export class RecordService {
 
   uneditRecord() {
     this.recordSelected.next(null);
-    this.temporaryFile = null;
+    this.temporaryMP3 = null;
     this.temporaryDuration = 0;
   }
 

@@ -39,8 +39,8 @@
       </div>
       <div class="row">
         <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
-          {{file == null ? 'Ajouter un fichier' : file.name}}
-          <input type="file" id="file" name="file" (change)="getFile($event)" ngModel>
+          {{files.length == 0 ? 'Ajouter un fichier' : files.length + ' fichier(s)'}}
+          <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
         </div>
         <button (click)="playPause()" class="buttonPlay col s1 offset-s2" [ngClass]="{'paused' : wavesurfer.isPlaying()}"></button>
         <button (click)="startStopRecording()" class="col s1 recButton" [ngClass]="isRecording ? 'Rec' : 'notRec'"></button>

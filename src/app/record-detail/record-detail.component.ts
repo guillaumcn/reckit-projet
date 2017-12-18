@@ -5,6 +5,7 @@ import {RecordService} from '../record.service';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
 import JSZip from 'jszip/dist/jszip.js';
 import {Subscription} from 'rxjs/Subscription';
+import * as FileSaver from 'file-saver';
 
 @Component({
   selector: 'app-record-detail',
@@ -16,13 +17,13 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   selectedRecord: Record = null;
   tags: string[] = [];
   files: File[] = [];
-  filesName: string[] = [];
 
   wavesurfer: WaveSurfer = null;
 
   subscriptions: Subscription[] = [];
 
-  constructor(public recordService: RecordService, private loadingService: LoadingService) { }
+  constructor(public recordService: RecordService, private loadingService: LoadingService) {
+  }
 
   ngOnInit() {
 
@@ -43,18 +44,17 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       }
 
       fetch(record.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-        this.recordService.temporaryFile = blob as File;
+        this.recordService.temporaryMP3 = blob as File;
         this.recordService.temporaryDuration = record.duration;
         const zip = new JSZip();
-        zip.loadAsync(this.recordService.temporaryFile).then(() => {
+        zip.loadAsync(this.recordService.temporaryMP3).then(() => {
           zip.forEach((relativePath) => {
             zip.file(relativePath).async('blob').then((fileblob) => {
-              this.files.push(fileblob as File);
-              this.filesName.push(relativePath);
+              this.files.push(new File([fileblob], relativePath));
             });
           });
           zip.file(record.name + '.mp3').async('blob').then((mp3Blob) => {
-            this.wavesurfer.load(URL.createObjectURL(mp3Blob as File));
+            this.wavesurfer.load(URL.createObjectURL(mp3Blob));
             this.loadingService.stopLoading();
           });
         });
@@ -92,6 +92,10 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     result += seconds;
 
     return result;
+  }
+
+  downloadAttachment(index: number) {
+    FileSaver.saveAs(this.files[index], this.files[index].name);
   }
 
 }
