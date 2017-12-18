@@ -1,3 +1,5 @@
+<!-- Loading -->
+
 <div *ngIf="loadingService.isLoading" class="preloader-wrapper big active">
   <div class="spinner-layer spinner-blue-only">
     <div class="circle-clipper left">
@@ -11,6 +13,8 @@
     </div>
   </div>
 </div>
+
+<!-- Uploading -->
 
 <p *ngIf="loadingService.isUploading">Envoi du fichier : {{loadingService.uploadProgression}} %</p>
 

@@ -19,11 +19,6 @@ export class HeaderComponent implements OnInit {
 
   }
 
-  showSideNav() {
-    this.sidenavParams = ['show'];
-    this.sidenavActions.emit('sideNav');
-  }
-
   deconnexion() {
     this.authService.logout();
   }

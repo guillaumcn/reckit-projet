@@ -1,10 +1,16 @@
 <nav class="indigo darken-1">
   <div class="nav-wrapper">
     <a class="brand-logo">Reckit</a>
+
+    <!-- Mobile button -->
+
     <a *ngIf="authService.isLoggedIn()" materialize="sideNav" [materializeParams]="sidenavParams" [materializeActions]="sidenavActions"
        data-activates="sidenav" class="button-collapse">
       <i class="material-icons">menu</i>
     </a>
+
+    <!-- Navbar -->
+
     <ul *ngIf="authService.isLoggedIn()" class="right hide-on-med-and-down">
       <li [routerLinkActive]="['active']"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
       <li [routerLinkActive]="['active']"><a [routerLink]="['/record-list']">Enregistrements</a></li>
@@ -12,6 +18,8 @@
     </ul>
   </div>
 </nav>
+
+<!-- Mobile sidebar -->
 
 <ul *ngIf="authService.isLoggedIn()" class="side-nav" id="sidenav">
   <li [routerLinkActive]="['active']"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>

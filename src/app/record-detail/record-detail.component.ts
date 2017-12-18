@@ -14,12 +14,19 @@ import * as FileSaver from 'file-saver';
 })
 export class RecordDetailComponent implements OnInit, OnDestroy {
 
+  // Selected record (change whenever a record is selected)
   selectedRecord: Record = null;
+
+  // List of tags
   tags: string[] = [];
+
+  // Attachments files of the record
   files: File[] = [];
 
+  // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
 
+  // We will add subscriptions to observable here and unsubscribe when destroying the component
   subscriptions: Subscription[] = [];
 
   constructor(public recordService: RecordService, private loadingService: LoadingService) {
@@ -27,6 +34,17 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
 
+    // Save current page (in case of reloading)
+    localStorage.setItem('reloadPage', '/record-detail');
+
+    // Load selected record (from a previous reloading)
+    if (localStorage.getItem('selectedRecord')) {
+      this.selectedRecord = JSON.parse(localStorage.getItem('selectedRecord'));
+
+      this.loadDataFromSelectedRecord();
+    }
+
+    // Initialize WaveSurfer
     this.wavesurfer = WaveSurfer.create({
       container: '#waveform',
       waveColor: 'blue',
@@ -34,40 +52,59 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       height: 150
     });
 
-    this.subscriptions.push(this.recordService.recordSelected.subscribe((record) => {
-      this.selectedRecord = record;
+    this.subscriptions.push(
+      // Subscribe to a selectedRecord event
+      this.recordService.recordSelected.subscribe((record) => {
+        this.selectedRecord = record;
 
-      if (this.selectedRecord.tags == null) {
-        this.tags = [];
-      } else {
-        this.tags = this.selectedRecord.tags.slice();
-      }
+        // Save loaded record (in case of reloading)
+        localStorage.setItem('selectedRecord', JSON.stringify(this.selectedRecord));
 
-      fetch(record.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-        this.recordService.temporaryMP3 = blob as File;
-        this.recordService.temporaryDuration = record.duration;
-        const zip = new JSZip();
-        zip.loadAsync(this.recordService.temporaryMP3).then(() => {
-          zip.forEach((relativePath) => {
-            zip.file(relativePath).async('blob').then((fileblob) => {
-              this.files.push(new File([fileblob], relativePath));
-            });
-          });
-          zip.file(record.name + '.mp3').async('blob').then((mp3Blob) => {
-            this.wavesurfer.load(URL.createObjectURL(mp3Blob));
-            this.loadingService.stopLoading();
-          });
-        });
-      });
-    }));
+        // Patch all values with new record selected
+        this.loadDataFromSelectedRecord();
+      }));
   }
 
-  ngOnDestroy() {
-    this.subscriptions.forEach((subscription: Subscription) => {
-      subscription.unsubscribe();
+  loadDataFromSelectedRecord() {
+
+    // patch tags
+    this.tags = this.selectedRecord.tags.slice();
+
+    // get zip with all files
+    fetch(this.selectedRecord.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
+      this.recordService.temporaryMP3 = blob as File;
+      this.recordService.temporaryDuration = this.selectedRecord.duration;
+      const zip = new JSZip();
+      zip.loadAsync(this.recordService.temporaryMP3).then(() => {
+        // For each file in the zip...
+        zip.forEach((relativePath) => {
+          zip.file(relativePath).async('blob').then((fileblob) => {
+            // Patch files array
+            this.files.push(new File([fileblob], relativePath));
+          });
+        });
+        // For the record file...
+        zip.file(this.selectedRecord.name + '.mp3').async('blob').then((mp3Blob) => {
+          // .. Load it in the waveSurfer
+          this.wavesurfer.load(URL.createObjectURL(mp3Blob));
+          this.loadingService.stopLoading();
+        });
+      });
     });
   }
 
+  ngOnDestroy() {
+    // Unsubscribe all observables
+    this.subscriptions.forEach((subscription: Subscription) => {
+      subscription.unsubscribe();
+    });
+
+    // Remove all "current page" data
+    localStorage.removeItem('reloadPage');
+    localStorage.removeItem('selectedRecord');
+  }
+
+  // 00:05:36 from 336 seconds (for example)
   prettyPrintDuration(duration: number): string {
     let result = '';
     const hours = Math.floor(duration / (60 * 60));
@@ -94,6 +131,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     return result;
   }
 
+  // On click of download file button
   downloadAttachment(index: number) {
     FileSaver.saveAs(this.files[index], this.files[index].name);
   }

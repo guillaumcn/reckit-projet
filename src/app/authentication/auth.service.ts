@@ -1,14 +1,14 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { AngularFireAuth } from 'angularfire2/auth';
+import {AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 
-import { Observable } from 'rxjs/Observable';
-import { Router } from '@angular/router';
-import { LoadingService } from '../loading/loading.service';
-import { ToastService } from '../toast.service';
-import { Location } from '@angular/common';
-import { Subject } from 'rxjs/Subject';
+import {Observable} from 'rxjs/Observable';
+import {Router} from '@angular/router';
+import {LoadingService} from '../loading/loading.service';
+import {ToastService} from '../toast.service';
+import {Location} from '@angular/common';
+import {Subject} from 'rxjs/Subject';
 import {UsersService} from '../users.service';
 
 @Injectable()
@@ -16,7 +16,7 @@ export class AuthService {
   userDetails: firebase.User = null;
 
   constructor(private firebaseAuth: AngularFireAuth, private router: Router,
-    private loadingService: LoadingService, private toastService: ToastService, private usersService: UsersService) {
+              private loadingService: LoadingService, private toastService: ToastService, private usersService: UsersService) {
 
     firebaseAuth.authState.subscribe(
       (user) => {
@@ -24,12 +24,12 @@ export class AuthService {
           // If user.providerData[0]['providerId'] !== 'password', no need to verify email
           if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
             this.userDetails = user;
-            if (user.displayName != null) {
-              this.toastService.toast('Connecté en tant que ' + user.displayName);
+
+            if (localStorage.getItem('reloadPage')) {
+              this.router.navigate([localStorage.getItem('reloadPage')]);
             } else {
-              this.toastService.toast('Connecté en tant que ' + user.email);
+              this.router.navigate(['/record-form']);
             }
-            this.router.navigate(['/record-form']);
           } else {
             this.logout();
             this.toastService.toast('Merci de valider votre adresse mail');
@@ -70,8 +70,8 @@ export class AuthService {
       .then(value => {
         this.loadingService.stopLoading();
       }).catch(err => {
-        this.loadingService.stopLoading();
-      });
+      this.loadingService.stopLoading();
+    });
   }
 
   signInWithGoogle() {

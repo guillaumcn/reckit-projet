@@ -14,6 +14,8 @@ export class LoadingService {
     this.uploadProgression = 0;
   }
 
+  // Loading
+
   startLoading() {
     this.isLoading = true;
   }
@@ -21,6 +23,8 @@ export class LoadingService {
   stopLoading() {
     this.isLoading = false;
   }
+
+  // Uploading
 
   startUploading() {
     this.isUploading = true;

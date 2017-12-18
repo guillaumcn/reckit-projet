@@ -1,22 +1,43 @@
 <div class="row frame">
+
   <div class="col s7">
-    <h5 class="center">{{selectedRecord ? selectedRecord.name : ''}}</h5>
+
+    <!-- Name - Type  -->
+
+    <h5 class="left">{{selectedRecord ? selectedRecord.name : ''}}</h5>
+    <h5 class="right">{{selectedRecord ? selectedRecord.type : ''}}</h5>
+
   </div>
+
   <div class="col s5 rightpanel">
+
+    <!-- Duration  -->
+
     <h5 class="center">{{selectedRecord ? prettyPrintDuration(selectedRecord.duration) : ''}}</h5>
+
+    <!-- Waveform  -->
+
     <div class="row">
       <div id="waveform"></div>
     </div>
+
+    <!-- Attachment files  -->
     <div *ngFor="let file of files; let i = index" class="row">
       <i class="material-icons col s1 offset-s1">attachment</i>
       <span class="col s8">{{file.name}}</span>
       <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(i)">file_download</i>
     </div>
+
     <br>
     <br>
+
+    <!-- Tags  -->
+
     <div *ngFor="let tag of tags" class="row">
       <i class="material-icons col s1 offset-s1">local_offer</i>
       <span class="col s10">{{tag}}</span>
     </div>
+
   </div>
+
 </div>

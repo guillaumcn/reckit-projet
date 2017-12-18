@@ -1,7 +1,11 @@
 <div class="row">
   <div class="col s12">
     <ul class="collection">
+
+      <!-- An app-record-item for each record -->
+
       <app-record-item *ngFor="let record of records; let i = index" [record]="record"></app-record-item>
+
     </ul>
   </div>
 </div>

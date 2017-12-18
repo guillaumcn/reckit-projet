@@ -1,6 +1,22 @@
 <li class="collection-item row">
+
+  <!-- Name - Orator -->
+
   <span class="col s6" (click)="onRecordDetail()">{{record.name}} - {{record.oratorMail}}</span>
-  <span class="col s2" (click)="onRecordDetail()">{{record.type}}</span><span class="col s2" (click)="onRecordDetail()">{{prettyPrintDuration(record.duration)}}</span>
+
+  <!-- Type -->
+
+  <span class="col s2" (click)="onRecordDetail()">{{record.type}}</span>
+
+  <!-- Duration -->
+
+  <span class="col s2" (click)="onRecordDetail()">{{prettyPrintDuration(record.duration)}}</span>
+
+  <!-- Edit button -->
+
   <i (click)="onEdit()" class="material-icons col s1">edit</i>
+
+  <!-- Remove button -->
+
   <i (click)="removeRecord()" class="material-icons col s1">remove_circle</i>
 </li>

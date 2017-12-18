@@ -9,6 +9,7 @@ import {Record} from '../../record.model';
 })
 export class RecordItemComponent implements OnInit {
 
+  // Record "inputted" from the record list component
   @Input() record: Record;
 
   constructor(private recordService: RecordService) {
@@ -17,6 +18,7 @@ export class RecordItemComponent implements OnInit {
   ngOnInit() {
   }
 
+  // Transmit actions to the recordService
   removeRecord() {
     this.recordService.removeRecord(this.record.key);
   }
@@ -29,6 +31,8 @@ export class RecordItemComponent implements OnInit {
     this.recordService.viewRecordDetails(this.record);
   }
 
+
+  // 00:05:36 from 336 seconds (for example)
   prettyPrintDuration(duration: number) {
     let result = '';
     const hours = Math.floor(duration / (60 * 60));
