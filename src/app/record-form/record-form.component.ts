@@ -115,7 +115,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.tags = this.selectedRecord.tags.slice();
       }
 
-      // get mp3 file with all files
+      // get mp3 file...
       this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
         fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
           this.recordService.temporaryDuration = this.selectedRecord.duration;

@@ -67,7 +67,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     // patch tags
     this.tags = this.selectedRecord.tags.slice();
 
-    // get mp3 file with all files
+    // get mp3 file ...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
       fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
         this.recordService.temporaryDuration = this.selectedRecord.duration;
@@ -120,9 +120,11 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // On click of download file button
   downloadAttachment(filename: string) {
     this.loadingService.startLoading();
+    // Get concerned file...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, filename).then((url) => {
       fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
         this.loadingService.stopLoading();
+        // Download it
         FileSaver.saveAs(blob, filename);
       });
     });
@@ -130,10 +132,12 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   showPDF(filename) {
     this.loadingService.startLoading();
+    // Get concerned file...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, filename).then((url) => {
       fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
         this.loadingService.stopLoading();
-        PDFObject.embed(URL.createObjectURL(blob), '#example1');
+        // Add it to the PDF container
+        PDFObject.embed(URL.createObjectURL(blob), '#pdfcontainer');
       });
     });
   }
