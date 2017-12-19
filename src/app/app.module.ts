@@ -24,7 +24,6 @@ import {RecordItemComponent} from './record-list/record-item/record-item.compone
 import {RecordService} from './record.service';
 import {UsersService} from './users.service';
 import { RecordDetailComponent } from './record-detail/record-detail.component';
-import { SafePipe } from './safe.pipe';
 
 @NgModule({
   declarations: [
@@ -38,7 +37,6 @@ import { SafePipe } from './safe.pipe';
     RecordListComponent,
     RecordItemComponent,
     RecordDetailComponent,
-    SafePipe
 ],
   imports: [
     BrowserModule,
