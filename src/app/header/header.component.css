@@ -7,10 +7,60 @@ a{
   cursor: pointer;
 }
 
+.input-field input {
+  border: none;
+  font-size: 14px;
+  opacity: 0.9;
+  outline: none;
+  width: 100px;
+  border-radius: 5px;
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  -o-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.input-field input:hover { opacity: 1}
+
+.input-field input:focus {
+  opacity: 1;
+  width: 160px;
+  font-size: 16px;
+}
+
+.input-field input[type=search] + label {
+  top: -0.6rem !important;
+}
+
+li {
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+.tabs {
+  margin-top: 2em;
+  margin-bottom: 1em;
+}
+
+.tabs .tab a {
+  color: #0d47a1;
+  border: 2px solid black;
+}
+
+.tabs .tab a:hover {
+  color: deepskyblue;
+}
+
+
 @media only screen and (max-width:991px) {
 
   .brand-logo{
     font-size: 20px !important;
+  }
+
+  li {
+    margin-left: 0em;
+    margin-right: 0em;
   }
 
 }
@@ -19,6 +69,11 @@ a{
 
   .brand-logo{
     font-size: 15px !important;
+  }
+
+  li {
+    margin-left: 0em;
+    margin-right: 0em;
   }
 
 }

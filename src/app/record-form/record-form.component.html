@@ -12,6 +12,27 @@
         </div>
       </div>
 
+      <div class="row">
+
+        <!-- Attachment file input -->
+        <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
+          {{files.length == 0 ? 'Ajouter un fichier' : files.length + ' fichier(s)'}}
+          <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
+        </div>
+
+        <!-- Play/Pause - Record buttons -->
+
+        <button (click)="playPause()" class="buttonPlay col s1 offset-s2"
+                [ngClass]="{'paused' : wavesurfer.isPlaying()}"></button>
+        <button (click)="startStopRecording()" class="col s1 recButton"
+                [ngClass]="isRecording ? 'Rec' : 'notRec'"></button>
+
+        <!-- Annotations button -->
+
+        <button class="btn indigo darken-1 offset-s2 col s3">Annoter</button>
+      </div>
+
+
       <!-- Duration / name -->
 
       <div class="row">
@@ -27,6 +48,7 @@
           <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.name != ''}" for="name">Nom</label>
         </div>
       </div>
+
 
       <!-- Type / Orator mail -->
 
@@ -49,28 +71,8 @@
             Orateur</label>
         </div>
       </div>
-
-
-      <div class="row">
-
-        <!-- Attachment file input -->
-        <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
-          {{files.length == 0 ? 'Ajouter un fichier' : files.length + ' fichier(s)'}}
-          <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
-        </div>
-
-        <!-- Play/Pause - Record buttons -->
-
-        <button (click)="playPause()" class="buttonPlay col s1 offset-s2"
-                [ngClass]="{'paused' : wavesurfer.isPlaying()}"></button>
-        <button (click)="startStopRecording()" class="col s1 recButton"
-                [ngClass]="isRecording ? 'Rec' : 'notRec'"></button>
-
-        <!-- Annotations button -->
-
-        <button class="btn indigo darken-1 offset-s2 col s3">Annoter</button>
-      </div>
     </div>
+
 
     <div class="col s3">
 
@@ -83,7 +85,7 @@
           <i class="material-icons col s1" (click)="deleteTag(i)">delete</i>
         </div>
         <div class="row input-field">
-          <input placeholder="Ajouter un tag..." class="col s8 offset-s1" type="text" #newTagInput/>
+          <input placeholder="Ajouter un tag..." class="col s8 offset-s1" type="text" #newTagInput (keyup.enter)="addTag(newTagInput)"/>
           <i class="material-icons col s2 addTagIcon" (click)="addTag(newTagInput)">add_box</i>
         </div>
       </div>
