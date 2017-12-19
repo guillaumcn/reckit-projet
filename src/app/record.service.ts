@@ -10,8 +10,6 @@ import {LoadingService} from './loading/loading.service';
 import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
-import JSZip from 'jszip/dist/jszip.js';
-import {forEach} from '@angular/router/src/utils/collection';
 
 @Injectable()
 export class RecordService {
@@ -48,6 +46,14 @@ export class RecordService {
     } else {
       this.loadingService.startLoading();
 
+      // Change mp3 filename
+      const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
+      this.temporaryMP3 = new File([blob], name + '.mp3', {type: blob.type});
+
+      files.push(this.temporaryMP3);
+
+      const filenames: string[] = files.map((file) => file.name);
+
       this.recordListRef.push({
         name: name,
         recorder: this.authService.userDetails.displayName,
@@ -55,37 +61,29 @@ export class RecordService {
         oratorMail: oratorMail,
         duration: duration,
         type: type,
-        tags: tags
+        tags: tags,
+        filenames: filenames
       }).then((data) => {
-        const zip = new JSZip();
-        zip.file(name + '.mp3', this.temporaryMP3);
-        for (let i = 0; i < files.length; i++) {
-          zip.file(files[i].name, files[i]);
-        }
-        zip.generateAsync({type: 'blob'}).then((content) => {
-          const uploadTask = this.storageRef.child('/records/' + data.key + '.zip').put(content);
-          this.uneditRecord();
-          this.loadingService.stopLoading();
-          this.loadingService.startUploading();
-          uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              this.loadingService.progressUploading(progress);
-            },
-            (error) => {
-              // upload failed
-              console.log(error);
-            },
-            () => {
-              this.loadingService.stopUploading();
-              this.toastService.toast('Enregistrement créé avec succès');
-            });
-        });
+
+        this.uneditRecord();
+        this.loadingService.stopLoading();
+
+        this.uploadFiles(data.key, files);
       });
     }
   }
 
   updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[]) {
     this.loadingService.startLoading();
+
+    // Change mp3 filename
+    const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
+    this.temporaryMP3 = new File([blob], name + '.mp3', {type: blob.type});
+
+    files.push(this.temporaryMP3);
+
+    const filenames: string[] = files.map((file) => file.name);
+
     this.recordListRef.update(key, {
       name: name,
       recorder: this.authService.userDetails.displayName,
@@ -93,42 +91,22 @@ export class RecordService {
       oratorMail: oratorMail,
       duration: duration,
       type: type,
-      tags: tags
+      tags: tags,
+      filenames: filenames
     }).then((data) => {
-      const zip = new JSZip();
-      zip.file(name + '.mp3', this.temporaryMP3);
-      for (let i = 0; i < files.length; i++) {
-        zip.file(files[i].name, files[i]);
-      }
-      zip.generateAsync({type: 'blob'}).then((content) => {
-        const uploadTask = this.storageRef.child('/records/' + key + '.zip').put(content);
-        this.uneditRecord();
-        this.loadingService.stopLoading();
-        this.loadingService.startUploading();
-        uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
-            const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            this.loadingService.progressUploading(progress);
-          },
-          (error) => {
-            // upload failed
-            console.log(error);
-          },
-          () => {
-            this.loadingService.stopUploading();
-            this.toastService.toast('Enregistrement modifié avec succès');
-          });
-      });
+
+      this.uneditRecord();
+      this.loadingService.stopLoading();
+
+      this.uploadFiles(key, files);
     });
   }
 
-  removeRecord(key: string) {
+  removeRecord(record: Record) {
     this.loadingService.startLoading();
-    this.recordListRef.remove(key).then(() => {
-      this.storageRef.child('/records/' + key + '.zip').delete().then(() => {
-        this.loadingService.stopLoading();
-        this.toastService.toast('Enregistrement supprimé avec succès');
-        this.uneditRecord();
-      });
+
+    this.recordListRef.remove(record.key).then(() => {
+      this.removeFiles(record.key, record.filenames);
     });
   }
 
@@ -138,23 +116,66 @@ export class RecordService {
     this.temporaryDuration = 0;
   }
 
+  getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {
+    return this.storageRef.child('/records/' + recordKey + '/' + filename).getDownloadURL();
+  }
+
   editRecord(record: Record) {
     this.router.navigate(['/record-form']).then(() => {
       this.loadingService.startLoading();
-      this.storageRef.child('/records/' + record.key + '.zip').getDownloadURL().then((url) => {
-        record.fileUrl = url;
-        this.recordSelected.next(record);
-      });
+      this.recordSelected.next(record);
     });
   }
 
   viewRecordDetails(record: Record) {
     this.router.navigate(['/record-detail']).then(() => {
       this.loadingService.startLoading();
-      this.storageRef.child('/records/' + record.key + '.zip').getDownloadURL().then((url) => {
-        record.fileUrl = url;
-        this.recordSelected.next(record);
+      this.recordSelected.next(record);
+    });
+  }
+
+  uploadFiles(recordKey, fileList: File[]) {
+    this.uploadFile(recordKey, fileList, 0);
+  }
+
+  uploadFile(recordKey: string, fileList: File[], currentIndex: number) {
+    if (currentIndex === fileList.length) {
+      this.toastService.toast('Enregistrement créé avec succès');
+      return;
+    }
+
+    this.loadingService.startUploading(fileList[currentIndex].name);
+    const uploadTask = this.storageRef.child('/records/' + recordKey + '/' + fileList[currentIndex].name).put(fileList[currentIndex]);
+    uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        this.loadingService.progressUploading(progress);
+      },
+      (error) => {
+        // upload failed
+        console.log(error);
+        this.loadingService.stopUploading();
+      },
+      () => {
+        this.loadingService.stopUploading();
+        this.uploadFile(recordKey, fileList, currentIndex + 1);
       });
+  }
+
+  removeFiles(recordKey, filenames: string[]) {
+    this.removeFile(recordKey, filenames, 0);
+  }
+
+  removeFile(recordKey: string, filenames: string[], currentIndex: number) {
+    if (currentIndex === filenames.length) {
+      this.uneditRecord();
+      this.loadingService.stopLoading();
+      this.toastService.toast('Enregistrement supprimé avec succès');
+      return;
+    }
+
+    const filename = filenames[currentIndex];
+    this.storageRef.child('/records/' + recordKey + '/' + filename).delete().then(() => {
+      this.removeFile(recordKey, filenames, currentIndex + 1);
     });
   }
 

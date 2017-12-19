@@ -24,13 +24,14 @@
     </div>
 
     <!-- Attachment files  -->
-    <div *ngFor="let file of files; let i = index" class="row">
-      <i class="material-icons col s1 offset-s1">attachment</i>
-      <span class="col s8">{{file.name}}</span>
-      <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(i)">file_download</i>
+    <div *ngIf="selectedRecord">
+      <div *ngFor="let filename of selectedRecord.filenames; let i = index" class="row">
+        <i class="material-icons col s1 offset-s1">attachment</i>
+        <span class="col s8" [ngClass]="filename.endsWith('.pdf') ? 'clickable' : 'notclickable'" (click)="showPDF(filename)">{{filename}}</span>
+        <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(filename)">file_download</i>
+      </div>
     </div>
 
-    <br>
     <br>
 
     <!-- Tags  -->
@@ -43,3 +44,5 @@
   </div>
 
 </div>
+
+<div id="example1"></div>

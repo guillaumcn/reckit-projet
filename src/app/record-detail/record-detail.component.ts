@@ -3,9 +3,9 @@ import {LoadingService} from '../loading/loading.service';
 import {Record} from '../record.model';
 import {RecordService} from '../record.service';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
-import JSZip from 'jszip/dist/jszip.js';
 import {Subscription} from 'rxjs/Subscription';
 import * as FileSaver from 'file-saver';
+import PDFObject from 'pdfobject/pdfobject.min.js';
 
 @Component({
   selector: 'app-record-detail',
@@ -20,9 +20,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // List of tags
   tags: string[] = [];
 
-  // Attachments files of the record
-  files: File[] = [];
-
   // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
 
@@ -30,10 +27,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   constructor(public recordService: RecordService, private loadingService: LoadingService) {
-  }
-
-  ngOnInit() {
-
     // Save current page (in case of reloading)
     localStorage.setItem('reloadPage', '/record-detail');
 
@@ -43,15 +36,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
       this.loadDataFromSelectedRecord();
     }
-
-    // Initialize WaveSurfer
-    this.wavesurfer = WaveSurfer.create({
-      container: '#waveform',
-      waveColor: 'blue',
-      progressColor: '#0000AA',
-      height: 150,
-      hideScrollbar: true
-    });
 
     this.subscriptions.push(
       // Subscribe to a selectedRecord event
@@ -66,30 +50,31 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       }));
   }
 
+  ngOnInit() {
+    // Initialize WaveSurfer
+    this.wavesurfer = WaveSurfer.create({
+      container: '#waveform',
+      waveColor: 'blue',
+      progressColor: '#0000AA',
+      height: 150,
+      hideScrollbar: true
+    });
+
+  }
+
   loadDataFromSelectedRecord() {
 
     // patch tags
     this.tags = this.selectedRecord.tags.slice();
 
-    // get zip with all files
-    fetch(this.selectedRecord.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-      this.recordService.temporaryMP3 = blob as File;
-      this.recordService.temporaryDuration = this.selectedRecord.duration;
-      const zip = new JSZip();
-      zip.loadAsync(this.recordService.temporaryMP3).then(() => {
-        // For each file in the zip...
-        zip.forEach((relativePath) => {
-          zip.file(relativePath).async('blob').then((fileblob) => {
-            // Patch files array
-            this.files.push(new File([fileblob], relativePath));
-          });
-        });
-        // For the record file...
-        zip.file(this.selectedRecord.name + '.mp3').async('blob').then((mp3Blob) => {
-          // .. Load it in the waveSurfer
-          this.wavesurfer.load(URL.createObjectURL(mp3Blob));
-          this.loadingService.stopLoading();
-        });
+    // get mp3 file with all files
+    this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
+      fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
+        this.recordService.temporaryDuration = this.selectedRecord.duration;
+        this.recordService.temporaryMP3 = blob as File;
+        // .. Load it in the waveSurfer
+        this.wavesurfer.load(URL.createObjectURL(blob));
+        this.loadingService.stopLoading();
       });
     });
   }
@@ -133,8 +118,24 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   }
 
   // On click of download file button
-  downloadAttachment(index: number) {
-    FileSaver.saveAs(this.files[index], this.files[index].name);
+  downloadAttachment(filename: string) {
+    this.loadingService.startLoading();
+    this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, filename).then((url) => {
+      fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
+        this.loadingService.stopLoading();
+        FileSaver.saveAs(blob, filename);
+      });
+    });
+  }
+
+  showPDF(filename) {
+    this.loadingService.startLoading();
+    this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, filename).then((url) => {
+      fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
+        this.loadingService.stopLoading();
+        PDFObject.embed(URL.createObjectURL(blob), '#example1');
+      });
+    });
   }
 
   // On play/pause click

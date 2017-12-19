@@ -8,7 +8,6 @@ import {Subscription} from 'rxjs/Subscription';
 import {LoadingService} from '../loading/loading.service';
 import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
-import JSZip from 'jszip/dist/jszip.js';
 
 @Component({
   selector: 'app-record-form',
@@ -49,10 +48,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
-  }
-
-  ngOnInit() {
-
     // Save current page (in case of reloading)
     localStorage.setItem('reloadPage', '/record-form');
 
@@ -65,20 +60,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       // Reinitialize all values if no previous record selected
       this.recordService.uneditRecord();
     }
-
-    // Initialize Recorder
-    this.recorder = new MicRecorder({
-      bitRate: 128
-    });
-
-    // Initialize WaveSurfer
-    this.wavesurfer = WaveSurfer.create({
-      container: '#waveform',
-      waveColor: 'blue',
-      progressColor: '#0000AA',
-      height: 300,
-      hideScrollbar: true
-    });
 
     this.subscriptions.push(
       // Subscribe to a selectedRecord event
@@ -103,6 +84,24 @@ export class RecordFormComponent implements OnInit, OnDestroy {
           this.oratorList[u.email] = null;
         }
       }));
+
+  }
+
+  ngOnInit() {
+
+    // Initialize Recorder
+    this.recorder = new MicRecorder({
+      bitRate: 128
+    });
+
+    // Initialize WaveSurfer
+    this.wavesurfer = WaveSurfer.create({
+      container: '#waveform',
+      waveColor: 'blue',
+      progressColor: '#0000AA',
+      height: 300,
+      hideScrollbar: true
+    });
   }
 
   loadDataFromSelectedRecord() {
@@ -116,28 +115,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.tags = this.selectedRecord.tags.slice();
       }
 
-      // get zip with all files
-      fetch(this.selectedRecord.fileUrl, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-        this.recordService.temporaryDuration = this.selectedRecord.duration;
-        const zip = new JSZip();
-        zip.loadAsync(blob as File).then(() => {
-          // For each file in the zip...
-          zip.forEach((relativePath) => {
-            zip.file(relativePath).async('blob').then((fileblob) => {
-              // ...Which are not the record file (this.selectedRecord.name + '.mp3')
-              if (relativePath !== this.selectedRecord.name + '.mp3') {
-                // Patch files array
-                this.files.push(new File([fileblob], relativePath));
-              }
-            });
-          });
-          // For the record file...
-          zip.file(this.selectedRecord.name + '.mp3').async('blob').then((mp3Blob) => {
-            this.recordService.temporaryMP3 = mp3Blob as File;
-            // .. Load it in the waveSurfer
-            this.wavesurfer.load(URL.createObjectURL(mp3Blob));
-            this.loadingService.stopLoading();
-          });
+      // get mp3 file with all files
+      this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
+        fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
+          this.recordService.temporaryDuration = this.selectedRecord.duration;
+          this.recordService.temporaryMP3 = blob as File;
+          // .. Load it in the waveSurfer
+          this.wavesurfer.load(URL.createObjectURL(blob));
+          this.loadingService.stopLoading();
         });
       });
 
@@ -164,6 +149,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   }
 
   onCreate() {
+    console.log(this.files);
     if (this.recordForm.valid) {
       // Pass data to the record service
       this.recordService.addRecord(
@@ -239,7 +225,10 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // Get files on input[type=file] change
   getFiles(event) {
-    this.files = event.target.files;
+    this.files = [];
+    for (let i = 0; i < event.target.files.length; i++) {
+      this.files.push(event.target.files[i]);
+    }
   }
 
   // On record button click

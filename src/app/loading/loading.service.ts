@@ -7,6 +7,7 @@ export class LoadingService {
 
   isUploading: boolean;
   uploadProgression: number;
+  uploadFilename = '';
 
   constructor() {
     this.isLoading = false;
@@ -26,9 +27,10 @@ export class LoadingService {
 
   // Uploading
 
-  startUploading() {
+  startUploading(filename: string) {
     this.isUploading = true;
     this.uploadProgression  = 0;
+    this.uploadFilename = filename;
   }
 
   progressUploading(progression: number) {

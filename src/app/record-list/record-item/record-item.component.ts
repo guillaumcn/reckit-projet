@@ -20,7 +20,7 @@ export class RecordItemComponent implements OnInit {
 
   // Transmit actions to the recordService
   removeRecord() {
-    this.recordService.removeRecord(this.record.key);
+    this.recordService.removeRecord(this.record);
   }
 
   onEdit() {

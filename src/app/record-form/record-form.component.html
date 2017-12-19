@@ -16,7 +16,7 @@
 
         <!-- Attachment file input -->
         <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
-          {{files.length == 0 ? 'Fichier' : files.length + ' fichier(s)'}}
+          {{selectedRecord ? (selectedRecord.filenames.length - 1) + ' fichier(s)' : files.length + ' fichier(s)'}}
           <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
           <i class="material-icons left">attach_file</i>
         </div>
@@ -47,7 +47,7 @@
         <div class="input-field col s5 offset-s3">
           <i class="material-icons prefix">label_outline</i>
           <input id="name" type="text" name="name" [ngModel]="selectedRecord ? selectedRecord.name : ''" required/>
-          <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.name != ''}" for="name">Nom</label>
+          <label [ngClass]="{'active' : selectedRecord}" for="name">Nom</label>
         </div>
       </div>
 
@@ -69,7 +69,7 @@
           <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off"
                  [ngModel]="selectedRecord ? selectedRecord.oratorMail : ''"
                  materialize="autocomplete" [materializeParams]="[{'data': oratorList}]" email required/>
-          <label [ngClass]="{'active' : selectedRecord != null && selectedRecord.oratorMail != ''}" for="oratorMail">Mail
+          <label [ngClass]="{'active' : selectedRecord}" for="oratorMail">Mail
             Orateur</label>
         </div>
       </div>

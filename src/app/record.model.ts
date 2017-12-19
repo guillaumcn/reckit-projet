@@ -1,6 +1,5 @@
 export interface Record {
   key?: string;
-  fileUrl?: string;
   name: string;
   recorder: string;
   oratorMail: string;
@@ -8,4 +7,5 @@ export interface Record {
   type: string;
   recorderMail: string;
   tags: string[];
+  filenames: string[];
 }
