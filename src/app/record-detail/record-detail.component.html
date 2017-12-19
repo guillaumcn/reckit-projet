@@ -19,6 +19,8 @@
 
     <div class="row">
       <div id="waveform"></div>
+      <button (click)="playPause()" class="buttonPlay col s1 offset-s5"
+              [ngClass]="{'paused' : wavesurfer.isPlaying()}"></button>
     </div>
 
     <!-- Attachment files  -->

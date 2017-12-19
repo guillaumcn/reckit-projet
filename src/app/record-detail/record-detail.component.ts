@@ -136,4 +136,11 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     FileSaver.saveAs(this.files[index], this.files[index].name);
   }
 
+  // On play/pause click
+  playPause() {
+    if (this.recordService.temporaryMP3 != null) {
+      this.wavesurfer.playPause();
+    }
+  }
+
 }
