@@ -1,18 +1,18 @@
 <nav class="indigo darken-1">
   <div class="nav-wrapper">
+
+    <!-- Logo -->
+
     <a class="brand-logo">Reckit</a>
 
-    <!-- Mobile button -->
-
-    <a *ngIf="authService.isLoggedIn()" materialize="sideNav" [materializeParams]="sidenavParams" [materializeActions]="sidenavActions"
-       data-activates="sidenav" class="button-collapse">
-      <i class="material-icons">menu</i>
-    </a>
+    <!-- Right buttons -->
 
     <ul *ngIf="authService.isLoggedIn()" class="right hide-on-med-and-down">
       <li><a href=""><i class="material-icons">account_circle</i></a></li>
       <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
     </ul>
+
+    <!-- Search bar -->
 
     <div *ngIf="authService.isLoggedIn()" class="nav-wrapper right">
       <form>
@@ -22,38 +22,17 @@
         </div>
       </form>
     </div>
-
-    <!-- Navbar -->
-
-    <!--<ul *ngIf="authService.isLoggedIn()" class="right hide-on-med-and-down">
-      <li [routerLinkActive]="['active']"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
-      <li [routerLinkActive]="['active']"><a [routerLink]="['/record-list']">Enregistrements</a></li>
-      <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
-    </ul>-->
   </div>
 </nav>
 
-<!-- Mobile sidebar -->
-
-<!--<ul *ngIf="authService.isLoggedIn()" class="side-nav" id="sidenav">
-  <li [routerLinkActive]="['active']"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
-  <li [routerLinkActive]="['active']"><a [routerLink]="['/record-list']">Enregistrements</a></li>
-  <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
-</ul>-->
-
-<ul *ngIf="authService.isLoggedIn()" class="side-nav" id="sidenav">
-  <li><a href=""><i class="material-icons">account_circle</i> Mon compte</a></li>
-  <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i> Déconnexion</a></li>
-</ul>
-
-
+<!-- Tabs -->
 
 <div *ngIf="authService.isLoggedIn()" class="row">
-  <div class="col s10 offset-s2">
+  <div class="col s8 offset-s2">
     <ul class="tabs">
-      <li [routerLinkActive]="['active']" class="tab col s3"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
-      <li [routerLinkActive]="['active']" class="tab col s3"><a href="">Actualités</a></li>
-      <li [routerLinkActive]="['active']" class="tab col s3"><a [routerLink]="['/record-list']">Enregistrements</a></li>
+      <li [routerLinkActive]="['active']" class="tab col s4"><a [routerLink]="['/record-form']">Créer/Modifier</a></li>
+      <li [routerLinkActive]="['active']" class="tab col s4"><a href="">Actualités</a></li>
+      <li [routerLinkActive]="['active']" class="tab col s4"><a [routerLink]="['/record-list']">Enregistrements</a></li>
     </ul>
   </div>
 </div>
