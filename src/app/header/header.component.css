@@ -39,14 +39,21 @@ li {
   margin-right: 2em;
 }
 
+a.active {
+  border-bottom: 2px #0d47a1 solid !important;
+}
+
 .tabs {
   margin-top: 2em;
   margin-bottom: 2em;
 }
 
 .tabs .tab a {
-  color: #0d47a1;
-  /*border: 2px solid black;*/
+  color: #0d47a1 !important;
+}
+
+.tabs .tab a:hover {
+  border-bottom: 2px #0d47a1 solid !important;
 }
 
 .tabs .tab a:hover {

@@ -23,14 +23,14 @@
 
         <!-- Play/Pause - Record buttons -->
 
-        <button (click)="playPause()" class="buttonPlay col s1 offset-s2"
-                [ngClass]="{'paused' : wavesurfer.isPlaying()}"></button>
-        <button (click)="startStopRecording()" class="col s1 recButton"
-                [ngClass]="isRecording ? 'Rec' : 'notRec'"></button>
+        <a (click)="playPause()" class="buttonPlay col s1 offset-s2"
+                [ngClass]="{'paused' : wavesurfer.isPlaying()}"></a>
+        <a (click)="startStopRecording()" class="col s1 recButton"
+                [ngClass]="isRecording ? 'Rec' : 'notRec'"></a>
 
         <!-- Annotations button -->
 
-        <button class="btn indigo darken-1 offset-s2 col s3"><i class="material-icons left">turned_in</i>Annoter</button>
+        <a class="btn indigo darken-1 offset-s2 col s3"><i class="material-icons left">turned_in</i>Annoter</a>
 
       </div>
 

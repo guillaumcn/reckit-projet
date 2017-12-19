@@ -76,7 +76,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       container: '#waveform',
       waveColor: 'blue',
       progressColor: '#0000AA',
-      height: 300
+      height: 300,
+      hideScrollbar: true
     });
 
     this.subscriptions.push(
