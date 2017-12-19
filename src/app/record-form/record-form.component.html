@@ -16,8 +16,9 @@
 
         <!-- Attachment file input -->
         <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
-          {{files.length == 0 ? 'Ajouter un fichier' : files.length + ' fichier(s)'}}
+          {{files.length == 0 ? 'Fichier' : files.length + ' fichier(s)'}}
           <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
+          <i class="material-icons left">attach_file</i>
         </div>
 
         <!-- Play/Pause - Record buttons -->
@@ -29,7 +30,8 @@
 
         <!-- Annotations button -->
 
-        <button class="btn indigo darken-1 offset-s2 col s3">Annoter</button>
+        <button class="btn indigo darken-1 offset-s2 col s3"><i class="material-icons left">turned_in</i>Annoter</button>
+
       </div>
 
 
@@ -85,7 +87,7 @@
           <i class="material-icons col s1" (click)="deleteTag(i)">delete</i>
         </div>
         <div class="row input-field">
-          <input placeholder="Ajouter un tag..." class="col s8 offset-s1" type="text" #newTagInput (keyup.enter)="addTag(newTagInput)"/>
+          <input placeholder="Ajouter un tag..." class="col s8 offset-s1" type="text" (keyup.enter)="addTag(newTagInput)" #newTagInput/>
           <i class="material-icons col s2 addTagIcon" (click)="addTag(newTagInput)">add_box</i>
         </div>
       </div>

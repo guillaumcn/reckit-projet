@@ -3,11 +3,11 @@
 
     <!-- Logo -->
 
-    <a class="brand-logo">Reckit</a>
+    <a class="brand-logo left">Reckit</a>
 
     <!-- Right buttons -->
 
-    <ul *ngIf="authService.isLoggedIn()" class="right hide-on-med-and-down">
+    <ul *ngIf="authService.isLoggedIn()" class="right">
       <li><a href=""><i class="material-icons">account_circle</i></a></li>
       <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
     </ul>

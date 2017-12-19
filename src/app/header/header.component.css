@@ -24,8 +24,10 @@ a{
 
 .input-field input:focus {
   opacity: 1;
-  width: 160px;
+  width: 18em;
   font-size: 16px;
+  border-bottom: transparent;
+  box-shadow: 0 0 0 0;
 }
 
 .input-field input[type=search] + label {
@@ -39,16 +41,17 @@ li {
 
 .tabs {
   margin-top: 2em;
-  margin-bottom: 1em;
+  margin-bottom: 2em;
 }
 
 .tabs .tab a {
   color: #0d47a1;
-  border: 2px solid black;
+  /*border: 2px solid black;*/
 }
 
 .tabs .tab a:hover {
   color: deepskyblue;
+  border-bottom: 2px solid deepskyblue;
 }
 
 
@@ -59,9 +62,16 @@ li {
   }
 
   li {
-    margin-left: 0em;
-    margin-right: 0em;
+    margin-left: 1em;
+    margin-right: 1em;
   }
+
+  .input-field input:focus {
+    opacity: 1;
+    width: 10em;
+    font-size: 14px;
+  }
+
 
 }
 
