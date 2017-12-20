@@ -20,6 +20,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // List of tags
   tags: string[] = [];
 
+  show = false;
+
   // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
 
@@ -140,6 +142,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
         PDFObject.embed(URL.createObjectURL(blob), '#pdfcontainer');
       });
     });
+    // Show / hide pdf container
+    this.show = !this.show;
   }
 
   // On play/pause click

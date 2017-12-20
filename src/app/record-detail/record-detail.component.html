@@ -8,9 +8,6 @@
     <h5 class="right">{{selectedRecord ? selectedRecord.type : ''}}</h5>
 
 
-    <!-- PDF Container  -->
-    <div id="pdfcontainer"></div>
-
   </div>
 
   <div class="col s5 rightpanel">
@@ -35,6 +32,9 @@
         <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(filename)">file_download</i>
       </div>
     </div>
+
+    <!-- PDF container -->
+    <div id="pdfcontainer" *ngIf="show"></div>
 
     <br>
 
