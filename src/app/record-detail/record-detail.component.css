@@ -31,6 +31,7 @@
 
   margin-top: 1em;
   margin-bottom: 1em;
+  margin-left: 2vh !important;
 }
 
 .buttonPlay.paused {
@@ -50,5 +51,10 @@
   cursor: pointer;
   text-decoration: underline;
   font-weight: bold;
+}
+
+#pdfcontainer {
+  height: 92vh !important;
+  width: 100%;
 }
 

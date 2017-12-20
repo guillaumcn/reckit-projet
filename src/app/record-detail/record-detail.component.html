@@ -7,6 +7,10 @@
     <h5 class="left">{{selectedRecord ? selectedRecord.name : ''}}</h5>
     <h5 class="right">{{selectedRecord ? selectedRecord.type : ''}}</h5>
 
+
+    <!-- PDF Container  -->
+    <div id="pdfcontainer"></div>
+
   </div>
 
   <div class="col s5 rightpanel">
@@ -19,7 +23,7 @@
 
     <div class="row">
       <div id="waveform"></div>
-      <a (click)="playPause()" class="buttonPlay col s1 offset-s5"
+      <a (click)="playPause()" class="buttonPlay col push-s5"
               [ngClass]="{'paused' : wavesurfer.isPlaying()}"></a>
     </div>
 
@@ -45,6 +49,3 @@
 
 </div>
 
-<!-- PDF Container  -->
-
-<div id="pdfcontainer"></div>
