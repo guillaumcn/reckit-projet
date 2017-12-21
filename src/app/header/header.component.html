@@ -7,14 +7,14 @@
 
     <!-- Right buttons -->
 
-    <ul *ngIf="authService.isLoggedIn() && connected" class="right">
+    <ul *ngIf="authService.isLoggedIn()" class="right">
       <li><a href=""><i class="material-icons">account_circle</i></a></li>
       <li><a (click)="deconnexion()"><i class="material-icons">power_settings_new</i></a></li>
     </ul>
 
     <!-- Search bar -->
 
-    <div *ngIf="authService.isLoggedIn() && connected" class="nav-wrapper right">
+    <div *ngIf="authService.isLoggedIn()" class="nav-wrapper right">
       <form>
         <div class="input-field">
           <input id="search" type="search" placeholder="Recherche ..." required>
@@ -27,7 +27,7 @@
 
 <!-- Tabs -->
 
-<div *ngIf="authService.isLoggedIn() && connected" class="row">
+<div *ngIf="authService.isLoggedIn()" class="row">
   <div class="col s8 offset-s2">
     <ul class="tabs">
       <li class="tab col s4"><a [routerLinkActive]="['active']" [routerLink]="['/record-form']">Créer/Modifier</a></li>

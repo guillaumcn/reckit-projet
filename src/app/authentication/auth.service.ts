@@ -34,6 +34,8 @@ export class AuthService {
             this.logout();
             this.toastService.toast('Merci de valider votre adresse mail');
           }
+        } else {
+          this.userDetails = null;
         }
       }
     );
