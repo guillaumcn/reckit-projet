@@ -12,8 +12,11 @@ export class HeaderComponent implements OnInit {
 
   sidenavActions = new EventEmitter<any>();
   sidenavParams = [];
+  connected = false;
 
-  constructor(public authService: AuthService, private router: Router, private toastService: ToastService) { }
+  constructor(public authService: AuthService, private router: Router, private toastService: ToastService) {
+    this.connected = true;
+  }
 
   ngOnInit() {
 
@@ -21,5 +24,6 @@ export class HeaderComponent implements OnInit {
 
   deconnexion() {
     this.authService.logout();
+    this.connected = false;
   }
 }
