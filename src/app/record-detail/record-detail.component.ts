@@ -20,7 +20,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // List of tags
   tags: string[] = [];
 
-  show = false;
+  showPDF = false;
 
   // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
@@ -82,6 +82,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.wavesurfer.pause();
+
     // Unsubscribe all observables
     this.subscriptions.forEach((subscription: Subscription) => {
       subscription.unsubscribe();
@@ -132,7 +134,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     });
   }
 
-  showPDF(filename) {
+  downloadPDF(filename) {
     this.loadingService.startLoading();
     // Get concerned file...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, filename).then((url) => {
@@ -143,7 +145,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       });
     });
     // Show / hide pdf container
-    this.show = !this.show;
+    this.showPDF = !this.showPDF;
   }
 
   // On play/pause click

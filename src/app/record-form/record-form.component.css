@@ -181,6 +181,7 @@ h5 {
   border: 0;
   border-radius: 35px;
   outline: none;
+  cursor: pointer;
 }
 
 .notRec {
@@ -206,27 +207,33 @@ h5 {
   }
 }
 
-.buttonPlay {
-  background: transparent;
-  box-sizing: border-box;
-  width: 35px !important;
-  height: 35px !important;
+/*.buttonPlay {*/
+  /*background: transparent;*/
+  /*box-sizing: border-box;*/
+  /*width: 35px !important;*/
+  /*height: 35px !important;*/
 
-  border-color: transparent transparent transparent #202020;
-  transition: 100ms all ease;
+  /*border-color: transparent transparent transparent #202020;*/
+  /*transition: 100ms all ease;*/
+  /*cursor: pointer;*/
+
+  /*border-style: solid;*/
+  /*border-width: 18px 0 18px 30px;*/
+/*}*/
+
+/*.buttonPlay.paused {*/
+  /*border-style: double !important;*/
+  /*border-width: 0px 0 0px 28px !important;*/
+/*}*/
+
+/*.buttonPlay:hover {*/
+  /*border-color: transparent transparent transparent #404040 !important;*/
+/*}*/
+
+.iconButton {
+  font-size: 65px;
   cursor: pointer;
-
-  border-style: solid;
-  border-width: 18px 0 18px 30px;
-}
-
-.buttonPlay.paused {
-  border-style: double !important;
-  border-width: 0px 0 0px 28px !important;
-}
-
-.buttonPlay:hover {
-  border-color: transparent transparent transparent #404040 !important;
+  margin-top: -14px;
 }
 
 .resetForm {

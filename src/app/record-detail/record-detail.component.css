@@ -16,7 +16,7 @@
   cursor: pointer;
 }
 
-.buttonPlay {
+/*.buttonPlay {
   background: transparent;
   box-sizing: border-box;
   width: 35px !important;
@@ -41,6 +41,11 @@
 
 .buttonPlay:hover {
   border-color: transparent transparent transparent #404040 !important;
+}*/
+
+.iconButton {
+  font-size : 50px !important;
+  cursor: pointer;
 }
 
 .notclickable {

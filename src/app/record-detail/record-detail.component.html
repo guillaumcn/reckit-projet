@@ -20,30 +20,38 @@
 
     <div class="row">
       <div id="waveform"></div>
-      <a (click)="playPause()" class="buttonPlay col push-s5"
-              [ngClass]="{'paused' : wavesurfer.isPlaying()}"></a>
+      <i *ngIf="showPDF" (click)="showPDF = !showPDF" class="material-icons col s1 iconButton">reply</i>
+      <i *ngIf="!showPDF" class="col s1"></i>
+      <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s4 iconButton">play_arrow</i>
+      <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s4 iconButton">pause</i>
     </div>
 
-    <!-- Attachment files  -->
-    <div *ngIf="selectedRecord">
-      <div *ngFor="let filename of selectedRecord.filenames; let i = index" class="row">
-        <i class="material-icons col s1 offset-s1">attachment</i>
-        <span class="col s8" [ngClass]="filename.endsWith('.pdf') ? 'clickable' : 'notclickable'" (click)="showPDF(filename)">{{filename}}</span>
-        <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(filename)">file_download</i>
+    <div *ngIf="!showPDF">
+
+      <!-- Attachment files  -->
+
+      <div *ngIf="selectedRecord">
+        <div *ngFor="let filename of selectedRecord.filenames; let i = index" class="row">
+          <i class="material-icons col s1 offset-s1">attachment</i>
+          <span class="col s8" [ngClass]="filename.endsWith('.pdf') ? 'clickable' : 'notclickable'" (click)="downloadPDF(filename)">{{filename}}</span>
+          <i class="material-icons col s1 downloadbutton" (click)="downloadAttachment(filename)">file_download</i>
+        </div>
+      </div>
+
+      <br>
+
+      <!-- Tags  -->
+
+      <div *ngFor="let tag of tags" class="row">
+        <i class="material-icons col s1 offset-s1">local_offer</i>
+        <span class="col s10">{{tag}}</span>
       </div>
     </div>
 
     <!-- PDF container -->
-    <div id="pdfcontainer" *ngIf="show"></div>
+    <div id="pdfcontainer" *ngIf="showPDF"></div>
 
     <br>
-
-    <!-- Tags  -->
-
-    <div *ngFor="let tag of tags" class="row">
-      <i class="material-icons col s1 offset-s1">local_offer</i>
-      <span class="col s10">{{tag}}</span>
-    </div>
 
   </div>
 

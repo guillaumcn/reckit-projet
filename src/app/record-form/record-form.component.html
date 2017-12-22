@@ -14,23 +14,33 @@
 
       <div class="row">
 
-        <!-- Attachment file input -->
-        <div class="btn indigo darken-1 file-field input-field col s3 addFileButton">
-          {{selectedRecord ? (selectedRecord.filenames.length - 1) + ' fichier(s)' : files.length + ' fichier(s)'}}
-          <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
-          <i class="material-icons left">attach_file</i>
+        <div class="col s6">
+          <!-- Attachment file input -->
+          <div class="btn indigo darken-1 file-field input-field col s6 addFileButton">
+            {{selectedRecord ? (selectedRecord.filenames.length - 1) + ' fichier(s)' : files.length + ' fichier(s)'}}
+            <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
+            <i class="material-icons left">attach_file</i>
+          </div>
+
+          <!-- Play/Pause button -->
+
+          <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s2 offset-s3 iconButton">play_arrow</i>
+          <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s2 offset-s3 iconButton">pause</i>
+
         </div>
 
-        <!-- Play/Pause - Record buttons -->
+        <div class="col s6">
 
-        <a (click)="playPause()" class="buttonPlay col s1 offset-s2"
-                [ngClass]="{'paused' : wavesurfer.isPlaying()}"></a>
-        <a (click)="startStopRecording()" class="col s1 recButton"
-                [ngClass]="isRecording ? 'Rec' : 'notRec'"></a>
+          <!-- Record button -->
 
-        <!-- Annotations button -->
+          <a (click)="startStopRecording()" class="col s2 recButton"
+             [ngClass]="isRecording ? 'Rec' : 'notRec'"></a>
 
-        <a class="btn indigo darken-1 offset-s2 col s3"><i class="material-icons left">turned_in</i>Annoter</a>
+          <!-- Annotations button -->
+
+          <a class="btn indigo darken-1 offset-s4 col s6"><i class="material-icons left">turned_in</i>Annoter</a>
+
+        </div>
 
       </div>
 

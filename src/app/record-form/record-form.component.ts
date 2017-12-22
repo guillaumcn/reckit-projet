@@ -138,6 +138,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.wavesurfer.pause();
+
     // Unsubscribe all observables
     this.subscriptions.forEach((subscription: Subscription) => {
       subscription.unsubscribe();
