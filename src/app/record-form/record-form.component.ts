@@ -45,7 +45,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   isRecording = false;
 
   // Show / hide div to add annotation
-  isVisible = false;
+  annotationsVisible = false;
 
   // Interval of 1 second to count record or playing time
   recordInterval = null;
@@ -310,8 +310,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // Show / Hide div to add an annotation
   showHide() {
-    this.isVisible = !this.isVisible;
-    if (this.isVisible) {
+    this.annotationsVisible = !this.annotationsVisible;
+    if (this.annotationsVisible) {
       // Update annotation time every 200 milliseconds
       this.annotationInterval = setInterval(() => {
         if (this.isRecording) {
