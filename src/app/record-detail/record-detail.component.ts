@@ -28,6 +28,11 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // We will add subscriptions to observable here and unsubscribe when destroying the component
   subscriptions: Subscription[] = [];
 
+
+  currentPlayingTime = 0;
+  // Interval of 1 second to count record time
+  interval = null;
+
   constructor(public recordService: RecordService, private loadingService: LoadingService) {
     // Save current page (in case of reloading)
     localStorage.setItem('reloadPage', '/record-detail');
@@ -60,6 +65,10 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       progressColor: '#0000AA',
       height: 150,
       hideScrollbar: true
+    });
+
+    this.wavesurfer.on('finish', () => {
+      clearInterval(this.interval);
     });
 
   }
@@ -151,6 +160,13 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // On play/pause click
   playPause() {
     if (this.recordService.temporaryMP3 != null) {
+      if (!this.wavesurfer.isPlaying()) {
+        this.interval = setInterval(() => {
+          this.recordService.temporaryDuration++;
+        }, 1000);
+      } else {
+        clearInterval(this.interval);
+      }
       this.wavesurfer.playPause();
     }
   }

@@ -14,7 +14,8 @@
 
     <!-- Duration  -->
 
-    <h5 class="center">{{selectedRecord ? prettyPrintDuration(selectedRecord.duration) : ''}}</h5>
+    <h5 class="center">{{currentPlayingTime != 0 ? prettyPrintDuration(currentPlayingTime) :
+      prettyPrintDuration(selectedRecord.duration)}}</h5>
 
     <!-- Waveform  -->
 

@@ -47,7 +47,7 @@
           <div class="input-field col s4">
             <i class="material-icons prefix">timer</i>
             <input id="fixTime" type="text" name="fixTime"
-                   [value]="getTime()" required readonly/>
+                   [value]="getTime()" required #newAnnotationTime/>
             <label for="fixTime">Temps</label>
           </div>
           <div class="input-field col s8">
@@ -56,7 +56,7 @@
           </div>
 
           <!-- Validate annotation -->
-          <a class="btn indigo darken-1 offset-s4 col s4" (click)="addAnnotation(newAnnotation)">Valider</a>
+          <a class="btn indigo darken-1 offset-s4 col s4" (click)="addAnnotation(newAnnotationTime, newAnnotation)">Valider</a>
         </div>
 
       </div>
