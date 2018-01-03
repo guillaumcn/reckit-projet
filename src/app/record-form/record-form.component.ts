@@ -40,6 +40,9 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // To know if we are recording or not
   isRecording = false;
 
+  // Show / hide div to add annotation
+  isVisible = false;
+
   // Interval of 1 second to count record time
   interval = null;
 
@@ -278,5 +281,20 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     if (this.recordService.temporaryMP3 != null) {
       this.wavesurfer.playPause();
     }
+  }
+
+  // Get current time of the wavesurfer
+  getTime(): string {
+    const time = this.wavesurfer.getCurrentTime();
+    return time.toFixed(2);
+  }
+
+  // Show / Hide div to add an annotation
+  ShowHide() {
+    this.isVisible = !this.isVisible;
+  }
+
+  addAnnotation() {
+
   }
 }
