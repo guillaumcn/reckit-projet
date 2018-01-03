@@ -7,5 +7,6 @@ export interface Record {
   type: string;
   recorderMail: string;
   tags: string[];
+  annotations: { time: number, content: string }[];
   filenames: string[];
 }

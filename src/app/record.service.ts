@@ -40,7 +40,7 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[]) {
+  addRecord(name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[], annotations: {time: number, content: string}[]) {
     if (this.temporaryMP3 == null) {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
     } else {
@@ -62,6 +62,7 @@ export class RecordService {
         duration: duration,
         type: type,
         tags: tags,
+        annotations: annotations,
         filenames: filenames
       }).then((data) => {
 
@@ -73,7 +74,7 @@ export class RecordService {
     }
   }
 
-  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[]) {
+  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[], annotations: {time: number, content: string}[]) {
     this.loadingService.startLoading();
 
     // Change mp3 filename
@@ -92,6 +93,7 @@ export class RecordService {
       duration: duration,
       type: type,
       tags: tags,
+      annotations: annotations,
       filenames: filenames
     }).then((data) => {
 

@@ -48,7 +48,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   isVisible = false;
 
   // Interval of 1 second to count record or playing time
-  interval = null;
+  recordInterval = null;
 
   annotationInterval = null;
   // Current time of playing or recording
@@ -126,6 +126,13 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.tags = this.selectedRecord.tags.slice();
       }
 
+      // patch annotations
+      if (this.selectedRecord.annotations == null) {
+        this.annotations = [];
+      } else {
+        this.annotations = this.selectedRecord.annotations.slice();
+      }
+
       // get mp3 file...
       this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
         fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
@@ -145,6 +152,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.recordService.temporaryDuration = 0;
       this.wavesurfer.load(null);
       this.files = [];
+      this.annotations = [];
     }
   }
 
@@ -156,13 +164,15 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       subscription.unsubscribe();
     });
 
+    clearInterval(this.annotationInterval);
+    clearInterval(this.recordInterval);
+
     // Remove all "current page" data
     localStorage.removeItem('reloadPage');
     localStorage.removeItem('selectedRecord');
   }
 
   onCreate() {
-    console.log(this.files);
     if (this.recordForm.valid) {
       // Pass data to the record service
       this.recordService.addRecord(
@@ -171,7 +181,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
         this.files,
-        this.tags
+        this.tags,
+        this.annotations
       );
     }
   }
@@ -186,7 +197,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
         this.files,
-        this.tags
+        this.tags,
+        this.annotations
       );
     }
   }
@@ -256,7 +268,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordService.temporaryDuration = 0;
         this.annotationTime = 0;
         // Start duration count
-        this.interval = setInterval(() => {
+        this.recordInterval = setInterval(() => {
           this.recordService.temporaryDuration++;
         }, 1000);
         this.isRecording = true;
@@ -266,7 +278,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     } else {
       // Stop recording
       // Stop duration count
-      clearInterval(this.interval);
+      clearInterval(this.recordInterval);
       this.recorder.stop().getMp3().then(([buffer, blob]) => {
 
         this.isRecording = false;
