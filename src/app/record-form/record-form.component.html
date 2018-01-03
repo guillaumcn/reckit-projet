@@ -47,7 +47,7 @@
           <div class="input-field col s4">
             <i class="material-icons prefix">access_time</i>
             <input id="fixTime" type="text" name="fixTime"
-                   [value]="getTime()" required readonly/>
+                   [value]="getTime()" required/>
             <label for="fixTime">Temps</label>
           </div>
           <div class="input-field col s8">
@@ -62,7 +62,7 @@
           <div class="col s12">
             <div *ngFor="let note of annotations; let i = index" class="row" (click)="view(note.time)">
               <i class="material-icons col s1">collections_bookmark</i>
-              <span class="col s1">{{note.time.toFixed(2)}}</span>
+              <span class="col s1">{{this.prettyPrintDuration(note.time)}}</span>
               <span class="col s8 push-s1 center">{{note.content}}</span>
               <i class="material-icons col s1 offset-s1" (click)="deleteNote(i)">delete</i>
             </div>

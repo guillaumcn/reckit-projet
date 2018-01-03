@@ -289,7 +289,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Get current time of the wavesurfer
   getTime(): string {
     const time = this.wavesurfer.getCurrentTime();
-    return time.toFixed(2);
+    return this.prettyPrintDuration(time);
   }
 
   // Show / Hide div to add an annotation
@@ -301,9 +301,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   addAnnotation(note) {
     if (this.annotations.indexOf(note.value) === -1) {
       this.annotations.push({
-          time : this.wavesurfer.getCurrentTime(), content : note.value
+        time: this.wavesurfer.getCurrentTime(), content: note.value
       });
-      note.value = '';
     }
   }
 
