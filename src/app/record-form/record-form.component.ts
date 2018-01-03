@@ -33,6 +33,9 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // List of tags
   tags: string[] = [];
 
+  // List of annotation
+  annotations: {time: number, content: string}[] = [];
+
   // Wave surfer and Microphone Objects from libraries
   wavesurfer: WaveSurfer = null;
   recorder: MicRecorder = null;
@@ -294,7 +297,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.isVisible = !this.isVisible;
   }
 
-  addAnnotation() {
-
+  // Add annotation with current time to the array
+  addAnnotation(note) {
+    if (this.tags.indexOf(note.value) === -1) {
+      this.annotations.push(this.wavesurfer.getCurrentTime(), note.value);
+      note.value = '';
+    }
   }
 }

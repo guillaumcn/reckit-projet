@@ -52,11 +52,11 @@
           </div>
           <div class="input-field col s8">
             <i class="material-icons prefix">label_outline</i>
-            <textarea id="note" type="text" name="note" required></textarea>
+            <textarea id="note" type="text" name="note" required #newAnnotation></textarea>
           </div>
 
           <!-- Validate annotation -->
-          <a class="btn indigo darken-1 offset-s4 col s4" (click)="addAnnotation()">Valider</a>
+          <a class="btn indigo darken-1 offset-s4 col s4" (click)="addAnnotation(newAnnotation)">Valider</a>
         </div>
 
       </div>
