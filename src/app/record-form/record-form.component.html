@@ -45,18 +45,28 @@
         <!-- Add Annotation -->
         <div *ngIf="isVisible" class="col s12">
           <div class="input-field col s4">
-            <i class="material-icons prefix">timer</i>
+            <i class="material-icons prefix">access_time</i>
             <input id="fixTime" type="text" name="fixTime"
                    [value]="getTime()" required readonly/>
             <label for="fixTime">Temps</label>
           </div>
           <div class="input-field col s8">
-            <i class="material-icons prefix">label_outline</i>
+            <i class="material-icons prefix">edit</i>
             <textarea id="note" type="text" name="note" required #newAnnotation></textarea>
           </div>
 
           <!-- Validate annotation -->
-          <a class="btn indigo darken-1 offset-s4 col s4" (click)="addAnnotation(newAnnotation)">Valider</a>
+          <a class="btn indigo darken-1 col s4 center margin" (click)="addAnnotation(newAnnotation)">Valider</a>
+
+
+          <div class="col s12">
+            <div *ngFor="let note of annotations; let i = index" class="row" (click)="view(note.time)">
+              <i class="material-icons col s1">collections_bookmark</i>
+              <span class="col s1">{{note.time.toFixed(2)}}</span>
+              <span class="col s8 push-s1 center">{{note.content}}</span>
+              <i class="material-icons col s1 offset-s1" (click)="deleteNote(i)">delete</i>
+            </div>
+          </div>
         </div>
 
       </div>

@@ -240,3 +240,8 @@ h5 {
   margin-top: 5px !important;
   cursor: pointer;
 }
+
+.margin {
+  margin-top: 1em !important;
+  margin-bottom: 2em !important;
+}

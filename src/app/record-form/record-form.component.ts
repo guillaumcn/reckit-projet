@@ -299,9 +299,23 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // Add annotation with current time to the array
   addAnnotation(note) {
-    if (this.tags.indexOf(note.value) === -1) {
-      this.annotations.push(this.wavesurfer.getCurrentTime(), note.value);
+    if (this.annotations.indexOf(note.value) === -1) {
+      this.annotations.push({
+          time : this.wavesurfer.getCurrentTime(), content : note.value
+      });
       note.value = '';
     }
+  }
+
+  // Remove annotation
+  deleteNote(index) {
+    if (index > -1) {
+      this.annotations.splice(index, 1);
+    }
+  }
+
+  // Go to annotation mark on wavesurfer
+  view(time) {
+    this.wavesurfer.play(time);
   }
 }
