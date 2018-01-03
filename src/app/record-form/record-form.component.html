@@ -38,7 +38,7 @@
 
           <!-- Annotations button -->
 
-          <a class="btn indigo darken-1 offset-s4 col s6" (click)="ShowHide()"><i class="material-icons left">turned_in</i>Annoter</a>
+          <a class="btn indigo darken-1 offset-s4 col s6" (click)="showHide()"><i class="material-icons left">turned_in</i>Annoter</a>
         </div>
 
 
@@ -47,8 +47,8 @@
           <div class="input-field col s4">
             <i class="material-icons prefix">access_time</i>
             <input id="fixTime" type="text" name="fixTime"
-                   [value]="getTime()" required/>
-            <label for="fixTime">Temps</label>
+                   [value]="prettyPrintDuration(annotationTime)" readonly required/>
+            <label class="active" for="fixTime">Temps</label>
           </div>
           <div class="input-field col s8">
             <i class="material-icons prefix">edit</i>
@@ -59,12 +59,13 @@
           <a class="btn indigo darken-1 col s4 center margin" (click)="addAnnotation(newAnnotation)">Valider</a>
 
 
+          <!-- Annotations list -->
           <div class="col s12">
-            <div *ngFor="let note of annotations; let i = index" class="row" (click)="view(note.time)">
+            <div *ngFor="let note of annotations; let i = index" class="row pointer" (click)="playAtTime(note.time)">
               <i class="material-icons col s1">collections_bookmark</i>
               <span class="col s1">{{this.prettyPrintDuration(note.time)}}</span>
               <span class="col s8 push-s1 center">{{note.content}}</span>
-              <i class="material-icons col s1 offset-s1" (click)="deleteNote(i)">delete</i>
+              <i class="material-icons col s1 offset-s1" (click)="deleteAnnotation(i)">delete</i>
             </div>
           </div>
         </div>
@@ -81,12 +82,12 @@
           <i class="material-icons prefix">timer</i>
           <input id="duration" type="text" name="duration"
                  [value]="prettyPrintDuration(recordService.temporaryDuration)" required readonly/>
-          <label [ngClass]="{'active' : true}" for="duration">Durée</label>
+          <label class="active" for="duration">Durée</label>
         </div>
         <div class="input-field col s5 offset-s3">
           <i class="material-icons prefix">label_outline</i>
           <input id="name" type="text" name="name" [ngModel]="selectedRecord ? selectedRecord.name : ''" required/>
-          <label [ngClass]="{'active' : selectedRecord}" for="name">Nom</label>
+          <label class="active" for="name">Nom</label>
         </div>
       </div>
 
@@ -108,7 +109,7 @@
           <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off"
                  [ngModel]="selectedRecord ? selectedRecord.oratorMail : ''"
                  materialize="autocomplete" [materializeParams]="[{'data': oratorList}]" email required/>
-          <label [ngClass]="{'active' : selectedRecord}" for="oratorMail">Mail
+          <label class="active" for="oratorMail">Mail
             Orateur</label>
         </div>
       </div>

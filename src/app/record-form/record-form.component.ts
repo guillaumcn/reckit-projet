@@ -8,6 +8,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {LoadingService} from '../loading/loading.service';
 import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
+import {Subject} from 'rxjs/Subject';
 
 @Component({
   selector: 'app-record-form',
@@ -34,7 +35,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   tags: string[] = [];
 
   // List of annotation
-  annotations: {time: number, content: string}[] = [];
+  annotations: { time: number, content: string }[] = [];
 
   // Wave surfer and Microphone Objects from libraries
   wavesurfer: WaveSurfer = null;
@@ -46,8 +47,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Show / hide div to add annotation
   isVisible = false;
 
-  // Interval of 1 second to count record time
+  // Interval of 1 second to count record or playing time
   interval = null;
+
+  annotationInterval = null;
+  // Current time of playing or recording
+  annotationTime = 0;
 
   // Attachments files of the record
   files: File[] = [];
@@ -242,9 +247,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // On record button click
   startStopRecording() {
     if (!this.isRecording) {
+      // Stop playing
+      if (this.wavesurfer.isPlaying()) {
+        this.playPause();
+      }
       // Start recording
       this.recorder.start().then(() => {
         this.recordService.temporaryDuration = 0;
+        this.annotationTime = 0;
         // Start duration count
         this.interval = setInterval(() => {
           this.recordService.temporaryDuration++;
@@ -281,40 +291,49 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // On play/pause click
   playPause() {
-    if (this.recordService.temporaryMP3 != null) {
+    if (this.recordService.temporaryMP3 != null && !this.isRecording) {
       this.wavesurfer.playPause();
     }
   }
 
-  // Get current time of the wavesurfer
-  getTime(): string {
-    const time = this.wavesurfer.getCurrentTime();
-    return this.prettyPrintDuration(time);
-  }
-
   // Show / Hide div to add an annotation
-  ShowHide() {
+  showHide() {
     this.isVisible = !this.isVisible;
+    if (this.isVisible) {
+      // Update annotation time every 200 milliseconds
+      this.annotationInterval = setInterval(() => {
+        if (this.isRecording) {
+          this.annotationTime = this.recordService.temporaryDuration;
+        } else {
+          if (this.recordService.temporaryMP3 != null) {
+            this.annotationTime = Math.floor(this.wavesurfer.getCurrentTime());
+          } else {
+            this.annotationTime = 0;
+          }
+        }
+      }, 200);
+    } else {
+      clearInterval(this.annotationInterval);
+    }
   }
 
   // Add annotation with current time to the array
   addAnnotation(note) {
     if (this.annotations.indexOf(note.value) === -1) {
       this.annotations.push({
-        time: this.wavesurfer.getCurrentTime(), content: note.value
+        time: this.annotationTime,
+        content: note.value
       });
     }
   }
 
   // Remove annotation
-  deleteNote(index) {
-    if (index > -1) {
-      this.annotations.splice(index, 1);
-    }
+  deleteAnnotation(index) {
+    this.annotations.splice(index, 1);
   }
 
-  // Go to annotation mark on wavesurfer
-  view(time) {
+  // Play wavesurfer on click on the annotation
+  playAtTime(time) {
     this.wavesurfer.play(time);
   }
 }
