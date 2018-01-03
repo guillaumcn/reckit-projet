@@ -300,7 +300,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Add annotation with current time to the array
   addAnnotation(newAnnotationTime, note) {
     if (this.tags.indexOf(note.value) === -1) {
-      this.annotations.push({time: unprettyPrintDuration(this.wavesurfer.getCurrentTime()), content: note.value});
+      this.annotations.push({time: unprettyPrintDuration(newAnnotationTime.value), content: note.value});
       note.value = '';
     }
   }
