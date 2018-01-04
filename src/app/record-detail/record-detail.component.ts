@@ -33,7 +33,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
 
   currentPlayingTime = 0;
-  // Interval of 1 second to count record time
+  // Interval of 1 second to count playing time
   interval = null;
 
   constructor(public recordService: RecordService, private loadingService: LoadingService) {
@@ -168,8 +168,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     if (this.recordService.temporaryMP3 != null) {
       if (!this.wavesurfer.isPlaying()) {
         this.interval = setInterval(() => {
-          this.recordService.temporaryDuration++;
-        }, 1000);
+          this.currentPlayingTime = Math.floor(this.wavesurfer.getCurrentTime());
+        }, 200);
       } else {
         clearInterval(this.interval);
       }
