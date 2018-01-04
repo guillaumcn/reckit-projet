@@ -66,6 +66,15 @@ input:-webkit-autofill {
   cursor: pointer;
 }
 
+.tagform div span {
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.tagform div span:hover {
+  white-space: normal;
+}
+
 .addTagIcon {
   margin-top: 15px;
 }

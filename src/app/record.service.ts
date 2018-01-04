@@ -24,7 +24,7 @@ export class RecordService {
   temporaryMP3: File = null;
   temporaryDuration = 0;
 
-  selectOptions: string[] = ['Cours', 'Réunion', 'Conférence', 'Discours'];
+  previousFilenames = [];
 
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
@@ -40,7 +40,7 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[], annotations: {time: number, content: string}[]) {
+  addRecord(name: string, oratorMail: string, duration: number, type: string, filenames: string[], files: File[], tags: string[], annotations: { time: number, content: string }[]) {
     if (this.temporaryMP3 == null) {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
     } else {
@@ -52,7 +52,7 @@ export class RecordService {
 
       files.push(this.temporaryMP3);
 
-      const filenames: string[] = files.map((file) => file.name);
+      filenames.push(this.temporaryMP3.name);
 
       this.recordListRef.push({
         name: name,
@@ -74,16 +74,18 @@ export class RecordService {
     }
   }
 
-  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, files: File[], tags: string[], annotations: {time: number, content: string}[]) {
+  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, filenames: string[], files: File[], tags: string[], annotations: { time: number, content: string }[]) {
     this.loadingService.startLoading();
 
     // Change mp3 filename
     const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
     this.temporaryMP3 = new File([blob], name + '.mp3', {type: blob.type});
 
-    files.push(this.temporaryMP3);
+    if (this.previousFilenames.indexOf(this.temporaryMP3.name) === -1) {
+      files.push(this.temporaryMP3);
+    }
 
-    const filenames: string[] = files.map((file) => file.name);
+    filenames.push(this.temporaryMP3.name);
 
     this.recordListRef.update(key, {
       name: name,
@@ -97,10 +99,13 @@ export class RecordService {
       filenames: filenames
     }).then((data) => {
 
-      this.uneditRecord();
       this.loadingService.stopLoading();
 
+      this.removeFiles(key, this.arrayDiff(this.previousFilenames, filenames));
+
       this.uploadFiles(key, files);
+
+      this.uneditRecord();
     });
   }
 
@@ -171,7 +176,6 @@ export class RecordService {
     if (currentIndex === filenames.length) {
       this.uneditRecord();
       this.loadingService.stopLoading();
-      this.toastService.toast('Enregistrement supprimé avec succès');
       return;
     }
 
@@ -179,6 +183,17 @@ export class RecordService {
     this.storageRef.child('/records/' + recordKey + '/' + filename).delete().then(() => {
       this.removeFile(recordKey, filenames, currentIndex + 1);
     });
+  }
+
+  // array1 - array2
+  arrayDiff(array1, array2) {
+    const result = [];
+    for (let i = 0; i < array1.length; i++) {
+      if (array2.indexOf(array1[i]) === -1) {
+        result.push(array1[i]);
+      }
+    }
+    return result;
   }
 
 }

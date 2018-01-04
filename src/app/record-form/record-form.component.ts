@@ -55,7 +55,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   annotationTime = 0;
 
   // Attachments files of the record
-  files: File[] = [];
+  filenames: string[] = [];
+  newfiles: File[] = [];
+
+  selectOptions: string[] = ['Cours', 'Réunion', 'Conférence', 'Discours'];
+
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
@@ -133,6 +137,16 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.annotations = this.selectedRecord.annotations.slice();
       }
 
+      // patch filenames
+      if (this.selectedRecord.annotations == null) {
+        this.filenames = [];
+        this.recordService.previousFilenames = [];
+      } else {
+        this.filenames = this.selectedRecord.filenames.slice();
+        this.recordService.previousFilenames = this.selectedRecord.filenames.slice();
+        this.filenames.splice(this.filenames.indexOf(this.selectedRecord.name + '.mp3'), 1);
+      }
+
       // get mp3 file...
       this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
         fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
@@ -151,7 +165,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.recordService.temporaryMP3 = null;
       this.recordService.temporaryDuration = 0;
       this.wavesurfer.load(null);
-      this.files = [];
+      this.newfiles = [];
       this.annotations = [];
     }
   }
@@ -180,7 +194,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordForm.value.recordData.oratorMail,
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
-        this.files,
+        this.filenames,
+        this.newfiles,
         this.tags,
         this.annotations
       );
@@ -196,7 +211,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.recordForm.value.recordData.oratorMail,
         this.recordService.temporaryDuration,
         this.recordForm.value.recordData.type,
-        this.files,
+        this.filenames,
+        this.newfiles,
         this.tags,
         this.annotations
       );
@@ -212,7 +228,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   addTag(tagInput) {
     if (this.tags.indexOf(tagInput.value) === -1) {
-      this.tags.push(tagInput.value);
+      this.tags.unshift(tagInput.value);
       tagInput.value = '';
     }
   }
@@ -250,10 +266,17 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // Get files on input[type=file] change
   getFiles(event) {
-    this.files = [];
     for (let i = 0; i < event.target.files.length; i++) {
-      this.files.push(event.target.files[i]);
+      if (this.filenames.indexOf(event.target.files[i].name) === -1) {
+        this.newfiles.unshift(event.target.files[i]);
+        this.filenames.unshift(event.target.files[i].name);
+      }
     }
+  }
+
+  deleteFilename(index) {
+    this.filenames.splice(index, 1);
+    this.newfiles.splice(index, 1);
   }
 
   // On record button click
@@ -332,7 +355,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Add annotation with current time to the array
   addAnnotation(note) {
     if (this.annotations.indexOf(note.value) === -1) {
-      this.annotations.push({
+      this.annotations.unshift({
         time: this.annotationTime,
         content: note.value
       });

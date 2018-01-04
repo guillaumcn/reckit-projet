@@ -17,7 +17,7 @@
         <div class="col s6">
           <!-- Attachment file input -->
           <div class="btn indigo darken-1 file-field input-field col s6 addFileButton">
-            {{selectedRecord ? (selectedRecord.filenames.length - 1) + ' fichier(s)' : files.length + ' fichier(s)'}}
+            {{filenames.length + ' fichier(s)'}}
             <input type="file" id="file" name="file" (change)="getFiles($event)" ngModel multiple>
             <i class="material-icons left">attach_file</i>
           </div>
@@ -98,10 +98,10 @@
         <div class="row">
           <div class="input-field col s3 custom-select">
             <i class="material-icons prefix">unfold_more</i>
-            <select materialize="material_select" [materializeSelectOptions]="recordService.selectOptions" id="type"
+            <select materialize="material_select" [materializeSelectOptions]="selectOptions" id="type"
                     name="type"
                     [ngModel]="selectedRecord ? selectedRecord.type : defaultType">
-              <option *ngFor="let option of recordService.selectOptions" [value]="option">{{option}}</option>
+              <option *ngFor="let option of selectOptions" [value]="option">{{option}}</option>
             </select>
             <label for="type">Type</label>
           </div>
@@ -131,6 +131,20 @@
         <div class="row input-field">
           <input placeholder="Ajouter un tag..." class="col s8 offset-s1" type="text" (keyup.enter)="addTag(newTagInput)" #newTagInput/>
           <i class="material-icons col s2 addTagIcon" (click)="addTag(newTagInput)">add_box</i>
+        </div>
+      </div>
+
+      <br>
+      <hr>
+      <br>
+
+      <!-- Attachment files -->
+
+      <div class="tagform z-depth-2">
+        <div *ngFor="let filename of filenames; let i = index" class="row">
+          <i class="material-icons col s1 offset-s1">attach_file</i>
+          <span class="col s6 offset-s1">{{filename}}</span>
+          <i class="material-icons col s1" (click)="deleteFilename(i)">delete</i>
         </div>
       </div>
 
