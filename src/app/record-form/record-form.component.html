@@ -140,7 +140,7 @@
 
       <!-- Attachment files -->
 
-      <div class="tagform z-depth-2">
+      <div *ngIf="filenames.length != 0" class="tagform z-depth-2">
         <div *ngFor="let filename of filenames; let i = index" class="row">
           <i class="material-icons col s1 offset-s1">attach_file</i>
           <span class="col s6 offset-s1">{{filename}}</span>
@@ -148,9 +148,9 @@
         </div>
       </div>
 
-      <br>
-      <hr>
-      <br>
+      <br *ngIf="filenames.length != 0">
+      <hr *ngIf="filenames.length != 0">
+      <br *ngIf="filenames.length != 0">
 
       <!-- Validation buttons  -->
 
