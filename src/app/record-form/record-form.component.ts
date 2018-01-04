@@ -138,7 +138,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       }
 
       // patch filenames
-      if (this.selectedRecord.annotations == null) {
+      if (this.selectedRecord.filenames == null) {
         this.filenames = [];
         this.recordService.previousFilenames = [];
       } else {
@@ -167,6 +167,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.wavesurfer.load(null);
       this.newfiles = [];
       this.annotations = [];
+      this.filenames = [];
+      localStorage.removeItem('selectedRecord');
     }
   }
 
