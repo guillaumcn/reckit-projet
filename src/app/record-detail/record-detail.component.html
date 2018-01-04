@@ -7,6 +7,12 @@
     <h5 class="center">{{currentPlayingTime != 0 ? prettyPrintDuration(currentPlayingTime) :
       prettyPrintDuration(selectedRecord.duration)}}</h5>
 
+    <!-- Annotations -->
+
+    <div *ngFor="let annotation of annotations">
+      <span class="note right">{{currentPlayingTime != annotation.time ? hidden : annotation.content}}</span>
+    </div>
+
     <!-- Waveform  -->
 
     <div class="row">
@@ -31,14 +37,6 @@
   <div class="col s5 rightpanel">
 
     <div *ngIf="!showPDF">
-
-      <!-- Annotations -->
-
-      <div *ngFor="let annotation of annotations" class="row pointer">
-        <span class="col s10">{{currentPlayingTime != annotation.time ? hidden : annotation.content}}</span>
-      </div>
-
-      <br/>
 
       <!-- Attachment files  -->
 
