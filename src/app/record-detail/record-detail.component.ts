@@ -10,7 +10,7 @@ import PDFObject from 'pdfobject/pdfobject.min.js';
 @Component({
   selector: 'app-record-detail',
   templateUrl: './record-detail.component.html',
-  styleUrls: ['./record-detail.component.css']
+  styleUrls: ['./record-detail.component.css', './bubble.css']
 })
 export class RecordDetailComponent implements OnInit, OnDestroy {
 
