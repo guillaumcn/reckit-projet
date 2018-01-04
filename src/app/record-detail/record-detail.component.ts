@@ -21,7 +21,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   tags: string[] = [];
 
   // List of annotations
-  annotations: { time: number, content: string }[] = [];
+  annotations: {} = {};
 
   showPDF = false;
 
@@ -82,7 +82,9 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     this.tags = this.selectedRecord.tags.slice();
 
     // patch annotations
-    this.annotations = this.selectedRecord.annotations.slice();
+    for (let i = 0; i < this.selectedRecord.annotations.length; i++) {
+      this.annotations[this.selectedRecord.annotations[i].time] = this.selectedRecord.annotations[i].content;
+    }
 
     // get mp3 file ...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
