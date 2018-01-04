@@ -20,6 +20,9 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // List of tags
   tags: string[] = [];
 
+  // List of annotations
+  annotations: { time: number, content: string }[] = [];
+
   showPDF = false;
 
   // Wave surfer Object from libraries
@@ -77,6 +80,9 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
     // patch tags
     this.tags = this.selectedRecord.tags.slice();
+
+    // patch annotations
+    this.annotations = this.selectedRecord.annotations.slice();
 
     // get mp3 file ...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {

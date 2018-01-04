@@ -58,6 +58,10 @@
   font-weight: bold;
 }
 
+.pointer {
+  cursor: pointer;
+}
+
 #pdfcontainer {
   height: 50vh !important;
   width: 100%;

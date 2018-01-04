@@ -1,5 +1,23 @@
 <div class="row frame">
 
+  <div class="col s12">
+
+    <!-- Duration  -->
+
+    <h5 class="center">{{currentPlayingTime != 0 ? prettyPrintDuration(currentPlayingTime) :
+      prettyPrintDuration(selectedRecord.duration)}}</h5>
+
+    <!-- Waveform  -->
+
+    <div class="row">
+      <div id="waveform"></div>
+      <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">play_arrow</i>
+      <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">pause</i>
+      <i *ngIf="showPDF" (click)="showPDF = !showPDF" class="material-icons col s1 offset-s1 iconButton">reply</i>
+      <i *ngIf="!showPDF" class="col s1"></i>
+    </div>
+  </div>
+
   <div class="col s7">
 
     <!-- Name - Type  -->
@@ -12,22 +30,15 @@
 
   <div class="col s5 rightpanel">
 
-    <!-- Duration  -->
-
-    <h5 class="center">{{currentPlayingTime != 0 ? prettyPrintDuration(currentPlayingTime) :
-      prettyPrintDuration(selectedRecord.duration)}}</h5>
-
-    <!-- Waveform  -->
-
-    <div class="row">
-      <div id="waveform"></div>
-      <i *ngIf="showPDF" (click)="showPDF = !showPDF" class="material-icons col s1 iconButton">reply</i>
-      <i *ngIf="!showPDF" class="col s1"></i>
-      <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s4 iconButton">play_arrow</i>
-      <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s4 iconButton">pause</i>
-    </div>
-
     <div *ngIf="!showPDF">
+
+      <!-- Annotations -->
+
+      <div *ngFor="let annotation of annotations" class="row pointer">
+        <span class="col s10">{{currentPlayingTime != annotation.time ? hidden : annotation.content}}</span>
+      </div>
+
+      <br/>
 
       <!-- Attachment files  -->
 
@@ -39,7 +50,7 @@
         </div>
       </div>
 
-      <br>
+      <br/>
 
       <!-- Tags  -->
 
