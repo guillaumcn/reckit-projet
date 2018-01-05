@@ -20,8 +20,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // List of tags
   tags: string[] = [];
 
-  // List of annotations
-  annotations: {} = {};
+  // List of annotation
+  annotations: { time: number, content: string }[] = [];
 
   showPDF = false;
 
@@ -82,9 +82,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     this.tags = this.selectedRecord.tags.slice();
 
     // patch annotations
-    for (let i = 0; i < this.selectedRecord.annotations.length; i++) {
-      this.annotations[this.selectedRecord.annotations[i].time] = this.selectedRecord.annotations[i].content;
-    }
+    this.annotations = this.selectedRecord.annotations.slice();
 
     // get mp3 file ...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
@@ -176,6 +174,13 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
         clearInterval(this.interval);
       }
       this.wavesurfer.playPause();
+    }
+  }
+
+  // Display annotation 3 seconds
+  showAnnotation(annotation: { time: number, content: string }) {
+    if (this.currentPlayingTime >= annotation.time && this.currentPlayingTime < annotation.time + 3) {
+      return true;
     }
   }
 

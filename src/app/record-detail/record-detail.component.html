@@ -9,8 +9,10 @@
 
     <!-- Annotations -->
 
-    <div *ngIf="annotations[currentPlayingTime]" class="pinched">
-      <p>{{annotations[currentPlayingTime]}}</p>
+    <div *ngFor="let annotation of annotations">
+      <div *ngIf="showAnnotation(annotation)" class="pinched">
+        <p>{{annotation.content}}</p>
+      </div>
     </div>
 
     <!-- Waveform  -->

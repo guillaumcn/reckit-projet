@@ -66,8 +66,3 @@
   height: 50vh !important;
   width: 100%;
 }
-
-.note:after {
-  position: absolute;
-  display: inline-block;
-}
