@@ -9,8 +9,8 @@
 
     <!-- Annotations -->
 
-    <div *ngFor="let annotation of annotations; let i = index">
-      <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': getAnnotationMarginLeft(i, annotation)}" class="bubble">
+    <div *ngFor="let annotation of annotations">
+      <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': getAnnotationMarginLeft(annotation)}" class="bubble">
         <p>{{annotation.content}}</p>
       </div>
     </div>
