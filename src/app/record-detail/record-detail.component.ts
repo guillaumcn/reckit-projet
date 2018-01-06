@@ -83,6 +83,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       }, 200);
     });
 
+    // Clear interval on pause and finish
     this.wavesurfer.on('pause', () => {
       clearInterval(this.interval);
     });
@@ -98,6 +99,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       this.currentPlayingTime = Math.floor(this.wavesurfer.getCurrentTime());
     });
 
+    // update bounds values after create
     this.waveformSize = this.waveform.nativeElement.offsetWidth;
     this.waveformLeft = this.waveform.nativeElement.offsetLeft;
 
@@ -206,9 +208,9 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // Get position of the annotation
   getAnnotationMarginLeft(index, annotation: { time: number, content: string }) {
-      return (this.waveformLeft +
-        (this.waveformSize * (annotation.time / this.selectedRecord.duration))
-        - 125)
+    return (this.waveformLeft +
+      (this.waveformSize * (annotation.time / this.selectedRecord.duration))
+      - 125)
       + 'px';
   }
 

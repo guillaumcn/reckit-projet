@@ -127,6 +127,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       }
     });
 
+    // Clear interval on pause and finish
     this.wavesurfer.on('pause', () => {
       clearInterval(this.annotationInterval);
     });
