@@ -115,10 +115,18 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   loadDataFromSelectedRecord() {
 
     // patch tags
-    this.tags = this.selectedRecord.tags.slice();
+    if (this.selectedRecord.tags == null) {
+      this.tags = [];
+    } else {
+      this.tags = this.selectedRecord.tags.slice();
+    }
 
     // patch annotations
-    this.annotations = this.selectedRecord.annotations.slice();
+    if (this.selectedRecord.annotations == null) {
+      this.annotations = [];
+    } else {
+      this.annotations = this.selectedRecord.annotations.slice();
+    }
 
     // get mp3 file ...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
