@@ -9,10 +9,14 @@
 
     <!-- Annotations -->
 
+    <!-- Annotation bubbles -->
     <div *ngFor="let annotation of annotations">
-      <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': getAnnotationMarginLeft(annotation)}" class="bubble">
+      <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': (getAnnotationMarginLeft(annotation) - 125) + 'px'}" class="bubble">
         <p>{{annotation.content}}</p>
       </div>
+    </div>
+    <!-- Annotation lines -->
+    <div *ngFor="let annotation of annotations" class="line" [ngStyle]="{'left': getAnnotationMarginLeft(annotation) + 'px'}">
     </div>
 
     <!-- Waveform  -->

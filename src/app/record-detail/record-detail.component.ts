@@ -215,10 +215,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // Get position of the annotation
   getAnnotationMarginLeft(annotation: { time: number, content: string }) {
-    return (this.waveformLeft +
-      (this.waveformSize * (annotation.time / this.selectedRecord.duration))
-      - 125)
-      + 'px';
+    return this.waveformLeft +
+      (this.waveformSize * (annotation.time / this.selectedRecord.duration));
   }
 
   // Update bounds value on window resize and resize the wavesurfer
