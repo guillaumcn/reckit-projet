@@ -19,6 +19,7 @@
 
     <div class="row" #waveform>
       <div id="waveform"></div>
+      <div id="timeline"></div>
       <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">play_arrow</i>
       <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">pause</i>
       <i *ngIf="showPDF" (click)="showPDF = !showPDF" class="material-icons col s1 offset-s1 iconButton">reply</i>

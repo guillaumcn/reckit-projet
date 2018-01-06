@@ -3,6 +3,7 @@ import {LoadingService} from '../loading/loading.service';
 import {Record} from '../record.model';
 import {RecordService} from '../record.service';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
+import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 import {Subscription} from 'rxjs/Subscription';
 import * as FileSaver from 'file-saver';
 import PDFObject from 'pdfobject/pdfobject.min.js';
@@ -27,6 +28,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
+  timeline: TimelinePlugin = null;
   @ViewChild('waveform') waveform: ElementRef;
   waveformSize = 0;
   waveformLeft = 0;
@@ -71,7 +73,12 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       progressColor: '#0000AA',
       height: 150,
       hideScrollbar: true,
-      normalize: true
+      normalize: true,
+      plugins: [
+        TimelinePlugin.create({
+          container: '#timeline'
+        }),
+        ]
     });
 
     this.wavesurfer.on('play', () => {
