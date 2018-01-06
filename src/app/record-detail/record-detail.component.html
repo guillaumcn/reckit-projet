@@ -22,12 +22,9 @@
     <!-- Waveform  -->
 
     <div class="row" #waveform>
-      <div id="waveform"></div>
+      <div id="waveform"><i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons playButton">play_arrow</i>
+        <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons playButton">pause</i></div>
       <div id="timeline"></div>
-      <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">play_arrow</i>
-      <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">pause</i>
-      <i *ngIf="showPDF" (click)="showPDF = !showPDF" class="material-icons col s1 offset-s1 iconButton">reply</i>
-      <i *ngIf="!showPDF" class="col s1"></i>
     </div>
   </div>
 
@@ -66,6 +63,7 @@
     </div>
 
     <!-- PDF container -->
+    <i *ngIf="showPDF" (click)="showPDF = !showPDF" class="material-icons col s1 pdfBackButton">reply</i>
     <div id="pdfcontainer" *ngIf="showPDF"></div>
 
     <br>

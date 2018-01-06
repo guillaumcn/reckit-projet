@@ -16,9 +16,17 @@
   cursor: pointer;
 }
 
-.iconButton {
+.playButton {
   font-size : 50px !important;
   cursor: pointer;
+  position: absolute;
+  z-index: 1000;
+}
+
+.pdfBackButton {
+  font-size : 50px !important;
+  cursor: pointer;
+  position: absolute;
 }
 
 .notclickable {
@@ -38,6 +46,7 @@
 #pdfcontainer {
   height: 50vh !important;
   width: 100%;
+  margin-top: 60px;
 }
 
 .hide {
