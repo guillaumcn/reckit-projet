@@ -8,7 +8,7 @@ import {Subscription} from 'rxjs/Subscription';
 import {LoadingService} from '../loading/loading.service';
 import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
-import {Subject} from 'rxjs/Subject';
+import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 
 @Component({
   selector: 'app-record-form',
@@ -115,7 +115,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       waveColor: 'blue',
       progressColor: '#0000AA',
       height: 300,
-      hideScrollbar: true
+      hideScrollbar: true,
+      plugins: [
+        TimelinePlugin.create({
+          container: '#timeline'
+        }),
+      ]
     });
 
     // On play, update annotation time if not recording
