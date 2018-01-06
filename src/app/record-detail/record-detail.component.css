@@ -16,33 +16,6 @@
   cursor: pointer;
 }
 
-/*.buttonPlay {
-  background: transparent;
-  box-sizing: border-box;
-  width: 35px !important;
-  height: 35px !important;
-
-  border-color: transparent transparent transparent #202020;
-  transition: 100ms all ease;
-  cursor: pointer;
-
-  border-style: solid;
-  border-width: 18px 0 18px 30px;
-
-  margin-top: 1em;
-  margin-bottom: 1em;
-  margin-left: 2vh !important;
-}
-
-.buttonPlay.paused {
-  border-style: double !important;
-  border-width: 0px 0 0px 28px !important;
-}
-
-.buttonPlay:hover {
-  border-color: transparent transparent transparent #404040 !important;
-}*/
-
 .iconButton {
   font-size : 50px !important;
   cursor: pointer;
@@ -65,4 +38,35 @@
 #pdfcontainer {
   height: 50vh !important;
   width: 100%;
+}
+
+.hide {
+  display: none;
+}
+
+.bubble {
+  position:absolute;
+  background-color: #4E342E;
+  color:white;
+  padding: 0 25px;
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  border-radius:         10px;
+  width: 250px;
+  z-index: 999;
+  margin-top: 110px;
+  opacity: 0.8;
+  text-align:center;
+}
+
+.bubble:after {
+  position: absolute;
+  content:"";
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 35px solid #4E342E;
+  top: -35px;
+  left: 100px;
 }

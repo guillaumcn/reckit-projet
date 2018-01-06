@@ -117,6 +117,31 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       height: 300,
       hideScrollbar: true
     });
+
+    // On play, update annotation time if not recording
+    this.wavesurfer.on('play', () => {
+      if (!this.isRecording) {
+        this.annotationInterval = setInterval(() => {
+          this.annotationTime = Math.floor(this.wavesurfer.getCurrentTime());
+        }, 200);
+      }
+    });
+
+    this.wavesurfer.on('pause', () => {
+      clearInterval(this.annotationInterval);
+    });
+
+    this.wavesurfer.on('finish', () => {
+      clearInterval(this.annotationInterval);
+      this.annotationTime = 0;
+    });
+
+    // On seek, update annotation time if not recording
+    this.wavesurfer.on('seek', () => {
+      if (!this.isRecording) {
+        this.annotationTime = Math.floor(this.wavesurfer.getCurrentTime());
+      }
+    });
   }
 
   loadDataFromSelectedRecord() {
@@ -295,6 +320,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         // Start duration count
         this.recordInterval = setInterval(() => {
           this.recordService.temporaryDuration++;
+          this.annotationTime = this.recordService.temporaryDuration;
         }, 1000);
         this.isRecording = true;
       }).catch((e) => {
@@ -336,22 +362,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Show / Hide div to add an annotation
   showHide() {
     this.annotationsVisible = !this.annotationsVisible;
-    if (this.annotationsVisible) {
-      // Update annotation time every 200 milliseconds
-      this.annotationInterval = setInterval(() => {
-        if (this.isRecording) {
-          this.annotationTime = this.recordService.temporaryDuration;
-        } else {
-          if (this.recordService.temporaryMP3 != null) {
-            this.annotationTime = Math.floor(this.wavesurfer.getCurrentTime());
-          } else {
-            this.annotationTime = 0;
-          }
-        }
-      }, 200);
-    } else {
-      clearInterval(this.annotationInterval);
-    }
   }
 
   // Add annotation with current time to the array

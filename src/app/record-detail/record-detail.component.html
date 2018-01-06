@@ -9,15 +9,15 @@
 
     <!-- Annotations -->
 
-    <div *ngFor="let annotation of annotations">
-      <div *ngIf="showAnnotation(annotation)" class="pinched">
+    <div *ngFor="let annotation of annotations; let i = index">
+      <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': getAnnotationMarginLeft(i, annotation)}" class="bubble">
         <p>{{annotation.content}}</p>
       </div>
     </div>
 
     <!-- Waveform  -->
 
-    <div class="row">
+    <div class="row" #waveform>
       <div id="waveform"></div>
       <i *ngIf="!wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">play_arrow</i>
       <i *ngIf="wavesurfer.isPlaying()" (click)="playPause()" class="material-icons col s1 offset-s5 iconButton">pause</i>

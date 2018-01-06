@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, ElementRef, HostListener, OnDestroy, OnInit, QueryList, ViewChild, ViewChildren} from '@angular/core';
 import {LoadingService} from '../loading/loading.service';
 import {Record} from '../record.model';
 import {RecordService} from '../record.service';
@@ -10,7 +10,7 @@ import PDFObject from 'pdfobject/pdfobject.min.js';
 @Component({
   selector: 'app-record-detail',
   templateUrl: './record-detail.component.html',
-  styleUrls: ['./record-detail.component.css', './bubble.css']
+  styleUrls: ['./record-detail.component.css']
 })
 export class RecordDetailComponent implements OnInit, OnDestroy {
 
@@ -27,6 +27,9 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
+  @ViewChild('waveform') waveform: ElementRef;
+  waveformSize = 0;
+  waveformLeft = 0;
 
   // We will add subscriptions to observable here and unsubscribe when destroying the component
   subscriptions: Subscription[] = [];
@@ -67,12 +70,36 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       waveColor: 'blue',
       progressColor: '#0000AA',
       height: 150,
-      hideScrollbar: true
+      hideScrollbar: true,
+      normalize: true
+    });
+
+    this.wavesurfer.on('play', () => {
+      // While playing, update current time and bounds values
+      this.interval = setInterval(() => {
+        this.waveformSize = this.waveform.nativeElement.offsetWidth;
+        this.waveformLeft = this.waveform.nativeElement.offsetLeft;
+        this.currentPlayingTime = Math.floor(this.wavesurfer.getCurrentTime());
+      }, 200);
+    });
+
+    this.wavesurfer.on('pause', () => {
+      clearInterval(this.interval);
     });
 
     this.wavesurfer.on('finish', () => {
       clearInterval(this.interval);
     });
+
+    // On seek, update current time and bounds values
+    this.wavesurfer.on('seek', () => {
+      this.waveformSize = this.waveform.nativeElement.offsetWidth;
+      this.waveformLeft = this.waveform.nativeElement.offsetLeft;
+      this.currentPlayingTime = Math.floor(this.wavesurfer.getCurrentTime());
+    });
+
+    this.waveformSize = this.waveform.nativeElement.offsetWidth;
+    this.waveformLeft = this.waveform.nativeElement.offsetLeft;
 
   }
 
@@ -166,13 +193,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // On play/pause click
   playPause() {
     if (this.recordService.temporaryMP3 != null) {
-      if (!this.wavesurfer.isPlaying()) {
-        this.interval = setInterval(() => {
-          this.currentPlayingTime = Math.floor(this.wavesurfer.getCurrentTime());
-        }, 200);
-      } else {
-        clearInterval(this.interval);
-      }
       this.wavesurfer.playPause();
     }
   }
@@ -182,6 +202,30 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     if (this.currentPlayingTime >= annotation.time && this.currentPlayingTime < annotation.time + 3) {
       return true;
     }
+  }
+
+  // Get position of the annotation
+  getAnnotationMarginLeft(index, annotation: { time: number, content: string }) {
+      return (this.waveformLeft +
+        (this.waveformSize * (annotation.time / this.selectedRecord.duration))
+        - 125)
+      + 'px';
+  }
+
+  // Update bounds value on window resize and resize the wavesurfer
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (this.wavesurfer) {
+      const wasPlaying = this.wavesurfer.isPlaying();
+      const currentTime = this.wavesurfer.getCurrentTime();
+      this.wavesurfer.empty();
+      this.wavesurfer.drawBuffer();
+      if (wasPlaying) {
+        this.wavesurfer.play(currentTime);
+      }
+    }
+    this.waveformSize = this.waveform.nativeElement.offsetWidth;
+    this.waveformLeft = this.waveform.nativeElement.offsetLeft;
   }
 
 }

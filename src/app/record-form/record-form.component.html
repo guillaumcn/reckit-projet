@@ -47,7 +47,7 @@
       <hr>
 
       <!-- Add Annotation -->
-      <div *ngIf="annotationsVisible" class="col s12">
+      <div [ngStyle]="{'display' : !annotationsVisible ? 'none' : 'block'}" class="col s12">
         <div class="input-field col s4">
           <i class="material-icons prefix">access_time</i>
           <input id="fixTime" type="text" name="fixTime"
@@ -77,7 +77,7 @@
 
       <!-- Duration / name -->
 
-      <div *ngIf="!annotationsVisible" class="col s12">
+      <div [ngStyle]="{'display' : annotationsVisible ? 'none' : 'block'}" class="col s12">
         <div class="row">
           <div class="input-field col s3">
             <i class="material-icons prefix">timer</i>
