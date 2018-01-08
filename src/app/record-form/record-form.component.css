@@ -2,6 +2,42 @@ form {
   margin-top: 15px;
 }
 
+.line {
+  width:1px;
+  height: 300px;
+  position: absolute;
+  z-index: 998;
+  background-color: red;
+  margin-top: 2px;
+}
+
+.bubble {
+  position:absolute;
+  background-color: #4E342E;
+  color:white;
+  padding: 0 25px;
+  -moz-border-radius:    10px;
+  -webkit-border-radius: 10px;
+  border-radius:         10px;
+  width: 250px;
+  z-index: 999;
+  margin-top: 110px;
+  opacity: 0.8;
+  text-align:center;
+}
+
+.bubble:after {
+  position: absolute;
+  content:"";
+  width: 0;
+  height: 0;
+  border-left: 25px solid transparent;
+  border-right: 25px solid transparent;
+  border-bottom: 35px solid #4E342E;
+  top: -35px;
+  left: 100px;
+}
+
 /* label focus color */
 .input-field input:focus + label {
   color: #0d47a1 !important;

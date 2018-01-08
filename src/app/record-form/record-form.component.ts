@@ -1,5 +1,5 @@
 import {
-  Component, HostListener, OnDestroy, OnInit, ViewChild,
+  Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild,
   ViewChildren
 } from '@angular/core';
 import {RecordService} from '../record.service';
@@ -64,6 +64,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   newfiles: File[] = [];
 
   selectOptions: string[] = ['Cours', 'Réunion', 'Conférence', 'Discours'];
+
+  @ViewChild('waveform') waveform: ElementRef;
+  waveformSize = 0;
+  waveformLeft = 0;
+
+  spaceActive = true;
 
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
@@ -134,6 +140,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.wavesurfer.on('play', () => {
       if (!this.isRecording) {
         this.annotationInterval = setInterval(() => {
+          this.waveformSize = this.waveform.nativeElement.offsetWidth;
+          this.waveformLeft = this.waveform.nativeElement.offsetLeft;
           this.annotationTime = Math.floor(this.wavesurfer.getCurrentTime());
         }, 200);
       }
@@ -152,9 +160,13 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     // On seek, update annotation time if not recording
     this.wavesurfer.on('seek', () => {
       if (!this.isRecording) {
+        this.waveformSize = this.waveform.nativeElement.offsetWidth;
+        this.waveformLeft = this.waveform.nativeElement.offsetLeft;
         this.annotationTime = Math.floor(this.wavesurfer.getCurrentTime());
       }
     });
+    this.waveformSize = this.waveform.nativeElement.offsetWidth;
+    this.waveformLeft = this.waveform.nativeElement.offsetLeft;
   }
 
   loadDataFromSelectedRecord() {
@@ -374,7 +386,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup', ['$event'])
   playPauseSpace(event: KeyboardEvent) {
-    if (this.recordService.temporaryMP3 != null && !this.isRecording) {
+    if (this.recordService.temporaryMP3 != null && !this.isRecording && this.spaceActive) {
       if (event.keyCode === 32) {
         this.wavesurfer.playPause();
       }
@@ -422,6 +434,20 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.wavesurfer.play(time);
   }
 
+  // Get position of the annotation
+  getAnnotationMarginLeft(annotation: { time: number, content: string }) {
+    return this.waveformLeft +
+      (this.waveformSize * (annotation.time / this.selectedRecord.duration));
+  }
+
+  // Display annotation 3 seconds
+  showAnnotation(annotation: { time: number, content: string }) {
+    if (this.annotationTime >= annotation.time && this.annotationTime < annotation.time + 3) {
+      return true;
+    }
+    console.log('--------' + this.waveformSize);
+  }
+
   @HostListener('window:resize', ['$event'])
   onResize(event) {
     if (this.wavesurfer) {
@@ -433,5 +459,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.wavesurfer.play(currentTime);
       }
     }
+    this.waveformSize = this.waveform.nativeElement.offsetWidth;
+    this.waveformLeft = this.waveform.nativeElement.offsetLeft;
   }
 }
