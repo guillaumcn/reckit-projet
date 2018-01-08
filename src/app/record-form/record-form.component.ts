@@ -1,4 +1,7 @@
-import {Component, OnDestroy, OnInit, ViewChild} from '@angular/core';
+import {
+  Component, OnDestroy, OnInit, ViewChild,
+  ViewChildren
+} from '@angular/core';
 import {RecordService} from '../record.service';
 import {NgForm} from '@angular/forms';
 import {Record} from '../record.model';
@@ -36,6 +39,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // List of annotation
   annotations: { time: number, content: string }[] = [];
+  @ViewChildren('annotationText') annotationsText;
+  isEditing: number[] = [];
 
   // Wave surfer and Microphone Objects from libraries
   wavesurfer: WaveSurfer = null;
@@ -372,10 +377,20 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // Add annotation with current time to the array
   addAnnotation(note) {
-    if (this.annotations.indexOf(note.value) === -1) {
+    let noteExist = false;
+    for (let i = 0; i < this.annotations.length; i++) {
+      if (this.annotations[i].time === this.annotationTime) {
+        this.annotations[i] = {
+          time : this.annotationTime,
+          content : note.value
+        };
+        noteExist = true;
+      }
+    }
+    if (!noteExist) {
       this.annotations.unshift({
-        time: this.annotationTime,
-        content: note.value
+        time : this.annotationTime,
+        content : note.value
       });
     }
   }
@@ -383,6 +398,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Remove annotation
   deleteAnnotation(index) {
     this.annotations.splice(index, 1);
+  }
+
+  // Update annotation
+  updateAnnotation(index) {
+    this.annotations[index].content = this.annotationsText._results[index].nativeElement.textContent;
+    this.isEditing.splice(this.isEditing.indexOf(index), 1);
   }
 
   // Play wavesurfer on click on the annotation

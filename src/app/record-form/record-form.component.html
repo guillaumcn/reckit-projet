@@ -57,7 +57,7 @@
         </div>
         <div class="input-field col s8">
           <i class="material-icons prefix">edit</i>
-          <textarea id="note" type="text" name="note" required #newAnnotation></textarea>
+          <textarea id="note" type="text" name="note" placeholder="Ajouter une annotation" required #newAnnotation></textarea>
         </div>
 
         <!-- Validate annotation -->
@@ -66,11 +66,12 @@
 
         <!-- Annotations list -->
         <div class="col s12">
-          <div *ngFor="let note of annotations; let i = index" class="row pointer" (click)="playAtTime(note.time)">
+          <div *ngFor="let note of annotations; let i = index" class="row">
             <i class="material-icons col s1">collections_bookmark</i>
-            <span class="col s1">{{this.prettyPrintDuration(note.time)}}</span>
-            <span class="col s8 push-s1 center">{{note.content}}</span>
-            <i class="material-icons col s1 offset-s1" (click)="deleteAnnotation(i)">delete</i>
+            <span class="col s1 pointer" (click)="playAtTime(note.time)">{{this.prettyPrintDuration(note.time)}}</span>
+            <span class="col s7 push-s1 center" contenteditable="true" (click)="isEditing.indexOf(i) == -1 ? isEditing.push(i) : return" #annotationText>{{note.content}}</span>
+            <i *ngIf="isEditing.indexOf(i) != -1" class="material-icons col s1 offset-s1 pointer green-text" (click)="updateAnnotation(i)">check</i>
+            <i class="material-icons col s1 pointer right" (click)="deleteAnnotation(i)">delete</i>
           </div>
         </div>
       </div>
@@ -89,7 +90,7 @@
           <div class="input-field col s5 offset-s3">
             <i class="material-icons prefix">label_outline</i>
             <input id="name" type="text" name="name" [ngModel]="selectedRecord ? selectedRecord.name : ''" required/>
-            <label class="active" for="name">Nom</label>
+            <label class="active" for="name">Titre</label>
           </div>
         </div>
 
