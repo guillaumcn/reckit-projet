@@ -214,6 +214,16 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  @HostListener('window:keyup', ['$event'])
+  playPauseSpace(event: KeyboardEvent) {
+    if (this.recordService.temporaryMP3 != null) {
+      console.log(event);
+      if (event.keyCode === 32) {
+        this.wavesurfer.playPause();
+      }
+    }
+  }
+
   // Display annotation 3 seconds
   showAnnotation(annotation: { time: number, content: string }) {
     if (this.currentPlayingTime >= annotation.time && this.currentPlayingTime < annotation.time + 3) {
