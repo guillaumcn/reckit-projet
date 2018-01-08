@@ -10,6 +10,8 @@ import {LoadingService} from './loading/loading.service';
 import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
+import {Http} from '@angular/http';
+import {HttpParams} from '@angular/common/http';
 
 @Injectable()
 export class RecordService {
@@ -28,7 +30,8 @@ export class RecordService {
 
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
-              private router: Router) {
+              private router: Router,
+              private http: Http) {
     this.recordListRef = this.db.list<Record>('/records');
     this.recordFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
@@ -45,6 +48,10 @@ export class RecordService {
       this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
     } else {
       this.loadingService.startLoading();
+
+      const headers = new Headers();
+      headers.append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+      this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', 'email='+oratorMail+'&recorder='+this.authService.userDetails.displayName, headers).subscribe((response) => {alert(response); });
 
       // Change mp3 filename
       const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);

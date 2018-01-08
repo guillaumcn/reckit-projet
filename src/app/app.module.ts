@@ -24,6 +24,7 @@ import {RecordItemComponent} from './record-list/record-item/record-item.compone
 import {RecordService} from './record.service';
 import {UsersService} from './users.service';
 import { RecordDetailComponent } from './record-detail/record-detail.component';
+import {HttpModule} from '@angular/http';
 
 @NgModule({
   declarations: [
@@ -45,7 +46,8 @@ import { RecordDetailComponent } from './record-detail/record-detail.component';
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
-    AngularFireAuthModule
+    AngularFireAuthModule,
+    HttpModule
   ],
   providers: [
     AuthService,
