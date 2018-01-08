@@ -421,4 +421,17 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   playAtTime(time) {
     this.wavesurfer.play(time);
   }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (this.wavesurfer) {
+      const wasPlaying = this.wavesurfer.isPlaying();
+      const currentTime = this.wavesurfer.getCurrentTime();
+      this.wavesurfer.empty();
+      this.wavesurfer.drawBuffer();
+      if (wasPlaying) {
+        this.wavesurfer.play(currentTime);
+      }
+    }
+  }
 }
