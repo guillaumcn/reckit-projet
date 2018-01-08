@@ -69,6 +69,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   waveformSize = 0;
   waveformLeft = 0;
 
+  spaceActive = true;
+
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
@@ -384,7 +386,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup', ['$event'])
   playPauseSpace(event: KeyboardEvent) {
-    if (this.recordService.temporaryMP3 != null && !this.isRecording) {
+    if (this.recordService.temporaryMP3 != null && !this.isRecording && this.spaceActive) {
       if (event.keyCode === 32) {
         this.wavesurfer.playPause();
       }
