@@ -24,6 +24,7 @@ import {RecordItemComponent} from './record-list/record-item/record-item.compone
 import {RecordService} from './record.service';
 import {UsersService} from './users.service';
 import { RecordDetailComponent } from './record-detail/record-detail.component';
+import {ResetPasswordComponent} from "./authentication/reset-password/reset-password.component";
 
 @NgModule({
   declarations: [
@@ -32,6 +33,7 @@ import { RecordDetailComponent } from './record-detail/record-detail.component';
     LoginComponent,
     LoadingComponent,
     CreateAccountComponent,
+    ResetPasswordComponent,
     AuthenticationComponent,
     RecordFormComponent,
     RecordListComponent,
