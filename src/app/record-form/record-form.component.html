@@ -5,13 +5,24 @@
     <div class="col s9">
 
       <!-- Waveform -->
+      <!-- Annotation bubbles -->
+      <div *ngFor="let annotation of annotations">
+        <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': (getAnnotationMarginLeft(annotation) - 125) + 'px'}" class="bubble">
+          <p>{{annotation.content}}</p>
+        </div>
+      </div>
+
+      <!-- Annotation lines -->
+      <div *ngFor="let annotation of annotations" class="line" [ngStyle]="{'left': getAnnotationMarginLeft(annotation) + 'px'}">
+      </div>
 
       <div class="valign-wrapper">
-        <div class="row">
-          <div id="waveform" class="z-depth-2"></div>
+        <div class="row" >
+          <div id="waveform" class="z-depth-2" #waveform></div>
           <div id="timeline"></div>
         </div>
       </div>
+
 
       <div class="row">
 
