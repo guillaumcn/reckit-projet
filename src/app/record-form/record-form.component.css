@@ -230,3 +230,7 @@ h5 {
   margin-top: 1em !important;
   margin-bottom: 2em !important;
 }
+
+textarea {
+  resize: none;
+}
