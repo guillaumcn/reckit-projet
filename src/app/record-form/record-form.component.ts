@@ -1,5 +1,5 @@
 import {
-  Component, OnDestroy, OnInit, ViewChild,
+  Component, HostListener, OnDestroy, OnInit, ViewChild,
   ViewChildren
 } from '@angular/core';
 import {RecordService} from '../record.service';
@@ -127,6 +127,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         }),
       ]
     });
+
+
 
     // On play, update annotation time if not recording
     this.wavesurfer.on('play', () => {
@@ -367,6 +369,15 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   playPause() {
     if (this.recordService.temporaryMP3 != null && !this.isRecording) {
       this.wavesurfer.playPause();
+    }
+  }
+
+  @HostListener('window:keyup', ['$event'])
+  playPauseSpace(event: KeyboardEvent) {
+    if (this.recordService.temporaryMP3 != null && !this.isRecording) {
+      if (event.keyCode === 32) {
+        this.wavesurfer.playPause();
+      }
     }
   }
 
