@@ -91,6 +91,12 @@ export class AuthService {
     });
   }
 
+  resetPassword(email: string) {
+    return this.firebaseAuth.auth.sendPasswordResetEmail(email)
+      .then(() => console.log('sent Password Reset Email!'))
+      .catch((error) => console.log(error));
+  }
+
   logout() {
     this.firebaseAuth.auth.signOut().then(value => {
       this.router.navigate(['/authentication']);

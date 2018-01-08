@@ -1,4 +1,5 @@
 import { CreateAccountComponent } from './authentication/create-account/create-account.component';
+import { ResetPasswordComponent } from './authentication/reset-password/reset-password.component';
 import { LoginComponent } from './authentication/login/login.component';
 import {NgModule} from '@angular/core';
 import {Routes, RouterModule} from '@angular/router';
@@ -15,6 +16,7 @@ const appRoutes: Routes = [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'login', component: LoginComponent},
     {path: 'create-account', component: CreateAccountComponent},
+    {path: 'reset-password', component: ResetPasswordComponent},
   ]},
   {path: 'record-form', component: RecordFormComponent, canActivate: [AuthGuard]},
   {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]},
