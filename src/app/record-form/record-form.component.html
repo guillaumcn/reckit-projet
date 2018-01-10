@@ -4,9 +4,16 @@
 
     <div class="col s9">
 
+      <!-- Annotation bubbles -->
+      <div *ngFor="let annotation of selectedRecord.annotations">
+        <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': (getAnnotationMarginLeft(annotation) - 125) + 'px'}" class="bubble">
+          <p>{{annotation.content}}</p>
+        </div>
+      </div>
+
       <!-- Annotation lines -->
-      <div *ngFor="let annotation of annotations" class="line"
-           [ngStyle]="{'display': recordService.temporaryMP3 ? 'block' : 'none','left': recordService.temporaryMP3 ? getAnnotationMarginLeft(annotation) + 'px' : '0px'}">
+      <div *ngFor="let annotation of selectedRecord.annotations" class="line"
+           [ngStyle]="{'display': temporaryMP3 ? 'block' : 'none','left': temporaryMP3 ? getAnnotationMarginLeft(annotation) + 'px' : '0px'}">
       </div>
 
       <div class="valign-wrapper">
@@ -22,8 +29,8 @@
         <div class="col s6">
           <!-- Attachment file input -->
           <div class="btn indigo darken-1 file-field input-field col s6 addFileButton">
-            {{filenames.length + ' fichier(s)'}}
-            <input type="file" id="file" name="file" (change)="getFiles($event)"ngModel multiple>
+            {{selectedRecord.filenames.length + ' fichier(s)'}}
+            <input type="file" id="file" name="file" (change)="getFiles($event)" multiple>
             <i class="material-icons left">attach_file</i>
           </div>
 
@@ -70,10 +77,10 @@
 
         <!-- Annotations list -->
         <div class="col s12">
-          <div *ngFor="let note of annotations; let i = index" class="row">
+          <div *ngFor="let note of selectedRecord.annotations; let i = index" class="row">
             <i class="material-icons col s1">collections_bookmark</i>
             <span class="col s1 pointer" (click)="playAtTime(note.time)">{{this.prettyPrintDuration(note.time)}}</span>
-            <span class="col s7 push-s1 center" contenteditable="true" (click)="isEditing.indexOf(i) == -1 ? isEditing.push(i) : return" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{note.content}}</span>
+            <span class="col s7 push-s1 center" contenteditable="true" (click)="isEditing.indexOf(i) == -1 ? isEditing.push(i) : ''" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{note.content}}</span>
             <i *ngIf="isEditing.indexOf(i) != -1" class="material-icons col s1 offset-s1 pointer green-text" (click)="updateAnnotation(i)">check</i>
             <i class="material-icons col s1 pointer right" (click)="deleteAnnotation(i)">delete</i>
           </div>
@@ -88,12 +95,12 @@
           <div class="input-field col s3">
             <i class="material-icons prefix">timer</i>
             <input id="duration" type="text" name="duration"
-                   [value]="prettyPrintDuration(recordService.temporaryDuration)" required readonly/>
+                   (ngModel)="unprettyPrintDuration(selectedRecord.duration)" [ngModel]="prettyPrintDuration(selectedRecord.duration)" required readonly/>
             <label class="active" for="duration">Durée</label>
           </div>
           <div class="input-field col s5 offset-s3">
             <i class="material-icons prefix">label_outline</i>
-            <input id="name" type="text" name="name" [ngModel]="selectedRecord ? selectedRecord.name : ''"  (focus)="spaceActive=false" (blur)="spaceActive=true" required/>
+            <input id="name" type="text" name="name" (ngModelChange)="nameChanged($event)" [(ngModel)]="selectedRecord.name"  (focus)="spaceActive=false" (blur)="spaceActive=true" required/>
             <label class="active" for="name">Titre</label>
           </div>
         </div>
@@ -106,7 +113,7 @@
             <i class="material-icons prefix">unfold_more</i>
             <select materialize="material_select" [materializeSelectOptions]="selectOptions" id="type"
                     name="type"
-                    [ngModel]="selectedRecord ? selectedRecord.type : defaultType">
+                    [(ngModel)]="selectedRecord.type">
               <option *ngFor="let option of selectOptions" [value]="option">{{option}}</option>
             </select>
             <label for="type">Type</label>
@@ -114,7 +121,7 @@
           <div class="input-field col s5 offset-s3">
             <i class="material-icons prefix">mic_none</i>
             <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off"
-                   [ngModel]="selectedRecord ? selectedRecord.oratorMail : ''"
+                   [(ngModel)]="selectedRecord.oratorMail"
                    materialize="autocomplete" [materializeParams]="[{'data': oratorList}]"  (focus)="spaceActive=false" (blur)="spaceActive=true" email required/>
             <label class="active" for="oratorMail">Mail
               Orateur</label>
@@ -129,7 +136,7 @@
       <!-- Tags -->
 
       <div class="tagform z-depth-2">
-        <div *ngFor="let chip of tags; let i = index" class="row">
+        <div *ngFor="let chip of selectedRecord.tags; let i = index" class="row">
           <i class="material-icons col s1 offset-s1">local_offer</i>
           <span class="col s6 offset-s1">{{chip}}</span>
           <i class="material-icons col s1" (click)="deleteTag(i)">delete</i>
@@ -146,24 +153,24 @@
 
       <!-- Attachment files -->
 
-      <div *ngIf="filenames.length != 0" class="tagform z-depth-2">
-        <div *ngFor="let filename of filenames; let i = index" class="row">
+      <div *ngIf="selectedRecord.filenames.length != 0" class="tagform z-depth-2">
+        <div *ngFor="let filename of selectedRecord.filenames; let i = index" class="row">
           <i class="material-icons col s1 offset-s1">attach_file</i>
           <span class="col s6 offset-s1">{{filename}}</span>
-          <i class="material-icons col s1" (click)="deleteFilename(i)">delete</i>
+          <i *ngIf="filename != selectedRecord.name + '.mp3'" class="material-icons col s1" (click)="deleteFilename(i)">delete</i>
         </div>
       </div>
 
-      <br *ngIf="filenames.length != 0">
-      <hr *ngIf="filenames.length != 0">
-      <br *ngIf="filenames.length != 0">
+      <br *ngIf="selectedRecord.filenames.length != 0">
+      <hr *ngIf="selectedRecord.filenames.length != 0">
+      <br *ngIf="selectedRecord.filenames.length != 0">
 
       <!-- Validation buttons  -->
 
-      <a *ngIf="selectedRecord == null" class="waves-effect waves-light btn col s10 indigo darken-1"
+      <a *ngIf="!selectedRecord.key" class="waves-effect waves-light btn col s10 indigo darken-1"
          [ngClass]="{' disabled' : loadingService.isUploading}"
          type="submit" (click)="onCreate()">Créer</a>
-      <a *ngIf="selectedRecord != null" class="waves-effect waves-light btn col s10 indigo darken-1"
+      <a *ngIf="selectedRecord.key" class="waves-effect waves-light btn col s10 indigo darken-1"
          [ngClass]="{' disabled' : loadingService.isUploading}"
          type="submit" (click)="onUpdate()">Modifier</a>
 

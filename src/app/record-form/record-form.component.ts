@@ -23,10 +23,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Object representing the form
   @ViewChild('f') recordForm: NgForm;
 
-  defaultType = 'Cours';
-
   // Selected record (change whenever a record is selected)
-  selectedRecord: Record = null;
+  selectedRecord: Record = new Record();
 
   // We will add subscriptions to observable here and unsubscribe when destroying the component
   subscriptions: Subscription[] = [];
@@ -34,17 +32,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Orator list (for the autocomplete of the orator input)
   oratorList = {};
 
-  // List of tags
-  tags: string[] = [];
-
-  // List of annotation
-  annotations: { time: number, content: string }[] = [];
   @ViewChildren('annotationText') annotationsText;
   isEditing: number[] = [];
 
   // Wave surfer and Microphone Objects from libraries
   wavesurfer: WaveSurfer = null;
   recorder: MicRecorder = null;
+  // The file which is currently loaded by the waveSurfer
+  temporaryMP3: File = null;
 
   // To know if we are recording or not
   isRecording = false;
@@ -59,8 +54,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Current time of playing or recording
   annotationTime = 0;
 
-  // Attachments files of the record
-  filenames: string[] = [];
   newfiles: File[] = [];
 
   selectOptions: string[] = ['Cours', 'Réunion', 'Conférence', 'Discours'];
@@ -70,6 +63,9 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   waveformLeft = 0;
 
   spaceActive = true;
+
+  prettyPrintDuration = Record.prettyPrintDuration;
+  unprettyPrintDuration = Record.unprettyPrintDuration;
 
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
@@ -135,7 +131,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     });
 
 
-
     // On play, update annotation time if not recording
     this.wavesurfer.on('play', () => {
       if (!this.isRecording) {
@@ -175,33 +170,23 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
       // patch tags
       if (this.selectedRecord.tags == null) {
-        this.tags = [];
-      } else {
-        this.tags = this.selectedRecord.tags.slice();
+        this.selectedRecord.tags = [];
       }
 
       // patch annotations
       if (this.selectedRecord.annotations == null) {
-        this.annotations = [];
-      } else {
-        this.annotations = this.selectedRecord.annotations.slice();
+        this.selectedRecord.annotations = [];
       }
 
       // patch filenames
       if (this.selectedRecord.filenames == null) {
-        this.filenames = [];
-        this.recordService.previousFilenames = [];
-      } else {
-        this.filenames = this.selectedRecord.filenames.slice();
-        this.recordService.previousFilenames = this.selectedRecord.filenames.slice();
-        this.filenames.splice(this.filenames.indexOf(this.selectedRecord.name + '.mp3'), 1);
+        this.selectedRecord.filenames = [];
       }
 
       // get mp3 file...
       this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
         fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-          this.recordService.temporaryDuration = this.selectedRecord.duration;
-          this.recordService.temporaryMP3 = blob as File;
+          this.temporaryMP3 = blob as File;
           // .. Load it in the waveSurfer
           this.wavesurfer.load(URL.createObjectURL(blob));
           this.loadingService.stopLoading();
@@ -210,14 +195,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
       // If no record selected, reset all values
     } else {
-      this.recordForm.reset();
-      this.tags = [];
-      this.recordService.temporaryMP3 = null;
-      this.recordService.temporaryDuration = 0;
+      this.selectedRecord = new Record();
+      this.temporaryMP3 = null;
       this.wavesurfer.load(null);
+      this.annotationTime = 0;
       this.newfiles = [];
-      this.annotations = [];
-      this.filenames = [];
       localStorage.removeItem('selectedRecord');
     }
   }
@@ -238,35 +220,42 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     localStorage.removeItem('selectedRecord');
   }
 
+  // Catched before this.selectedRecord.name is automatically changed
+  nameChanged(newValue) {
+    const indexMp3File = this.selectedRecord.filenames.indexOf(this.selectedRecord.name + '.mp3');
+    if (indexMp3File !== -1) {
+      this.selectedRecord.filenames[indexMp3File] = newValue + '.mp3';
+    }
+  }
+
   onCreate() {
-    if (this.recordForm.valid) {
+    if (this.recordForm.valid && this.temporaryMP3) {
+      // Change mp3 filename
+      const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
+      this.temporaryMP3 = new File([blob], this.selectedRecord.name + '.mp3', {type: blob.type});
+
+      this.newfiles.push(this.temporaryMP3);
+
       // Pass data to the record service
       this.recordService.addRecord(
-        this.recordForm.value.recordData.name,
-        this.recordForm.value.recordData.oratorMail,
-        this.recordService.temporaryDuration,
-        this.recordForm.value.recordData.type,
-        this.filenames,
+        this.selectedRecord,
         this.newfiles,
-        this.tags,
-        this.annotations
       );
     }
   }
 
   onUpdate() {
     if (this.recordForm.valid && this.selectedRecord != null) {
+      // Change mp3 filename
+      const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
+      this.temporaryMP3 = new File([blob], this.selectedRecord.name + '.mp3', {type: blob.type});
+
+      this.newfiles.push(this.temporaryMP3);
+
       // Pass data to the record service
       this.recordService.updateRecord(
-        this.selectedRecord.key,
-        this.recordForm.value.recordData.name,
-        this.recordForm.value.recordData.oratorMail,
-        this.recordService.temporaryDuration,
-        this.recordForm.value.recordData.type,
-        this.filenames,
+        this.selectedRecord,
         this.newfiles,
-        this.tags,
-        this.annotations
       );
     }
   }
@@ -279,55 +268,28 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Update tag Array on button clicks (+ or -)
 
   addTag(tagInput) {
-    if (this.tags.indexOf(tagInput.value) === -1) {
-      this.tags.unshift(tagInput.value);
+    if (this.selectedRecord.tags.indexOf(tagInput.value) === -1) {
+      this.selectedRecord.tags.unshift(tagInput.value);
       tagInput.value = '';
     }
   }
 
   deleteTag(index) {
-    this.tags.splice(index, 1);
-  }
-
-  // 00:05:36 from 336 seconds (for example)
-  prettyPrintDuration(duration: number): string {
-    let result = '';
-    const hours = Math.floor(duration / (60 * 60));
-
-    const divisor_for_minutes = duration % (60 * 60);
-    const minutes = Math.floor(divisor_for_minutes / 60);
-
-    const divisor_for_seconds = divisor_for_minutes % 60;
-    const seconds = Math.ceil(divisor_for_seconds);
-
-    if (hours < 10) {
-      result += '0';
-    }
-    result += hours + ':';
-    if (minutes < 10) {
-      result += '0';
-    }
-    result += minutes + ':';
-    if (seconds < 10) {
-      result += '0';
-    }
-    result += seconds;
-
-    return result;
+    this.selectedRecord.tags.splice(index, 1);
   }
 
   // Get files on input[type=file] change
   getFiles(event) {
     for (let i = 0; i < event.target.files.length; i++) {
-      if (this.filenames.indexOf(event.target.files[i].name) === -1) {
+      if (this.selectedRecord.filenames.indexOf(event.target.files[i].name) === -1) {
         this.newfiles.unshift(event.target.files[i]);
-        this.filenames.unshift(event.target.files[i].name);
+        this.selectedRecord.filenames.unshift(event.target.files[i].name);
       }
     }
   }
 
   deleteFilename(index) {
-    this.filenames.splice(index, 1);
+    this.selectedRecord.filenames.splice(index, 1);
     this.newfiles.splice(index, 1);
   }
 
@@ -340,12 +302,10 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       }
       // Start recording
       this.recorder.start().then(() => {
-        this.recordService.temporaryDuration = 0;
         this.annotationTime = 0;
         // Start duration count
         this.recordInterval = setInterval(() => {
-          this.recordService.temporaryDuration++;
-          this.annotationTime = this.recordService.temporaryDuration;
+          this.annotationTime++;
         }, 1000);
         this.isRecording = true;
       }).catch((e) => {
@@ -365,7 +325,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
           lastModified: Date.now()
         });
 
-        this.recordService.temporaryMP3 = file;
+        this.temporaryMP3 = file;
+        this.selectedRecord.duration = this.annotationTime;
+        if (this.selectedRecord.filenames.indexOf(this.selectedRecord.name + '.mp3') === -1) {
+          this.selectedRecord.filenames.unshift(this.selectedRecord.name + '.mp3');
+        }
 
         // Load file in wavesurfer
         this.wavesurfer.load(URL.createObjectURL(file));
@@ -379,14 +343,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // On play/pause click
   playPause() {
-    if (this.recordService.temporaryMP3 != null && !this.isRecording) {
+    if (!this.isRecording) {
       this.wavesurfer.playPause();
     }
   }
 
   @HostListener('window:keyup', ['$event'])
   playPauseSpace(event: KeyboardEvent) {
-    if (this.recordService.temporaryMP3 != null && !this.isRecording && this.spaceActive) {
+    if (!this.isRecording && this.spaceActive) {
       if (event.keyCode === 32) {
         this.wavesurfer.playPause();
       }
@@ -401,31 +365,31 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Add annotation with current time to the array
   addAnnotation(note) {
     let noteExist = false;
-    for (let i = 0; i < this.annotations.length; i++) {
-      if (this.annotations[i].time === this.annotationTime) {
-        this.annotations[i] = {
-          time : this.annotationTime,
-          content : note.value
+    for (let i = 0; i < this.selectedRecord.annotations.length; i++) {
+      if (this.selectedRecord.annotations[i].time === this.annotationTime) {
+        this.selectedRecord.annotations[i] = {
+          time: this.annotationTime,
+          content: note.value
         };
         noteExist = true;
       }
     }
     if (!noteExist) {
-      this.annotations.unshift({
-        time : this.annotationTime,
-        content : note.value
+      this.selectedRecord.annotations.unshift({
+        time: this.annotationTime,
+        content: note.value
       });
     }
   }
 
   // Remove annotation
   deleteAnnotation(index) {
-    this.annotations.splice(index, 1);
+    this.selectedRecord.annotations.splice(index, 1);
   }
 
   // Update annotation
   updateAnnotation(index) {
-    this.annotations[index].content = this.annotationsText._results[index].nativeElement.textContent;
+    this.selectedRecord.annotations[index].content = this.annotationsText._results[index].nativeElement.textContent;
     this.isEditing.splice(this.isEditing.indexOf(index), 1);
   }
 
@@ -434,17 +398,18 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.wavesurfer.play(time);
   }
 
+  // Display annotation 3 seconds
+  showAnnotation(annotation: { time: number, content: string }) {
+    if (!this.isRecording && this.temporaryMP3 &&  this.annotationTime >= annotation.time && this.annotationTime < annotation.time + 3) {
+      return true;
+    }
+    return false;
+  }
+
   // Get position of the annotation
   getAnnotationMarginLeft(annotation: { time: number, content: string }) {
     return this.waveformLeft +
-      (this.waveformSize * (annotation.time / this.recordService.temporaryDuration));
-  }
-
-  // Display annotation 3 seconds
-  showAnnotation(annotation: { time: number, content: string }) {
-    if (this.annotationTime >= annotation.time && this.annotationTime < annotation.time + 3) {
-      return true;
-    }
+      (this.waveformSize * (annotation.time / this.selectedRecord.duration));
   }
 
   @HostListener('window:resize', ['$event'])

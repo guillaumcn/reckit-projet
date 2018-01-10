@@ -18,17 +18,10 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // Selected record (change whenever a record is selected)
   selectedRecord: Record = null;
 
-  // List of tags
-  tags: string[] = [];
-
-  // List of annotation
-  annotations: { time: number, content: string }[] = [];
-
   showPDF = false;
 
   // Wave surfer Object from libraries
   wavesurfer: WaveSurfer = null;
-  timeline: TimelinePlugin = null;
   @ViewChild('waveform') waveform: ElementRef;
   waveformSize = 0;
   waveformLeft = 0;
@@ -36,10 +29,11 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   // We will add subscriptions to observable here and unsubscribe when destroying the component
   subscriptions: Subscription[] = [];
 
-
   currentPlayingTime = 0;
   // Interval of 1 second to count playing time
   interval = null;
+
+  prettyPrintDuration = Record.prettyPrintDuration;
 
   constructor(public recordService: RecordService, private loadingService: LoadingService) {
     // Save current page (in case of reloading)
@@ -116,23 +110,17 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
     // patch tags
     if (this.selectedRecord.tags == null) {
-      this.tags = [];
-    } else {
-      this.tags = this.selectedRecord.tags.slice();
+      this.selectedRecord.tags = [];
     }
 
     // patch annotations
     if (this.selectedRecord.annotations == null) {
-      this.annotations = [];
-    } else {
-      this.annotations = this.selectedRecord.annotations.slice();
+      this.selectedRecord.annotations = [];
     }
 
     // get mp3 file ...
     this.recordService.getAttachmentUrlPromise(this.selectedRecord.key, this.selectedRecord.name + '.mp3').then((url) => {
       fetch(url, {mode: 'cors'}).then((res) => res.blob()).then((blob) => {
-        this.recordService.temporaryDuration = this.selectedRecord.duration;
-        this.recordService.temporaryMP3 = blob as File;
         // .. Load it in the waveSurfer
         this.wavesurfer.load(URL.createObjectURL(blob));
         this.loadingService.stopLoading();
@@ -151,33 +139,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     // Remove all "current page" data
     localStorage.removeItem('reloadPage');
     localStorage.removeItem('selectedRecord');
-  }
-
-  // 00:05:36 from 336 seconds (for example)
-  prettyPrintDuration(duration: number): string {
-    let result = '';
-    const hours = Math.floor(duration / (60 * 60));
-
-    const divisor_for_minutes = duration % (60 * 60);
-    const minutes = Math.floor(divisor_for_minutes / 60);
-
-    const divisor_for_seconds = divisor_for_minutes % 60;
-    const seconds = Math.ceil(divisor_for_seconds);
-
-    if (hours < 10) {
-      result += '0';
-    }
-    result += hours + ':';
-    if (minutes < 10) {
-      result += '0';
-    }
-    result += minutes + ':';
-    if (seconds < 10) {
-      result += '0';
-    }
-    result += seconds;
-
-    return result;
   }
 
   // On click of download file button
@@ -209,18 +170,14 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // On play/pause click
   playPause() {
-    if (this.recordService.temporaryMP3 != null) {
       this.wavesurfer.playPause();
-    }
   }
 
   @HostListener('window:keyup', ['$event'])
   playPauseSpace(event: KeyboardEvent) {
-    if (this.recordService.temporaryMP3 != null) {
       if (event.keyCode === 32) {
         this.wavesurfer.playPause();
       }
-    }
   }
 
   // Display annotation 3 seconds

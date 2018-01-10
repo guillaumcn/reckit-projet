@@ -11,7 +11,6 @@ import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import {Http} from '@angular/http';
-import {HttpParams} from '@angular/common/http';
 
 @Injectable()
 export class RecordService {
@@ -23,10 +22,7 @@ export class RecordService {
 
   recordSelected: Subject<Record> = new Subject();
 
-  temporaryMP3: File = null;
-  temporaryDuration = 0;
-
-  previousFilenames = [];
+  beforeUpdateFileNames = [];
 
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
@@ -43,74 +39,54 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
-  addRecord(name: string, oratorMail: string, duration: number, type: string, filenames: string[], files: File[], tags: string[], annotations: { time: number, content: string }[]) {
-    if (this.temporaryMP3 == null) {
-      this.toastService.toast('Vous devez d\'abord enregistrer quelque chose');
-    } else {
-      this.loadingService.startLoading();
-
-      const headers = new Headers();
-      headers.append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-      this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', 'email='+oratorMail+'&recorder='+this.authService.userDetails.displayName, headers).subscribe((response) => {alert(response); });
-
-      // Change mp3 filename
-      const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
-      this.temporaryMP3 = new File([blob], name + '.mp3', {type: blob.type});
-
-      files.push(this.temporaryMP3);
-
-      filenames.push(this.temporaryMP3.name);
-
-      this.recordListRef.push({
-        name: name,
-        recorder: this.authService.userDetails.displayName,
-        recorderMail: this.authService.userDetails.email,
-        oratorMail: oratorMail,
-        duration: duration,
-        type: type,
-        tags: tags,
-        annotations: annotations,
-        filenames: filenames
-      }).then((data) => {
-
-        this.uneditRecord();
-        this.loadingService.stopLoading();
-
-        this.uploadFiles(data.key, files);
-      });
-    }
-  }
-
-  updateRecord(key: string, name: string, oratorMail: string, duration: number, type: string, filenames: string[], files: File[], tags: string[], annotations: { time: number, content: string }[]) {
+  addRecord(record: Record,
+            files: File[]) {
     this.loadingService.startLoading();
 
-    // Change mp3 filename
-    const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
-    this.temporaryMP3 = new File([blob], name + '.mp3', {type: blob.type});
+    /* const headers = new Headers();
+     headers.append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+     this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', 'email='+oratorMail+'&recorder='+this.authService.userDetails.displayName, headers).subscribe((response) => {alert(response); });*/
 
-    if (this.previousFilenames.indexOf(this.temporaryMP3.name) === -1) {
-      files.push(this.temporaryMP3);
-    }
-
-    filenames.push(this.temporaryMP3.name);
-
-    this.recordListRef.update(key, {
-      name: name,
+    this.recordListRef.push({
+      name: record.name,
       recorder: this.authService.userDetails.displayName,
       recorderMail: this.authService.userDetails.email,
-      oratorMail: oratorMail,
-      duration: duration,
-      type: type,
-      tags: tags,
-      annotations: annotations,
-      filenames: filenames
+      oratorMail: record.oratorMail,
+      duration: record.duration,
+      type: record.type,
+      tags: record.tags,
+      annotations: record.annotations,
+      filenames: record.filenames
+    }).then((data) => {
+
+      this.uneditRecord();
+      this.loadingService.stopLoading();
+
+      this.uploadFiles(data.key, files);
+    });
+  }
+
+  updateRecord(record: Record,
+               files: File[]) {
+    this.loadingService.startLoading();
+
+    this.recordListRef.update(record.key, {
+      name: record.name,
+      recorder: this.authService.userDetails.displayName,
+      recorderMail: this.authService.userDetails.email,
+      oratorMail: record.oratorMail,
+      duration: record.duration,
+      type: record.type,
+      tags: record.tags,
+      annotations: record.annotations,
+      filenames: record.filenames
     }).then((data) => {
 
       this.loadingService.stopLoading();
 
-      this.removeFiles(key, this.arrayDiff(this.previousFilenames, filenames));
+      this.uploadFiles(record.key, files);
 
-      this.uploadFiles(key, files);
+      this.removeFiles(record.key, this.arrayDiff(this.beforeUpdateFileNames, record.filenames));
 
       this.uneditRecord();
     });
@@ -126,8 +102,7 @@ export class RecordService {
 
   uneditRecord() {
     this.recordSelected.next(null);
-    this.temporaryMP3 = null;
-    this.temporaryDuration = 0;
+    this.beforeUpdateFileNames = [];
   }
 
   getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {
@@ -138,6 +113,7 @@ export class RecordService {
     this.router.navigate(['/record-form']).then(() => {
       this.loadingService.startLoading();
       this.recordSelected.next(record);
+      this.beforeUpdateFileNames = record.filenames.slice();
     });
   }
 

@@ -1,4 +1,4 @@
-export interface Record {
+export class Record {
   key?: string;
   name: string;
   recorder: string;
@@ -9,4 +9,50 @@ export interface Record {
   tags: string[];
   annotations: { time: number, content: string }[];
   filenames: string[];
+
+  constructor() {
+    this.name = '';
+    this.recorder = '';
+    this.oratorMail = '';
+    this.duration = 0;
+    this.type = 'Cours';
+    this.recorderMail = '';
+    this.tags = [];
+    this.annotations = [];
+    this.filenames = [];
+  }
+
+  static unprettyPrintDuration(duration: string): number {
+    const hours = parseInt(duration.substr(0, 2), 10);
+    const minutes = parseInt(duration.substr(3, 2), 10);
+    const seconds = parseInt(duration.substr(6, 2), 10);
+
+    return hours * 3600 + minutes * 60 + seconds;
+  }
+
+  static prettyPrintDuration(duration: number): string {
+    let result = '';
+    const hours = Math.floor(duration / (60 * 60));
+
+    const divisor_for_minutes = duration % (60 * 60);
+    const minutes = Math.floor(divisor_for_minutes / 60);
+
+    const divisor_for_seconds = divisor_for_minutes % 60;
+    const seconds = Math.ceil(divisor_for_seconds);
+
+    if (hours < 10) {
+      result += '0';
+    }
+    result += hours + ':';
+    if (minutes < 10) {
+      result += '0';
+    }
+    result += minutes + ':';
+    if (seconds < 10) {
+      result += '0';
+    }
+    result += seconds;
+
+    return result;
+  }
 }

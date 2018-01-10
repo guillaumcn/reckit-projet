@@ -4,19 +4,18 @@
 
     <!-- Duration  -->
 
-    <h5 class="center">{{currentPlayingTime != 0 ? prettyPrintDuration(currentPlayingTime) :
-      prettyPrintDuration(selectedRecord.duration)}}</h5>
+    <h5 class="center">{{prettyPrintDuration(currentPlayingTime) + ' / ' +  prettyPrintDuration(selectedRecord.duration)}}</h5>
 
     <!-- Annotations -->
 
     <!-- Annotation bubbles -->
-    <div *ngFor="let annotation of annotations">
+    <div *ngFor="let annotation of selectedRecord.annotations">
       <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': (getAnnotationMarginLeft(annotation) - 125) + 'px'}" class="bubble">
         <p>{{annotation.content}}</p>
       </div>
     </div>
     <!-- Annotation lines -->
-    <div *ngFor="let annotation of annotations" class="line" [ngStyle]="{'left': getAnnotationMarginLeft(annotation) + 'px'}">
+    <div *ngFor="let annotation of selectedRecord.annotations" class="line" [ngStyle]="{'left': getAnnotationMarginLeft(annotation) + 'px'}">
     </div>
 
     <!-- Waveform  -->
@@ -56,7 +55,7 @@
 
       <!-- Tags  -->
 
-      <div *ngFor="let tag of tags" class="row">
+      <div *ngFor="let tag of selectedRecord.tags" class="row">
         <i class="material-icons col s1 offset-s1">local_offer</i>
         <span class="col s10">{{tag}}</span>
       </div>
