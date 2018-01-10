@@ -437,7 +437,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Get position of the annotation
   getAnnotationMarginLeft(annotation: { time: number, content: string }) {
     return this.waveformLeft +
-      (this.waveformSize * (annotation.time / this.selectedRecord.duration));
+      (this.waveformSize * (annotation.time / this.recordService.temporaryDuration));
   }
 
   // Display annotation 3 seconds
@@ -445,7 +445,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     if (this.annotationTime >= annotation.time && this.annotationTime < annotation.time + 3) {
       return true;
     }
-    console.log('--------' + this.waveformSize);
   }
 
   @HostListener('window:resize', ['$event'])

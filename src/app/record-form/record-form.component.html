@@ -4,16 +4,9 @@
 
     <div class="col s9">
 
-      <!-- Waveform -->
-      <!-- Annotation bubbles -->
-      <div *ngFor="let annotation of annotations">
-        <div *ngIf="showAnnotation(annotation)" [ngStyle]="{'left': (getAnnotationMarginLeft(annotation) - 125) + 'px'}" class="bubble">
-          <p>{{annotation.content}}</p>
-        </div>
-      </div>
-
       <!-- Annotation lines -->
-      <div *ngFor="let annotation of annotations" class="line" [ngStyle]="{'left': getAnnotationMarginLeft(annotation) + 'px'}">
+      <div *ngFor="let annotation of annotations" class="line"
+           [ngStyle]="{'display': recordService.temporaryMP3 ? 'block' : 'none','left': recordService.temporaryMP3 ? getAnnotationMarginLeft(annotation) + 'px' : '0px'}">
       </div>
 
       <div class="valign-wrapper">
