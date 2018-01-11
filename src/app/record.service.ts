@@ -10,7 +10,7 @@ import {LoadingService} from './loading/loading.service';
 import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
-import {Http} from '@angular/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 
 @Injectable()
 export class RecordService {
@@ -27,7 +27,7 @@ export class RecordService {
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
               private router: Router,
-              private http: Http) {
+              private http: HttpClient) {
     this.recordListRef = this.db.list<Record>('/records');
     this.recordFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
@@ -43,6 +43,9 @@ export class RecordService {
             files: File[]) {
     this.loadingService.startLoading();
 
+    this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', {responseType: 'text'}, {
+      params: new HttpParams().set('email', record.oratorMail).set('recorder', this.authService.userDetails.displayName),
+    }).subscribe((result) => {console.log(result); });
     /* const headers = new Headers();
      headers.append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
      this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', 'email='+oratorMail+'&recorder='+this.authService.userDetails.displayName, headers).subscribe((response) => {alert(response); });*/

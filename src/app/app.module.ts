@@ -26,6 +26,7 @@ import {UsersService} from './users.service';
 import { RecordDetailComponent } from './record-detail/record-detail.component';
 import {HttpModule} from '@angular/http';
 import {ResetPasswordComponent} from './authentication/reset-password/reset-password.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,7 @@ import {ResetPasswordComponent} from './authentication/reset-password/reset-pass
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
     AngularFireAuthModule,
-    HttpModule
+    HttpClientModule
   ],
   providers: [
     AuthService,
