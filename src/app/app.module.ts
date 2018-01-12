@@ -24,9 +24,9 @@ import {RecordItemComponent} from './record-list/record-item/record-item.compone
 import {RecordService} from './record.service';
 import {UsersService} from './users.service';
 import { RecordDetailComponent } from './record-detail/record-detail.component';
-import {HttpModule} from '@angular/http';
 import {ResetPasswordComponent} from './authentication/reset-password/reset-password.component';
 import {HttpClientModule} from '@angular/common/http';
+import {ValidationComponent} from './validation/validation.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +37,7 @@ import {HttpClientModule} from '@angular/common/http';
     CreateAccountComponent,
     ResetPasswordComponent,
     AuthenticationComponent,
+    ValidationComponent,
     RecordFormComponent,
     RecordListComponent,
     RecordItemComponent,

@@ -8,6 +8,7 @@ import { AuthenticationComponent } from './authentication/authentication.compone
 import {RecordFormComponent} from './record-form/record-form.component';
 import {RecordListComponent} from './record-list/record-list.component';
 import {RecordDetailComponent} from './record-detail/record-detail.component';
+import {ValidationComponent} from './validation/validation.component';
 
 
 const appRoutes: Routes = [
@@ -17,6 +18,7 @@ const appRoutes: Routes = [
     {path: 'login', component: LoginComponent},
     {path: 'create-account', component: CreateAccountComponent},
     {path: 'reset-password', component: ResetPasswordComponent},
+    {path: 'validation', component: ValidationComponent},
   ]},
   {path: 'record-form', component: RecordFormComponent, canActivate: [AuthGuard]},
   {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]},
