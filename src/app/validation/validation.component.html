@@ -44,6 +44,9 @@
                 <label for="code">Code</label>
               </div>
             </div>
+            <div *ngIf="selectedRecord.validate">
+              <p>L'enregistrement a bien été validé, vous allez être redirigé(e) dans {{timer}} secondes</p>
+            </div>
             <div class="card-action">
               <button [routerLink]="['/record-form']" class="btn indigo darken-1 waves-effect waves-light"><i class="material-icons left">navigate_before</i>Retour</button>
               <button class="btn indigo darken-1 waves-effect waves-light right" (click)="validateRecord()"><i class="material-icons right">send</i>Valider</button>
