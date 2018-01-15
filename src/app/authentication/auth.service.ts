@@ -3,12 +3,9 @@ import {Injectable} from '@angular/core';
 import {AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 
-import {Observable} from 'rxjs/Observable';
 import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../loading/loading.service';
 import {ToastService} from '../toast.service';
-import {Location} from '@angular/common';
-import {Subject} from 'rxjs/Subject';
 import {UsersService} from '../users.service';
 
 @Injectable()
@@ -77,9 +74,8 @@ export class AuthService {
   }
 
   signInWithGoogle() {
-    const googleProvider = new firebase.auth.GoogleAuthProvider();
     this.firebaseAuth.auth.signInWithPopup(
-      googleProvider
+      new firebase.auth.GoogleAuthProvider()
     ).then(result => {
       this.loadingService.stopLoading();
       this.usersService.updateUserData(result.user.uid, result.user.email, result.user.displayName);
