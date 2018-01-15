@@ -95,7 +95,7 @@
           <div class="input-field col s3">
             <i class="material-icons prefix">timer</i>
             <input id="duration" type="text" name="duration"
-                   (ngModel)="unprettyPrintDuration(selectedRecord.duration)" [ngModel]="prettyPrintDuration(selectedRecord.duration)" required readonly/>
+                   (ngModel)="selectedRecord.duration" [ngModel]="temporaryMP3 ? prettyPrintDuration(selectedRecord.duration) : prettyPrintDuration(annotationTime)" required readonly/>
             <label class="active" for="duration">Durée</label>
           </div>
           <div class="input-field col s5 offset-s3">

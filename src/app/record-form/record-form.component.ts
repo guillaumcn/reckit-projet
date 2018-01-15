@@ -65,7 +65,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   spaceActive = true;
 
   prettyPrintDuration = Record.prettyPrintDuration;
-  unprettyPrintDuration = Record.unprettyPrintDuration;
 
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
