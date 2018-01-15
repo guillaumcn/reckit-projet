@@ -31,8 +31,7 @@ export class RecordService {
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
               private router: Router,
-              private http: HttpClient,
-              @Inject(Window) private _window: Window) {
+              private http: HttpClient) {
     this.recordListRef = this.db.list('/records');
     this.recordListFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
@@ -82,7 +81,7 @@ export class RecordService {
       validationKey: validationKey
     }).then((data) => {
 
-      const _baseUrl = `${this._window.location.origin}/validation?key=` + data.key;
+      const _baseUrl = window.location.origin + '/validation?key=' + data.key;
 
       this.http.get('https://www.guillaumelerda.com/inc/sendEmailReckit.php?' +
         'email=' + record.oratorMail +
