@@ -26,11 +26,15 @@ export class RecordItemComponent implements OnInit {
   }
 
   onEdit() {
-    this.recordService.editRecord(this.record);
+    if (this.record.validate) {
+      this.recordService.editRecord(this.record);
+    }
   }
 
   onRecordDetail() {
-    this.recordService.viewRecordDetails(this.record);
+    if (this.record.validate) {
+      this.recordService.viewRecordDetails(this.record);
+    }
   }
 
 }

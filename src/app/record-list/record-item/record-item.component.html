@@ -14,7 +14,8 @@
 
   <!-- Edit button -->
 
-  <i (click)="onEdit()" class="material-icons col s1">edit</i>
+  <i *ngIf="record.validate" (click)="onEdit()" class="material-icons col s1">edit</i>
+  <i *ngIf="!record.validate" class="material-icons col s1 red-text">clear</i>
 
   <!-- Remove button -->
 

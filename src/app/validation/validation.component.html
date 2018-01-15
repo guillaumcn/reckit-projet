@@ -5,18 +5,48 @@
         <div class="card-content indigo-text darken-1">
           <span class="card-title center">Autoriser la diffusion de l'enregistrement</span>
 
-          <p class="margin">Entrer le code reçu par email ci-dessous :</p>
+          <div class="row margin">
+            <div class="col s12">
+              <ul class="collection">
 
-          <form #validateRecord="ngForm">
+                <!-- An app-record-item for each record -->
+
+                <li class="collection-item row">
+
+                  <!-- Name - Orator -->
+
+                  <span class="col s7">{{selectedRecord.name}} - {{selectedRecord.oratorMail}}</span>
+
+                  <!-- Type -->
+
+                  <span class="col s2">{{selectedRecord.type}}</span>
+
+                  <!-- Duration -->
+
+                  <span class="col s2">{{prettyPrintDuration(selectedRecord.duration)}}</span>
+
+                  <!-- Edit button -->
+
+                  <i *ngIf="selectedRecord.validate" class="material-icons col s1 green-text">done</i>
+                  <i *ngIf="!selectedRecord.validate" class="material-icons col s1 red-text">clear</i>
+                </li>
+
+              </ul>
+            </div>
+          </div>
+
+          <p>Entrer le code reçu par email ci-dessous :</p>
+
+          <form>
             <div class="row">
               <div class="input-field">
-                <input id="code" name="code" type="text" class="validate" required>
+                <input id="code" name="code" type="password" class="validate" [(ngModel)]="validationKey" required>
                 <label for="code">Code</label>
               </div>
             </div>
             <div class="card-action">
               <button [routerLink]="['/record-form']" class="btn indigo darken-1 waves-effect waves-light"><i class="material-icons left">navigate_before</i>Retour</button>
-              <button class="btn indigo darken-1 waves-effect waves-light right"><i class="material-icons right">send</i>Valider</button>
+              <button class="btn indigo darken-1 waves-effect waves-light right" (click)="validateRecord()"><i class="material-icons right">send</i>Valider</button>
             </div>
           </form>
         </div>

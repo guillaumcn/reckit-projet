@@ -4,7 +4,7 @@ import {AngularFireAuth} from 'angularfire2/auth';
 import * as firebase from 'firebase/app';
 
 import {Observable} from 'rxjs/Observable';
-import {Router} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import {LoadingService} from '../loading/loading.service';
 import {ToastService} from '../toast.service';
 import {Location} from '@angular/common';
@@ -16,7 +16,8 @@ export class AuthService {
   userDetails: firebase.User = null;
 
   constructor(private firebaseAuth: AngularFireAuth, private router: Router,
-              private loadingService: LoadingService, private toastService: ToastService, private usersService: UsersService) {
+              private loadingService: LoadingService, private toastService: ToastService, private usersService: UsersService,
+              private route: ActivatedRoute) {
 
     firebaseAuth.authState.subscribe(
       (user) => {
@@ -25,10 +26,9 @@ export class AuthService {
           if (user.providerData[0]['providerId'] !== 'password' || user.emailVerified) {
             this.userDetails = user;
 
-            if (localStorage.getItem('reloadPage')) {
-              this.router.navigate([localStorage.getItem('reloadPage')]);
-            } else {
-              this.router.navigate(['/record-form']);
+            if (this.router.url.indexOf('authentication') !== -1) {
+              const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/record-form';
+              this.router.navigate([returnUrl]);
             }
           } else {
             this.logout();

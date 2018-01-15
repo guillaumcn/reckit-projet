@@ -59,7 +59,8 @@ import {ValidationComponent} from './validation/validation.component';
     ToastService,
     LoadingService,
     RecordService,
-    UsersService
+    UsersService,
+    {provide: Window, useValue: window}
   ],
   bootstrap: [AppComponent]
 })

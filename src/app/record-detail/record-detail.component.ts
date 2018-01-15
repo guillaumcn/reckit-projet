@@ -36,8 +36,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   prettyPrintDuration = Record.prettyPrintDuration;
 
   constructor(public recordService: RecordService, private loadingService: LoadingService) {
-    // Save current page (in case of reloading)
-    localStorage.setItem('reloadPage', '/record-detail');
 
     // Load selected record (from a previous reloading)
     if (localStorage.getItem('selectedRecord')) {
@@ -72,7 +70,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
         TimelinePlugin.create({
           container: '#timeline'
         }),
-        ]
+      ]
     });
 
     this.wavesurfer.on('play', () => {
@@ -136,8 +134,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
       subscription.unsubscribe();
     });
 
-    // Remove all "current page" data
-    localStorage.removeItem('reloadPage');
     localStorage.removeItem('selectedRecord');
   }
 
@@ -170,14 +166,14 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // On play/pause click
   playPause() {
-      this.wavesurfer.playPause();
+    this.wavesurfer.playPause();
   }
 
   @HostListener('window:keyup', ['$event'])
   playPauseSpace(event: KeyboardEvent) {
-      if (event.keyCode === 32) {
-        this.wavesurfer.playPause();
-      }
+    if (event.keyCode === 32) {
+      this.wavesurfer.playPause();
+    }
   }
 
   // Display annotation 3 seconds

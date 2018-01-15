@@ -1,6 +1,6 @@
-import {Injectable} from '@angular/core';
+import {Inject, Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
-import {AngularFireDatabase, AngularFireList} from 'angularfire2/database';
+import {AngularFireDatabase, AngularFireList, AngularFireObject} from 'angularfire2/database';
 import {Observable} from 'rxjs/Observable';
 import {ToastService} from './toast.service';
 import {Record} from './record.model';
@@ -11,14 +11,18 @@ import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import {HttpClient, HttpParams} from '@angular/common/http';
+import {FirebaseObjectObservable} from 'angularfire2/database-deprecated';
 
 @Injectable()
 export class RecordService {
 
   // Chaque élément du tableau de Record[] est une ligne de Firebase
   recordListRef: AngularFireList<Record>;
-  recordFirebaseObservable: Observable<Record[]>;
+  recordListFirebaseObservable: Observable<Record[]>;
   storageRef: Reference;
+
+  recordRef: AngularFireObject<Record>;
+  recordFirebaseObservable: Observable<Record>;
 
   recordSelected: Subject<Record> = new Subject();
 
@@ -27,9 +31,10 @@ export class RecordService {
   constructor(private db: AngularFireDatabase, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
               private router: Router,
-              private http: HttpClient) {
-    this.recordListRef = this.db.list<Record>('/records');
-    this.recordFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
+              private http: HttpClient,
+              @Inject(Window) private _window: Window) {
+    this.recordListRef = this.db.list('/records');
+    this.recordListFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
         const data = action.payload.val() as Record;
         const key = action.payload.key;
@@ -39,16 +44,29 @@ export class RecordService {
     this.storageRef = firebase.storage().ref();
   }
 
+  getRecord(recordKey: string) {
+    this.recordRef = this.db.object('/records/' + recordKey);
+    this.recordFirebaseObservable = this.recordRef.snapshotChanges().map(action => {
+      const data = action.payload.val() as Record;
+      const key = action.payload.key;
+      return {key, ...data};
+    });
+  }
+
+  validateRecord() {
+    this.recordRef.update({validate: true});
+  }
+
   addRecord(record: Record,
             files: File[]) {
     this.loadingService.startLoading();
 
-    this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', {responseType: 'text'}, {
-      params: new HttpParams().set('email', record.oratorMail).set('recorder', this.authService.userDetails.displayName),
-    }).subscribe((result) => {console.log(result); });
-    /* const headers = new Headers();
-     headers.append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
-     this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', 'email='+oratorMail+'&recorder='+this.authService.userDetails.displayName, headers).subscribe((response) => {alert(response); });*/
+    const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let validationKey = '';
+
+    for (let i = 0; i < 16; i++) {
+      validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
 
     this.recordListRef.push({
       name: record.name,
@@ -59,8 +77,21 @@ export class RecordService {
       type: record.type,
       tags: record.tags,
       annotations: record.annotations,
-      filenames: record.filenames
+      filenames: record.filenames,
+      validate: false,
+      validationKey: validationKey
     }).then((data) => {
+
+      const _baseUrl = `${this._window.location.origin}/validation?key=` + data.key;
+
+      this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', {responseType: 'text'}, {
+        params: new HttpParams()
+          .set('email', record.oratorMail)
+          .set('recorder', this.authService.userDetails.displayName)
+          .set('recordname', record.name)
+          .set('validationKey', validationKey)
+          .set('validationURL', _baseUrl),
+      }).subscribe();
 
       this.uneditRecord();
       this.loadingService.stopLoading();
@@ -82,14 +113,16 @@ export class RecordService {
       type: record.type,
       tags: record.tags,
       annotations: record.annotations,
-      filenames: record.filenames
+      filenames: record.filenames,
+      validate: record.validate,
+      validationKey: record.validationKey
     }).then((data) => {
 
       this.loadingService.stopLoading();
 
       this.uploadFiles(record.key, files);
 
-      this.removeFiles(record.key, this.arrayDiff(this.beforeUpdateFileNames, record.filenames));
+      this.removeFiles(record.key, Record.fileDiff(this.beforeUpdateFileNames, record.filenames));
 
       this.uneditRecord();
     });
@@ -169,17 +202,6 @@ export class RecordService {
     this.storageRef.child('/records/' + recordKey + '/' + filename).delete().then(() => {
       this.removeFile(recordKey, filenames, currentIndex + 1);
     });
-  }
-
-  // array1 - array2
-  arrayDiff(array1, array2) {
-    const result = [];
-    for (let i = 0; i < array1.length; i++) {
-      if (array2.indexOf(array1[i]) === -1) {
-        result.push(array1[i]);
-      }
-    }
-    return result;
   }
 
 }

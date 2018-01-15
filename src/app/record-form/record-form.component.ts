@@ -70,9 +70,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
 
-    // Save current page (in case of reloading)
-    localStorage.setItem('reloadPage', '/record-form');
-
     // Load selected record (from a previous reloading)
     if (localStorage.getItem('selectedRecord')) {
       this.selectedRecord = JSON.parse(localStorage.getItem('selectedRecord'));
@@ -200,7 +197,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.wavesurfer.load(null);
       this.annotationTime = 0;
       this.newfiles = [];
-      localStorage.removeItem('selectedRecord');
     }
   }
 
@@ -215,8 +211,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     clearInterval(this.annotationInterval);
     clearInterval(this.recordInterval);
 
-    // Remove all "current page" data
-    localStorage.removeItem('reloadPage');
     localStorage.removeItem('selectedRecord');
   }
 
