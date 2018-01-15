@@ -18,11 +18,11 @@ const appRoutes: Routes = [
     {path: 'login', component: LoginComponent},
     {path: 'create-account', component: CreateAccountComponent},
     {path: 'reset-password', component: ResetPasswordComponent},
-    {path: 'validation', component: ValidationComponent},
   ]},
   {path: 'record-form', component: RecordFormComponent, canActivate: [AuthGuard]},
   {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]},
   {path: 'record-detail', component: RecordDetailComponent, canActivate: [AuthGuard]},
+  {path: 'validation', component: ValidationComponent},
 ];
 
 @NgModule({
