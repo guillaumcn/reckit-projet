@@ -27,14 +27,16 @@ export class ValidationComponent implements OnInit {
       this.recordService.getRecord(this.route.snapshot.queryParams['key']);
       this.recordService.recordFirebaseObservable.subscribe((record) => {
         this.selectedRecord = record;
-        this.timer = 0;
-        // Start duration count
-        this.recordInterval = setInterval(() => {
-          this.timer++;
-          if (record.validate && this.timer === 5) {
-            this.router.navigate(['/record-form']);
-          }
-        }, 1000);
+        if (record.validate) {
+          this.timer = 0;
+          // Start duration count
+          this.recordInterval = setInterval(() => {
+            this.timer++;
+            if (this.timer === 5) {
+              this.router.navigate(['/record-form']);
+            }
+          }, 1000);
+        }
       });
     } else {
       this.router.navigate(['/record-form']);
