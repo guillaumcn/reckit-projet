@@ -84,14 +84,13 @@ export class RecordService {
 
       const _baseUrl = `${this._window.location.origin}/validation?key=` + data.key;
 
-      this.http.post('https://www.guillaumelerda.com/inc/sendEmailReckit.php', {responseType: 'text'}, {
-        params: new HttpParams()
-          .set('email', record.oratorMail)
-          .set('recorder', this.authService.userDetails.displayName)
-          .set('recordname', record.name)
-          .set('validationKey', validationKey)
-          .set('validationURL', _baseUrl),
-      }).subscribe();
+      this.http.get('https://www.guillaumelerda.com/inc/sendEmailReckit.php?' +
+        'email=' + record.oratorMail +
+        '&recorder=' + this.authService.userDetails.displayName +
+        '&recordname=' + record.name +
+        '&validationKey=' + validationKey +
+        '&validationURL=' + _baseUrl)
+        .subscribe();
 
       this.uneditRecord();
       this.loadingService.stopLoading();
