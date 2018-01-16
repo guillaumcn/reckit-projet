@@ -16,7 +16,7 @@ import PDFObject from 'pdfobject/pdfobject.min.js';
 export class RecordDetailComponent implements OnInit, OnDestroy {
 
   // Selected record (change whenever a record is selected)
-  selectedRecord: Record = null;
+  selectedRecord: Record = new Record();
 
   showPDF = false;
 

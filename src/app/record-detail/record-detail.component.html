@@ -31,9 +31,15 @@
 
     <!-- Name - Type  -->
 
-    <h5 class="left">{{selectedRecord ? selectedRecord.name : ''}}</h5>
-    <h5 class="right">{{selectedRecord ? selectedRecord.type : ''}}</h5>
+    <div class="row">
+      <h5 class="left">{{selectedRecord ? selectedRecord.name : ''}}</h5>
+      <h5 class="right">{{selectedRecord ? selectedRecord.type : ''}}</h5>
+    </div>
 
+    <!-- Record comments -->
+    <div class="row">
+      <app-record-comment [selectedRecord]="selectedRecord"></app-record-comment>
+    </div>
 
   </div>
 

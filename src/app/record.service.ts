@@ -202,4 +202,8 @@ export class RecordService {
     });
   }
 
+  addQuestion(recordKey: string, question: string){
+
+  }
+
 }
