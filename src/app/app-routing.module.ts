@@ -13,7 +13,7 @@ import {TagDetailComponent} from './tag-detail/tag-detail.component';
 
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: 'record-form', pathMatch: 'full'},
+  {path: '', redirectTo: 'record-form/new', pathMatch: 'full'},
   {path: 'authentication', component: AuthenticationComponent, children: [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'login', component: LoginComponent},

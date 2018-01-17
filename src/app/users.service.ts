@@ -22,4 +22,12 @@ export class UsersService {
     this.db.object<User>('/users/' + uid).update({email: email, displayName: displayName});
   }
 
+  updateUserFollowedTags(uid: string, followedTags: {}) {
+    this.db.object<User>('/users/' + uid).update({followedTags : followedTags});
+  }
+
+  getUserObservable(uid: string) {
+    return this.db.object<User>('/users/' + uid).valueChanges();
+  }
+
 }

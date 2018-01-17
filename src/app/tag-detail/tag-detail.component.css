@@ -2,6 +2,10 @@ i {
   font-size: 25px;
 }
 
+.row a {
+  margin-top: 15px;
+}
+
 h4 {
   display: inline-block;
   margin-left: 20px;

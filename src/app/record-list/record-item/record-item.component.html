@@ -2,22 +2,24 @@
 
   <!-- Name - Orator -->
 
-  <span class="col s6" (click)="onRecordDetail()">{{record.name}} - {{record.oratorMail}}</span>
+  <span class="col s3" (click)="onRecordDetail()">{{record.name}}</span>
+
+  <span class="col s3" (click)="onRecordDetail()">{{record.oratorMail}}</span>
+
+  <span class="col s2" (click)="onRecordDetail()">{{record.recorder}}</span>
 
   <!-- Type -->
 
-  <span class="col s2" (click)="onRecordDetail()">{{record.type}}</span>
+  <span class="col s1" (click)="onRecordDetail()">{{record.type}}</span>
 
   <!-- Duration -->
 
-  <span class="col s2" (click)="onRecordDetail()">{{prettyPrintDuration(record.duration)}}</span>
+  <span class="col s1" (click)="onRecordDetail()">{{prettyPrintDuration(record.duration)}}</span>
 
-  <!-- Edit button -->
+    <i *ngIf="record.validate" (click)="onEdit()" class="material-icons col s1">edit</i>
+    <i *ngIf="!record.validate" class="material-icons col s1 red-text">clear</i>
 
-  <i *ngIf="record.validate" (click)="onEdit()" class="material-icons col s1">edit</i>
-  <i *ngIf="!record.validate" class="material-icons col s1 red-text">clear</i>
+      <!-- Remove button -->
 
-  <!-- Remove button -->
-
-  <i (click)="removeRecord()" class="material-icons col s1">remove_circle</i>
+    <i (click)="removeRecord()" class="material-icons col s1">remove_circle</i>
 </li>

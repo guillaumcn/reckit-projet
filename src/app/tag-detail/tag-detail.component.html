@@ -1,3 +1,9 @@
-<i class="material-icons">local_offer</i><h4>{{selectedTag}}</h4>
+<div class="row">
+  <span class="col s9">
+    <i class="material-icons">local_offer</i><h4>{{selectedTag}}</h4>
+  </span>
+  <a *ngIf="!currentUser.followedTags[selectedTag]" (click)="followTag()" class="btn col s3 indigo darken-1">Suivre</a>
+  <a *ngIf="currentUser.followedTags[selectedTag]" (click)="unfollowTag()" class="btn col s3 indigo darken-1">Ne plus suivre</a>
+</div>
 
 <app-record-list></app-record-list>
