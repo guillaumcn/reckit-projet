@@ -7,7 +7,7 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js
 import {Subscription} from 'rxjs/Subscription';
 import * as FileSaver from 'file-saver';
 import PDFObject from 'pdfobject/pdfobject.min.js';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 
 @Component({
   selector: 'app-record-detail',
@@ -37,17 +37,21 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   prettyPrintDuration = Record.prettyPrintDuration;
   objectKeys = Object.keys;
 
-  constructor(public recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute) {
+  constructor(public recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute, private router: Router) {
 
 
     this.subscriptions.push(this.route.params.subscribe(params => {
       const recordKey = params['key'];
 
       this.subscriptions.push(this.recordService.recordByKey(recordKey).subscribe((record) => {
-        this.selectedRecord = record;
+        if (record != null) {
+          this.selectedRecord = record;
 
-        // Patch all values with new record selected
-        this.loadDataFromSelectedRecord();
+          // Patch all values with new record selected
+          this.loadDataFromSelectedRecord();
+        } else {
+          this.router.navigate(['/record-list']);
+        }
       }));
     }));
   }
