@@ -1,28 +1,58 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, Input, OnDestroy, OnInit} from '@angular/core';
 import {RecordService} from '../record.service';
 import {Record} from '../record.model';
+import {LoadingService} from '../loading/loading.service';
+import {Subscription} from 'rxjs/Subscription';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-record-list',
   templateUrl: './record-list.component.html',
   styleUrls: ['./record-list.component.css']
 })
-export class RecordListComponent implements OnInit {
+export class RecordListComponent implements OnInit, OnDestroy {
 
   // List of records
   records: Record[] = [];
 
-  constructor(private recordService: RecordService) {
+  // We will add subscriptions to observable here and unsubscribe when destroying the component
+  subscriptions: Subscription[] = [];
+
+  constructor(private recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute) {
   }
 
   ngOnInit() {
-
     // Subscribe to the list of records observable
-    this.recordService.recordListFirebaseObservable.subscribe(
+    this.subscriptions.push(this.recordService.recordList().subscribe(
       (records) => {
         this.records = records;
+        this.loadingService.stopLoading();
       }
-    );
+    ));
+
+    this.subscriptions.push(this.route.params.subscribe(params => {
+      if (params['tag']) {
+        // Unsubscribe all observables
+        this.subscriptions.forEach((subscription: Subscription) => {
+          subscription.unsubscribe();
+        });
+
+        // Subscribe to the list of records observable with tag filter
+        this.subscriptions.push(this.recordService.recordListByFilterTag(params['tag']).subscribe(
+          (records) => {
+            this.records = records;
+            this.loadingService.stopLoading();
+          }
+        ));
+      }
+    }));
+  }
+
+  ngOnDestroy() {
+    // Unsubscribe all observables
+    this.subscriptions.forEach((subscription: Subscription) => {
+      subscription.unsubscribe();
+    });
   }
 
 }

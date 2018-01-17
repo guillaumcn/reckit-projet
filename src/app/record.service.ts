@@ -1,7 +1,6 @@
-import {Inject, Injectable} from '@angular/core';
+import {Injectable} from '@angular/core';
 import {Subject} from 'rxjs/Subject';
 import {AngularFireDatabase, AngularFireList, AngularFireObject} from 'angularfire2/database';
-import {Observable} from 'rxjs/Observable';
 import {ToastService} from './toast.service';
 import {Record} from './record.model';
 import * as firebase from 'firebase';
@@ -10,21 +9,16 @@ import {LoadingService} from './loading/loading.service';
 import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
-import {HttpClient, HttpParams} from '@angular/common/http';
-import {FirebaseObjectObservable} from 'angularfire2/database-deprecated';
+import {HttpClient} from '@angular/common/http';
 
 @Injectable()
 export class RecordService {
 
   // Chaque élément du tableau de Record[] est une ligne de Firebase
   recordListRef: AngularFireList<Record>;
-  recordListFirebaseObservable: Observable<Record[]>;
   storageRef: Reference;
 
   recordRef: AngularFireObject<Record>;
-  recordFirebaseObservable: Observable<Record>;
-
-  recordSelected: Subject<Record> = new Subject();
 
   beforeUpdateFileNames = [];
 
@@ -32,23 +26,43 @@ export class RecordService {
               private loadingService: LoadingService, private authService: AuthService,
               private router: Router,
               private http: HttpClient) {
-    this.recordListRef = this.db.list('/records');
-    this.recordListFirebaseObservable = this.recordListRef.snapshotChanges().map(actions => {
+    this.storageRef = firebase.storage().ref();
+  }
+
+  recordList() {
+      this.recordListRef = this.db.list('/records');
+      return this.createRecordListObservable();
+  }
+
+  recordListByFilterTag(value) {
+      this.recordListRef = this.db.list('/records', ref => ref.orderByChild('tags/' + value).equalTo(true));
+      return this.createRecordListObservable();
+  }
+
+  createRecordListObservable() {
+    return this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
         const data = action.payload.val() as Record;
         const key = action.payload.key;
         return {key, ...data};
       });
     });
-    this.storageRef = firebase.storage().ref();
   }
 
-  getRecord(recordKey: string) {
+  recordByKey(recordKey: string) {
     this.recordRef = this.db.object('/records/' + recordKey);
-    this.recordFirebaseObservable = this.recordRef.snapshotChanges().map(action => {
+    return this.createRecordObservable();
+  }
+
+  createRecordObservable() {
+    return this.recordRef.snapshotChanges().map(action => {
       const data = action.payload.val() as Record;
       const key = action.payload.key;
-      return {key, ...data};
+      if (data) {
+        return {key, ...data};
+      } else {
+        return null;
+      }
     });
   }
 
@@ -135,7 +149,6 @@ export class RecordService {
   }
 
   uneditRecord() {
-    this.recordSelected.next(null);
     this.beforeUpdateFileNames = [];
   }
 
@@ -144,17 +157,21 @@ export class RecordService {
   }
 
   editRecord(record: Record) {
-    this.router.navigate(['/record-form']).then(() => {
+    this.router.navigate(['/record-form', record.key]).then(() => {
       this.loadingService.startLoading();
-      this.recordSelected.next(record);
       this.beforeUpdateFileNames = record.filenames.slice();
     });
   }
 
   viewRecordDetails(record: Record) {
-    this.router.navigate(['/record-detail']).then(() => {
+    this.router.navigate(['/record-detail', record.key]).then(() => {
       this.loadingService.startLoading();
-      this.recordSelected.next(record);
+    });
+  }
+
+  viewTagDetails(tag: string) {
+    this.router.navigate(['/tag-detail', tag]).then(() => {
+      this.loadingService.startLoading();
     });
   }
 
@@ -202,7 +219,7 @@ export class RecordService {
     });
   }
 
-  addQuestion(recordKey: string, question: string){
+  addQuestion(recordKey: string, question: string) {
 
   }
 

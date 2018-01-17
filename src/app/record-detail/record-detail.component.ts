@@ -7,6 +7,7 @@ import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js
 import {Subscription} from 'rxjs/Subscription';
 import * as FileSaver from 'file-saver';
 import PDFObject from 'pdfobject/pdfobject.min.js';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-record-detail',
@@ -34,27 +35,21 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   interval = null;
 
   prettyPrintDuration = Record.prettyPrintDuration;
+  objectKeys = Object.keys;
 
-  constructor(public recordService: RecordService, private loadingService: LoadingService) {
+  constructor(public recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute) {
 
-    // Load selected record (from a previous reloading)
-    if (localStorage.getItem('selectedRecord')) {
-      this.selectedRecord = JSON.parse(localStorage.getItem('selectedRecord'));
 
-      this.loadDataFromSelectedRecord();
-    }
+    this.subscriptions.push(this.route.params.subscribe(params => {
+      const recordKey = params['key'];
 
-    this.subscriptions.push(
-      // Subscribe to a selectedRecord event
-      this.recordService.recordSelected.subscribe((record) => {
+      this.subscriptions.push(this.recordService.recordByKey(recordKey).subscribe((record) => {
         this.selectedRecord = record;
-
-        // Save loaded record (in case of reloading)
-        localStorage.setItem('selectedRecord', JSON.stringify(this.selectedRecord));
 
         // Patch all values with new record selected
         this.loadDataFromSelectedRecord();
       }));
+    }));
   }
 
   ngOnInit() {
@@ -108,7 +103,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
     // patch tags
     if (this.selectedRecord.tags == null) {
-      this.selectedRecord.tags = [];
+      this.selectedRecord.tags = {};
     }
 
     // patch annotations
@@ -133,8 +128,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((subscription: Subscription) => {
       subscription.unsubscribe();
     });
-
-    localStorage.removeItem('selectedRecord');
   }
 
   // On click of download file button
@@ -187,6 +180,10 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   getAnnotationMarginLeft(annotation: { time: number, content: string }) {
     return this.waveformLeft +
       (this.waveformSize * (annotation.time / this.selectedRecord.duration));
+  }
+
+  selectTag(tag: string) {
+    this.recordService.viewTagDetails(tag);
   }
 
   // Update bounds value on window resize and resize the wavesurfer

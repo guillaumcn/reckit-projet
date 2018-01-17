@@ -12,6 +12,7 @@ import {LoadingService} from '../loading/loading.service';
 import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'app-record-form',
@@ -65,33 +66,23 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   spaceActive = true;
 
   prettyPrintDuration = Record.prettyPrintDuration;
+  objectKeys = Object.keys;
 
 
-  constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService) {
+  constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService, private route: ActivatedRoute) {
 
-    // Load selected record (from a previous reloading)
-    if (localStorage.getItem('selectedRecord')) {
-      this.selectedRecord = JSON.parse(localStorage.getItem('selectedRecord'));
+    this.subscriptions.push(this.route.params.subscribe(params => {
+      const recordKey = params['key'];
 
-      this.loadDataFromSelectedRecord();
-    } else {
-      // Reinitialize all values if no previous record selected
-      this.recordService.uneditRecord();
-    }
-
-    this.subscriptions.push(
-      // Subscribe to a selectedRecord event
-      this.recordService.recordSelected.subscribe(
-        (record) => {
+      this.subscriptions.push(this.recordService.recordByKey(recordKey).subscribe((record) => {
+        if (record != null) {
           this.selectedRecord = record;
-
-          // Save loaded record (in case of reloading)
-          localStorage.setItem('selectedRecord', JSON.stringify(this.selectedRecord));
 
           // Patch all values with new record selected
           this.loadDataFromSelectedRecord();
         }
-      ));
+      }));
+    }));
 
     this.subscriptions.push(
       // Subscribe to usersQueryObservable (for the autocomplete of the orator input)
@@ -166,7 +157,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
       // patch tags
       if (this.selectedRecord.tags == null) {
-        this.selectedRecord.tags = [];
+        this.selectedRecord.tags = {};
       }
 
       // patch annotations
@@ -209,8 +200,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
     clearInterval(this.annotationInterval);
     clearInterval(this.recordInterval);
-
-    localStorage.removeItem('selectedRecord');
   }
 
   // Catched before this.selectedRecord.name is automatically changed
@@ -261,14 +250,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Update tag Array on button clicks (+ or -)
 
   addTag(tagInput) {
-    if (this.selectedRecord.tags.indexOf(tagInput.value) === -1) {
-      this.selectedRecord.tags.unshift(tagInput.value);
-      tagInput.value = '';
-    }
+    this.selectedRecord.tags[tagInput.value] = true;
+    tagInput.value = '';
   }
 
-  deleteTag(index) {
-    this.selectedRecord.tags.splice(index, 1);
+  deleteTag(key) {
+    delete this.selectedRecord.tags[key];
   }
 
   // Get files on input[type=file] change
@@ -393,7 +380,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   // Display annotation 3 seconds
   showAnnotation(annotation: { time: number, content: string }) {
-    if (!this.isRecording && this.temporaryMP3 &&  this.annotationTime >= annotation.time && this.annotationTime < annotation.time + 3) {
+    if (!this.isRecording && this.temporaryMP3 && this.annotationTime >= annotation.time && this.annotationTime < annotation.time + 3) {
       return true;
     }
     return false;

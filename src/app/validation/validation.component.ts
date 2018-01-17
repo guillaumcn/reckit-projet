@@ -24,8 +24,7 @@ export class ValidationComponent implements OnInit {
 
   ngOnInit() {
     if (this.route.snapshot.queryParams['key']) {
-      this.recordService.getRecord(this.route.snapshot.queryParams['key']);
-      this.recordService.recordFirebaseObservable.subscribe((record) => {
+      this.recordService.recordByKey(this.route.snapshot.queryParams['key']).subscribe((record) => {
         this.selectedRecord = record;
         if (record.validate) {
           this.timer = 5;

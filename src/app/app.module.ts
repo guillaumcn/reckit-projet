@@ -28,6 +28,7 @@ import {ResetPasswordComponent} from './authentication/reset-password/reset-pass
 import {HttpClientModule} from '@angular/common/http';
 import {ValidationComponent} from './validation/validation.component';
 import { RecordCommentComponent } from './record-detail/record-comment/record-comment.component';
+import { TagDetailComponent } from './tag-detail/tag-detail.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { RecordCommentComponent } from './record-detail/record-comment/record-co
     RecordItemComponent,
     RecordDetailComponent,
     RecordCommentComponent,
+    TagDetailComponent,
 ],
   imports: [
     BrowserModule,
