@@ -32,7 +32,7 @@ export class ValidationComponent implements OnInit {
           this.recordInterval = setInterval(() => {
             this.timer--;
             if (this.timer === 0) {
-              this.router.navigate(['/record-form']);
+              this.router.navigate(['/record-form/new']);
             }
           }, 1000);
         }
