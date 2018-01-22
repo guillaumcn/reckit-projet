@@ -9,6 +9,7 @@ import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import {HttpClient} from '@angular/common/http';
 import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from 'angularfire2/firestore';
+import {current} from 'codelyzer/util/syntaxKind';
 
 @Injectable()
 export class RecordService {
@@ -35,7 +36,7 @@ export class RecordService {
   }
 
   recordListByFilterTag(value) {
-    this.recordListRef = this.afs.collection('/records'/*, ref => ref.orderByChild('tags/' + value).equalTo(true)*/);
+    this.recordListRef = this.afs.collection('/records', ref => ref.where('tags.' + value, '>', 0).orderBy('tags.' + value));
     return this.createRecordListObservable();
   }
 
@@ -81,6 +82,11 @@ export class RecordService {
       validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
+    const currentDate = Date.now();
+    for (const tagkey in record.tags) {
+      record.tags[tagkey] = currentDate;
+    }
+
     this.recordListRef.add({
       name: record.name,
       recorder: this.authService.userDetails.displayName,
@@ -91,7 +97,7 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
-      lastUpdate: Date.now(),
+      lastUpdate: currentDate,
       validate: false,
       validationKey: validationKey
     }).then((data) => {
@@ -115,6 +121,11 @@ export class RecordService {
   updateRecord(record: Record,
                files: File[]) {
     this.loadingService.startLoading();
+
+    const currentDate = Date.now();
+    for (const tagkey in record.tags) {
+      record.tags[tagkey] = currentDate;
+    }
 
     this.recordListRef.doc(record.key).update({
       name: record.name,
