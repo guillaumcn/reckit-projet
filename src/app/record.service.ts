@@ -27,18 +27,16 @@ export class RecordService {
               private router: Router,
               private http: HttpClient) {
     this.storageRef = firebase.storage().ref();
-    this.recordListRef = this.db.list('/records');
   }
 
   recordList() {
-    this.recordListRef = this.db.list('/records');
-    return this.createRecordListObservable();
+      this.recordListRef = this.db.list('/records');
+      return this.createRecordListObservable();
   }
 
   recordListByFilterTag(value) {
-    console.log(value);
-    this.recordListRef = this.db.list('/records', ref => ref.orderByChild('lastUpdate').startAt(value));
-    return this.createRecordListObservable();
+      this.recordListRef = this.db.list('/records', ref => ref.orderByChild('tags/' + value).equalTo(true));
+      return this.createRecordListObservable();
   }
 
   createRecordListObservable() {
@@ -83,11 +81,6 @@ export class RecordService {
       validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
-    let lastUpdate = Date.now().toString();
-    for (let i = 0; i < record.tags.length; i++) {
-      lastUpdate += ':::' + record.tags[i] + ':::';
-    }
-
     this.recordListRef.push({
       name: record.name,
       recorder: this.authService.userDetails.displayName,
@@ -98,7 +91,6 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
-      lastUpdate: lastUpdate,
       validate: false,
       validationKey: validationKey
     }).then((data) => {
@@ -124,11 +116,6 @@ export class RecordService {
                files: File[]) {
     this.loadingService.startLoading();
 
-    let lastUpdate = Date.now().toString();
-    for (let i = 0; i < record.tags.length; i++) {
-      lastUpdate += ':::' + record.tags[i] + ':::';
-    }
-
     this.recordListRef.update(record.key, {
       name: record.name,
       recorder: this.authService.userDetails.displayName,
@@ -139,7 +126,6 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
-      lastUpdate: lastUpdate,
       validate: record.validate,
       validationKey: record.validationKey
     }).then((data) => {

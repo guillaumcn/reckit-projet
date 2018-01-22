@@ -6,10 +6,9 @@ export class Record {
   duration: number;
   type: string;
   recorderMail: string;
-  tags: string[];
+  tags: {};
   annotations: { time: number, content: string }[];
   filenames: string[];
-  lastUpdate: string;
   validate: boolean;
   validationKey: string;
 
@@ -20,10 +19,9 @@ export class Record {
     this.duration = 0;
     this.type = 'Cours';
     this.recorderMail = '';
-    this.tags = [];
+    this.tags = {};
     this.annotations = [];
     this.filenames = [];
-    this.lastUpdate = '';
     this.validate = false;
     this.validationKey = '';
   }

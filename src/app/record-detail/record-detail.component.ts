@@ -107,7 +107,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
     // patch tags
     if (this.selectedRecord.tags == null) {
-      this.selectedRecord.tags = [];
+      this.selectedRecord.tags = {};
     }
 
     // patch annotations
