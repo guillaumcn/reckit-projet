@@ -66,7 +66,6 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   spaceActive = true;
 
   prettyPrintDuration = Record.prettyPrintDuration;
-  objectKeys = Object.keys;
 
 
   constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService, private route: ActivatedRoute) {
@@ -157,7 +156,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
       // patch tags
       if (this.selectedRecord.tags == null) {
-        this.selectedRecord.tags = {};
+        this.selectedRecord.tags = [];
       }
 
       // patch annotations
@@ -250,12 +249,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Update tag Array on button clicks (+ or -)
 
   addTag(tagInput) {
-    this.selectedRecord.tags[tagInput.value] = true;
-    tagInput.value = '';
+    if (this.selectedRecord.tags.indexOf(tagInput.value) === -1) {
+      this.selectedRecord.tags.push(tagInput.value);
+      tagInput.value = '';
+    }
   }
 
-  deleteTag(key) {
-    delete this.selectedRecord.tags[key];
+  deleteTag(index) {
+    this.selectedRecord.tags.splice(index, 1);
   }
 
   // Get files on input[type=file] change
