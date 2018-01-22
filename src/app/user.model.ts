@@ -1,7 +1,7 @@
 export class User {
   displayName: string;
   email: string;
-  followedTags: {};
+  followedTags?: {};
 
   constructor() {
     this.displayName = '';

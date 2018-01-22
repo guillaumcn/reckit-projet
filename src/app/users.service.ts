@@ -3,6 +3,7 @@ import {AngularFireDatabase, AngularFireList} from 'angularfire2/database';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
 import {User} from './user.model';
+import {AngularFirestore} from 'angularfire2/firestore';
 
 @Injectable()
 export class UsersService {
@@ -11,23 +12,23 @@ export class UsersService {
   usersQueryObservable: Observable<User[]>;
 
 
-  constructor(private db: AngularFireDatabase) {
+  constructor(private afs: AngularFirestore) {
     this.usersQueryObservable = this.query.switchMap(value =>
-      db.list('/users', ref =>
-        ref.orderByChild('email').limitToFirst(5).startAt(value)).valueChanges()
+      afs.collection('/users', ref =>
+        ref.orderBy('email').limit(5).startAt(value)).valueChanges()
     );
   }
 
   updateUserData(uid: string, email: string, displayName: string) {
-    this.db.object<User>('/users/' + uid).update({email: email, displayName: displayName});
+    this.afs.doc<User>('/users/' + uid).set({email: email, displayName: displayName});
   }
 
   updateUserFollowedTags(uid: string, followedTags: {}) {
-    this.db.object<User>('/users/' + uid).update({followedTags : followedTags});
+    this.afs.doc<User>('/users/' + uid).update({followedTags : followedTags});
   }
 
   getUserObservable(uid: string) {
-    return this.db.object<User>('/users/' + uid).valueChanges();
+    return this.afs.doc<User>('/users/' + uid).valueChanges();
   }
 
 }

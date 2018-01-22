@@ -29,6 +29,8 @@ import {HttpClientModule} from '@angular/common/http';
 import {ValidationComponent} from './validation/validation.component';
 import { RecordCommentComponent } from './record-detail/record-comment/record-comment.component';
 import { TagDetailComponent } from './tag-detail/tag-detail.component';
+import { NewsComponent } from './news/news.component';
+import {AngularFirestore, AngularFirestoreModule} from 'angularfire2/firestore';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,7 @@ import { TagDetailComponent } from './tag-detail/tag-detail.component';
     RecordDetailComponent,
     RecordCommentComponent,
     TagDetailComponent,
+    NewsComponent,
 ],
   imports: [
     BrowserModule,
@@ -54,6 +57,7 @@ import { TagDetailComponent } from './tag-detail/tag-detail.component';
     FormsModule,
     AngularFireModule.initializeApp(environment.firebase),
     AngularFireDatabaseModule,
+    AngularFirestoreModule,
     AngularFireAuthModule,
     HttpClientModule
   ],

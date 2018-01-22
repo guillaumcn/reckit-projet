@@ -75,13 +75,13 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       const recordKey = params['key'];
 
       this.subscriptions.push(this.recordService.recordByKey(recordKey).subscribe((record) => {
-        if (record != null) {
-          this.selectedRecord = record;
+          if (record != null) {
+            this.selectedRecord = record;
 
-          // Patch all values with new record selected
-          this.loadDataFromSelectedRecord();
-        }
-      }));
+            // Patch all values with new record selected
+            this.loadDataFromSelectedRecord();
+          }
+        }));
     }));
 
     this.subscriptions.push(

@@ -9,6 +9,7 @@ export class Record {
   tags: {};
   annotations: { time: number, content: string }[];
   filenames: string[];
+  lastUpdate: number;
   validate: boolean;
   validationKey: string;
 
@@ -22,6 +23,7 @@ export class Record {
     this.tags = {};
     this.annotations = [];
     this.filenames = [];
+    this.lastUpdate = 0;
     this.validate = false;
     this.validationKey = '';
   }

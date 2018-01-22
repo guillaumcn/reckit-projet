@@ -1,6 +1,4 @@
 import {Injectable} from '@angular/core';
-import {Subject} from 'rxjs/Subject';
-import {AngularFireDatabase, AngularFireList, AngularFireObject} from 'angularfire2/database';
 import {ToastService} from './toast.service';
 import {Record} from './record.model';
 import * as firebase from 'firebase';
@@ -10,55 +8,57 @@ import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import {HttpClient} from '@angular/common/http';
+import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from 'angularfire2/firestore';
 
 @Injectable()
 export class RecordService {
 
   // Chaque élément du tableau de Record[] est une ligne de Firebase
-  recordListRef: AngularFireList<Record>;
+  recordListRef: AngularFirestoreCollection<Record>;
   storageRef: Reference;
 
-  recordRef: AngularFireObject<Record>;
+  recordRef: AngularFirestoreDocument<Record>;
 
   beforeUpdateFileNames = [];
 
-  constructor(private db: AngularFireDatabase, private toastService: ToastService,
+  constructor(private afs: AngularFirestore, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
               private router: Router,
               private http: HttpClient) {
     this.storageRef = firebase.storage().ref();
+    this.recordListRef = this.afs.collection('/records');
   }
 
   recordList() {
-      this.recordListRef = this.db.list('/records');
-      return this.createRecordListObservable();
+    this.recordListRef = this.afs.collection('/records');
+    return this.createRecordListObservable();
   }
 
   recordListByFilterTag(value) {
-      this.recordListRef = this.db.list('/records', ref => ref.orderByChild('tags/' + value).equalTo(true));
-      return this.createRecordListObservable();
+    this.recordListRef = this.afs.collection('/records'/*, ref => ref.orderByChild('tags/' + value).equalTo(true)*/);
+    return this.createRecordListObservable();
   }
 
   createRecordListObservable() {
     return this.recordListRef.snapshotChanges().map(actions => {
       return actions.map(action => {
-        const data = action.payload.val() as Record;
-        const key = action.payload.key;
+        const data = action.payload.doc.data() as Record;
+        const key = action.payload.doc.id;
         return {key, ...data};
       });
     });
   }
 
   recordByKey(recordKey: string) {
-    this.recordRef = this.db.object('/records/' + recordKey);
+    this.recordRef = this.afs.doc('/records/' + recordKey);
     return this.createRecordObservable();
   }
 
   createRecordObservable() {
     return this.recordRef.snapshotChanges().map(action => {
-      const data = action.payload.val() as Record;
-      const key = action.payload.key;
-      if (data) {
+      if (action.payload.exists) {
+        const data = action.payload.data() as Record;
+        const key = action.payload.id;
         return {key, ...data};
       } else {
         return null;
@@ -81,7 +81,7 @@ export class RecordService {
       validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
-    this.recordListRef.push({
+    this.recordListRef.add({
       name: record.name,
       recorder: this.authService.userDetails.displayName,
       recorderMail: this.authService.userDetails.email,
@@ -91,11 +91,11 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
+      lastUpdate: Date.now(),
       validate: false,
       validationKey: validationKey
     }).then((data) => {
-
-      const _baseUrl = window.location.origin + '/validation?key=' + data.key;
+      const _baseUrl = window.location.origin + '/validation?key=' + data.id;
 
       this.http.get('https://www.guillaumelerda.com/inc/sendEmailReckit.php?' +
         'email=' + record.oratorMail +
@@ -108,7 +108,7 @@ export class RecordService {
       this.uneditRecord();
       this.loadingService.stopLoading();
 
-      this.uploadFiles(data.key, files);
+      this.uploadFiles(data.id, files);
     });
   }
 
@@ -116,7 +116,7 @@ export class RecordService {
                files: File[]) {
     this.loadingService.startLoading();
 
-    this.recordListRef.update(record.key, {
+    this.recordListRef.doc(record.key).update({
       name: record.name,
       recorder: this.authService.userDetails.displayName,
       recorderMail: this.authService.userDetails.email,
@@ -126,6 +126,7 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
+      lastUpdate: Date.now(),
       validate: record.validate,
       validationKey: record.validationKey
     }).then((data) => {
@@ -143,7 +144,7 @@ export class RecordService {
   removeRecord(record: Record) {
     this.loadingService.startLoading();
 
-    this.recordListRef.remove(record.key).then(() => {
+    this.recordListRef.doc(record.key).delete().then(() => {
       this.removeFiles(record.key, record.filenames);
     });
   }
