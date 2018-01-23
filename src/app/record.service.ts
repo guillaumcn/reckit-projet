@@ -1,6 +1,7 @@
 import {Injectable} from '@angular/core';
 import {ToastService} from './toast.service';
 import {Record} from './record.model';
+import {Comment} from './comment.model';
 import * as firebase from 'firebase';
 import Reference = firebase.storage.Reference;
 import {LoadingService} from './loading/loading.service';
@@ -18,6 +19,7 @@ export class RecordService {
   // Chaque élément du tableau de Record[] est une ligne de Firebase
   recordListRef: AngularFirestoreCollection<Record>;
   storageRef: Reference;
+  recordCommentsRef: AngularFirestoreCollection<Comment>;
 
   recordRef: AngularFirestoreDocument<Record>;
 
@@ -56,6 +58,7 @@ export class RecordService {
 
   recordByKey(recordKey: string) {
     this.recordRef = this.afs.doc('/records/' + recordKey);
+    this.recordCommentsRef = this.recordRef.collection('comments');
     return this.createRecordObservable();
   }
 
@@ -238,7 +241,12 @@ export class RecordService {
   }
 
   addQuestion(recordKey: string, question: string) {
-
+    let comList = this.recordRef.collection('comments');
+    comList.add({
+      textQuestion: question,
+      date: Date.now(),
+      questioner: this.authService.userDetails.displayName
+    });
   }
 
 }
