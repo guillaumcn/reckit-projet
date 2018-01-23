@@ -30,20 +30,11 @@ export class RecordListComponent implements OnInit, OnDestroy {
       }
     ));
 
+    this.recordService.searchQuery('');
+
     this.subscriptions.push(this.route.params.subscribe(params => {
       if (params['tag']) {
-        // Unsubscribe all observables
-        this.subscriptions.forEach((subscription: Subscription) => {
-          subscription.unsubscribe();
-        });
-
-        // Subscribe to the list of records observable with tag filter
-        this.subscriptions.push(this.recordService.recordListByFilterTag(params['tag']).subscribe(
-          (records) => {
-            this.records = records;
-            this.loadingService.stopLoading();
-          }
-        ));
+        this.recordService.searchQuery(params['tag']);
       }
     }));
   }

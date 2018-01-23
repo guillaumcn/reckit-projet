@@ -12,6 +12,7 @@ export class Record {
   lastUpdate: number;
   validate: boolean;
   validationKey: string;
+  searchRef?: string;
 
   constructor() {
     this.name = '';
@@ -26,6 +27,7 @@ export class Record {
     this.lastUpdate = 0;
     this.validate = false;
     this.validationKey = '';
+    this.searchRef = '';
   }
 
   static unprettyPrintDuration(duration: string): number {

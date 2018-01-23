@@ -10,6 +10,7 @@ import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import {HttpClient} from '@angular/common/http';
 import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from 'angularfire2/firestore';
 import {current} from 'codelyzer/util/syntaxKind';
+import {Subject} from 'rxjs/Subject';
 
 @Injectable()
 export class RecordService {
@@ -20,6 +21,8 @@ export class RecordService {
 
   recordRef: AngularFirestoreDocument<Record>;
 
+  query = new Subject<string>();
+
   beforeUpdateFileNames = [];
 
   constructor(private afs: AngularFirestore, private toastService: ToastService,
@@ -27,27 +30,28 @@ export class RecordService {
               private router: Router,
               private http: HttpClient) {
     this.storageRef = firebase.storage().ref();
-    this.recordListRef = this.afs.collection('/records');
+    this.recordListRef = this.afs.collection('records');
   }
 
   recordList() {
-    this.recordListRef = this.afs.collection('/records');
-    return this.createRecordListObservable();
+    return this.query.switchMap(value =>
+      this.afs.collection('/records', ref =>
+        ref
+          .orderBy('searchRef')
+          .startAt(value ? '+++' + value + '+++' : '')
+          .endAt(value ? '+++' + value + '+++' + '\uf8ff' : '\uf8ff'))
+        .snapshotChanges().map(actions => {
+        return actions.map(action => {
+          const data = action.payload.doc.data() as Record;
+          const key = action.payload.doc.id;
+          return {key, ...data};
+        });
+      })
+    );
   }
 
-  recordListByFilterTag(value) {
-    this.recordListRef = this.afs.collection('/records', ref => ref.where('tags.' + value, '>', 0).orderBy('tags.' + value));
-    return this.createRecordListObservable();
-  }
-
-  createRecordListObservable() {
-    return this.recordListRef.snapshotChanges().map(actions => {
-      return actions.map(action => {
-        const data = action.payload.doc.data() as Record;
-        const key = action.payload.doc.id;
-        return {key, ...data};
-      });
-    });
+  searchQuery(value: string) {
+    this.query.next(value);
   }
 
   recordByKey(recordKey: string) {
@@ -82,9 +86,9 @@ export class RecordService {
       validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
-    const currentDate = Date.now();
+    let searchRef = '';
     for (const tagkey in record.tags) {
-      record.tags[tagkey] = currentDate;
+      searchRef += '+++' + tagkey + '+++';
     }
 
     this.recordListRef.add({
@@ -97,9 +101,10 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
-      lastUpdate: currentDate,
+      lastUpdate: Date.now(),
       validate: false,
-      validationKey: validationKey
+      validationKey: validationKey,
+      searchRef: searchRef
     }).then((data) => {
       const _baseUrl = window.location.origin + '/validation?key=' + data.id;
 
@@ -122,9 +127,9 @@ export class RecordService {
                files: File[]) {
     this.loadingService.startLoading();
 
-    const currentDate = Date.now();
+    let searchRef = '';
     for (const tagkey in record.tags) {
-      record.tags[tagkey] = currentDate;
+      searchRef += '+++' + tagkey + '+++';
     }
 
     this.recordListRef.doc(record.key).update({
@@ -139,7 +144,8 @@ export class RecordService {
       filenames: record.filenames,
       lastUpdate: Date.now(),
       validate: record.validate,
-      validationKey: record.validationKey
+      validationKey: record.validationKey,
+      searchRef: searchRef
     }).then((data) => {
 
       this.loadingService.stopLoading();

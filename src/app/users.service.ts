@@ -15,7 +15,7 @@ export class UsersService {
   constructor(private afs: AngularFirestore) {
     this.usersQueryObservable = this.query.switchMap(value =>
       afs.collection('/users', ref =>
-        ref.orderBy('email').limit(5).startAt(value)).valueChanges()
+        ref.orderBy('email').limit(5).startAt(value).endAt(value + '\uf8ff')).valueChanges()
     );
   }
 
