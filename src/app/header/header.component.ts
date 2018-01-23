@@ -1,7 +1,9 @@
-import { Component, EventEmitter, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../authentication/auth.service';
 import { Router } from '@angular/router';
-import { ToastService } from '../toast.service';
+import {RecordService} from '../record.service';
+import {Record} from '../record.model';
+import {LoadingService} from '../loading/loading.service';
 
 @Component({
   selector: 'app-header',
@@ -10,14 +12,31 @@ import { ToastService } from '../toast.service';
 })
 export class HeaderComponent implements OnInit {
 
-  constructor(public authService: AuthService, private router: Router, private toastService: ToastService) {
+  // List of records
+  records: Record[] = [];
+
+  constructor(public authService: AuthService, private loadingService: LoadingService,private router: Router, private recordService: RecordService) {
   }
 
   ngOnInit() {
-
+    this.recordService.recordList().subscribe(
+      (records) => {
+        this.records = records;
+        for (let i = 0; i < records.length; i++) {
+          const r: Record = records[i];
+          this.records[r.name] = null;
+        }
+        //this.loadingService.stopLoading();
+      }
+    );
   }
 
   deconnexion() {
     this.authService.logout();
+  }
+
+  searchTags($event) {
+    // Query the user service (for the autocomplete of the orator input)
+      this.recordService.searchQuery($event.target.value);
   }
 }
