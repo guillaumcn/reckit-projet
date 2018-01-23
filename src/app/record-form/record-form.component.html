@@ -60,7 +60,7 @@
 
       <!-- Add Annotation -->
       <div [ngStyle]="{'display' : !annotationsVisible ? 'none' : 'block'}" class="col s12">
-        <div class="input-field col s4">
+        <div class="input-field col s4 align">
           <i class="material-icons prefix">access_time</i>
           <input id="fixTime" type="text" name="fixTime"
                  [value]="prettyPrintDuration(annotationTime)" readonly required/>
@@ -68,11 +68,12 @@
         </div>
         <div class="input-field col s8">
           <i class="material-icons prefix">edit</i>
-          <textarea id="note" type="text" name="note" placeholder="Ajouter une annotation" required  (focus)="spaceActive=false" (blur)="spaceActive=true" #newAnnotation></textarea>
+          <textarea id="note" class="materialize-textarea" name="note" required  (focus)="spaceActive=false" (blur)="spaceActive=true" #newAnnotation></textarea>
+          <label for="note">Ajouter une annotation</label>
         </div>
 
         <!-- Validate annotation -->
-        <a class="btn indigo darken-1 col s4 center margin" (click)="addAnnotation(newAnnotation)">Valider</a>
+        <a class="btn red text-accent-1 col s4 right margin" (click)="addAnnotation(newAnnotation)">Valider</a>
 
 
         <!-- Annotations list -->
