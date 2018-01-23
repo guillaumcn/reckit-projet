@@ -71,6 +71,15 @@ input:-webkit-autofill {
   background-color: white !important;
 }
 
+.materialize-textarea:focus {
+  border-bottom: 1px solid #0d47a1 !important;
+  box-shadow: 0 1px 0 0 #0d47a1 !important;
+}
+
+textarea.materialize-textarea:focus:not([readonly]) + label {
+  color: #0d47a1 !important;
+}
+
 .chips.focus {
   border-bottom: 1px solid #0d47a1 !important;
   box-shadow: 0 1px 0 0 #0d47a1 !important;
@@ -269,4 +278,8 @@ h5 {
 
 textarea {
   resize: none;
+}
+
+.align {
+  margin-top: 3.4em;
 }
