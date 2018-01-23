@@ -1,9 +1,17 @@
+<div class="col s12">
+  <div *ngFor="let comment of comments; let i = index" class="row">
+    <i class="material-icons col s1">collections_bookmark</i>
+    <span class="col s7 push-s1 center" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</span>
+  </div>
+</div>
+
+
 <form>
     <div  class="input-field col s9 ">
       <textarea id="ask" type="text" name="ask" class="materialize-textarea"
                 [(ngModel)]="askaquestion" required>
       </textarea>
-    <label for="ask">Poser une question à propos de l'enregistrement...</label>
+    <label for="ask">Poser une question...</label>
   </div>
-  <a class="waves-effect waves-light btn col s3 indigo darken-1">button</a>
+  <a class="waves-effect waves-light btn col s3 indigo darken-1" (click)="addQuestion()">Poser la question</a>
 </form>

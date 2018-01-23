@@ -1,5 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {Record} from '../../record.model';
+import {Comment} from '../../comment.model';
+import {RecordService} from '../../record.service';
 
 @Component({
   selector: 'app-record-comment',
@@ -10,16 +12,19 @@ export class RecordCommentComponent implements OnInit {
 
   askaquestion = '';
   @Input('selectedRecord') selectedRecord: Record = new Record();
+  comments: Comment[];
 
-  constructor() {
+  constructor(private recordService: RecordService) {
   }
 
   ngOnInit() {
-    console.log('dans le oninit putain ' + this.selectedRecord);
+    this.recordService.recordCommentsRef.valueChanges().subscribe((comments) => {
+      this.comments = comments;
+    });
   }
 
   addQuestion(){
-
+    this.recordService.addQuestion(this.selectedRecord.key, this.askaquestion);
   }
 
 }

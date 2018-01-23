@@ -6,12 +6,14 @@ export class Comment {
   textQuestion: string;
   date: number; //timestamp
   questioner: string;
-  answers: {answerer:string, date:number, textAnswer:string}[];
+  answers?: {answerer: string, date: number, textAnswer: string}[];
 
-  constructor() {
-    this.textQuestion = '';
-    this.date = 0;
-    this.questioner = '';
+  // ? -> param facultatif
+  constructor(textQuestion?: string, date?: number, questioner?: string) {
+    // s'il est défini : textQuestion, sinon ''
+    this.textQuestion = textQuestion || '';
+    this.date = date || 0;
+    this.questioner = questioner || '';
     this.answers = [];
   }
 }
