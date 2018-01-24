@@ -73,7 +73,7 @@
         </div>
 
         <!-- Validate annotation -->
-        <a class="btn red text-accent-1 col s4 right margin" (click)="addAnnotation(newAnnotation)">Valider</a>
+        <a class="btn red lighten-2 col s4 right margin" (click)="addAnnotation(newAnnotation)">Valider</a>
 
 
         <!-- Annotations list -->
@@ -168,10 +168,10 @@
 
       <!-- Validation buttons  -->
 
-      <a *ngIf="!selectedRecord.key" class="waves-effect waves-light btn col s10 indigo darken-1"
+      <a *ngIf="!selectedRecord.key" class="waves-effect waves-light btn col s10 red lighten-2"
          [ngClass]="{' disabled' : loadingService.isUploading}"
          type="submit" (click)="onCreate()">Créer</a>
-      <a *ngIf="selectedRecord.key" class="waves-effect waves-light btn col s10 indigo darken-1"
+      <a *ngIf="selectedRecord.key" class="waves-effect waves-light btn col s10 red lighten-2"
          [ngClass]="{' disabled' : loadingService.isUploading}"
          type="submit" (click)="onUpdate()">Modifier</a>
 
