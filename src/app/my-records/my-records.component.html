@@ -1,0 +1,5 @@
+<h4>Mes enregistrements</h4>
+<app-record-list *ngIf="authService.userDetails.email" [searchValue]="authService.userDetails.email" searchBy="recorderMail"></app-record-list>
+
+<h4>Je suis orateur</h4>
+<app-record-list *ngIf="authService.userDetails.email" [searchValue]="authService.userDetails.email" searchBy="oratorMail"></app-record-list>
