@@ -19,11 +19,9 @@ export class RecordService {
   // Chaque élément du tableau de Record[] est une ligne de Firebase
   recordListRef: AngularFirestoreCollection<Record>;
   storageRef: Reference;
-  recordCommentsRef: AngularFirestoreCollection<Comment>;
 
   recordRef: AngularFirestoreDocument<Record>;
-
-  query = new Subject<string>();
+  recordCommentsRef: AngularFirestoreCollection<Comment>;
 
   beforeUpdateFileNames = [];
 
@@ -32,28 +30,30 @@ export class RecordService {
               private router: Router,
               private http: HttpClient) {
     this.storageRef = firebase.storage().ref();
-    this.recordListRef = this.afs.collection('records');
+    this.recordListRef = this.afs.collection('/records');
   }
 
-  recordList() {
-    return this.query.switchMap(value =>
-      this.afs.collection('/records', ref =>
-        ref
-          .orderBy('searchRef')
-          .startAt(value ? '+++' + value + '+++' : '')
-          .endAt(value ? '+++' + value + '+++' + '\uf8ff' : '\uf8ff'))
-        .snapshotChanges().map(actions => {
-        return actions.map(action => {
+  recordList(value: string, searchBy?: string) {
+    return this.afs.collection('/records', ref =>
+      ref
+        .orderBy('searchRef.' + btoa(value))
+        .where('searchRef.' + btoa(value), '>', 0))
+      .snapshotChanges().map(actions => {
+        const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
           const key = action.payload.doc.id;
-          return {key, ...data};
+          if (!searchBy || (searchBy && data[searchBy] && data[searchBy].indexOf(value) !== -1)) {
+            return {key, ...data};
+          }
         });
-      })
-    );
-  }
-
-  searchQuery(value: string) {
-    this.query.next(value);
+        for (let i = 0; i < result.length; i++) {
+          if (result[i] === undefined) {
+            result.splice(i, 1);
+            i--;
+          }
+        }
+        return result;
+      });
   }
 
   recordByKey(recordKey: string) {
@@ -89,10 +89,12 @@ export class RecordService {
       validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
-    let searchRef = '';
-    for (const tagkey in record.tags) {
-      searchRef += '+++' + tagkey + '+++';
+    const searchRef = {};
+    for (let i = 0; i < record.tags.length; i++) {
+      searchRef[btoa(record.tags[i])] = 1 / Date.now();
     }
+    searchRef[btoa(this.authService.userDetails.email)] = 1 / Date.now();
+    searchRef[btoa(record.oratorMail)] = 1 / Date.now();
 
     this.recordListRef.add({
       name: record.name,
@@ -130,10 +132,12 @@ export class RecordService {
                files: File[]) {
     this.loadingService.startLoading();
 
-    let searchRef = '';
-    for (const tagkey in record.tags) {
-      searchRef += '+++' + tagkey + '+++';
+    const searchRef = {};
+    for (let i = 0; i < record.tags.length; i++) {
+      searchRef[btoa(record.tags[i])] = 1 / Date.now();
     }
+    searchRef[btoa(this.authService.userDetails.email)] = 1 / Date.now();
+    searchRef[btoa(record.oratorMail)] = 1 / Date.now();
 
     this.recordListRef.doc(record.key).update({
       name: record.name,
@@ -171,6 +175,8 @@ export class RecordService {
 
   uneditRecord() {
     this.beforeUpdateFileNames = [];
+
+    this.router.navigate(['/record-form/new']);
   }
 
   getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {
@@ -241,7 +247,7 @@ export class RecordService {
   }
 
   addQuestion(recordKey: string, question: string) {
-    let comList = this.recordRef.collection('comments');
+    const comList = this.recordRef.collection('comments');
     comList.add({
       textQuestion: question,
       date: Date.now(),

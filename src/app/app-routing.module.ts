@@ -10,6 +10,7 @@ import {RecordListComponent} from './record-list/record-list.component';
 import {RecordDetailComponent} from './record-detail/record-detail.component';
 import {ValidationComponent} from './validation/validation.component';
 import {TagDetailComponent} from './tag-detail/tag-detail.component';
+import {MyRecordsComponent} from './my-records/my-records.component';
 
 
 const appRoutes: Routes = [
@@ -21,7 +22,7 @@ const appRoutes: Routes = [
     {path: 'reset-password', component: ResetPasswordComponent},
   ]},
   {path: 'record-form/:key', component: RecordFormComponent, canActivate: [AuthGuard]},
-  {path: 'record-list', component: RecordListComponent, canActivate: [AuthGuard]},
+  {path: 'my-records', component: MyRecordsComponent, canActivate: [AuthGuard]},
   {path: 'record-detail/:key', component: RecordDetailComponent, canActivate: [AuthGuard]},
   {path: 'tag-detail/:tag', component: TagDetailComponent, canActivate: [AuthGuard]},
   {path: 'validation', component: ValidationComponent},

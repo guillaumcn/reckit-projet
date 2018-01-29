@@ -15,20 +15,19 @@ export class HeaderComponent implements OnInit {
   // List of records
   records: Record[] = [];
 
-  constructor(public authService: AuthService, private loadingService: LoadingService,private router: Router, private recordService: RecordService) {
+  constructor(public authService: AuthService, private loadingService: LoadingService, private router: Router, private recordService: RecordService) {
   }
 
   ngOnInit() {
-    this.recordService.recordList().subscribe(
+    /*this.recordService.recordList().subscribe(
       (records) => {
         this.records = records;
         for (let i = 0; i < records.length; i++) {
           const r: Record = records[i];
           this.records[r.name] = null;
         }
-        //this.loadingService.stopLoading();
       }
-    );
+    );*/
   }
 
   deconnexion() {
@@ -37,6 +36,6 @@ export class HeaderComponent implements OnInit {
 
   searchTags($event) {
     // Query the user service (for the autocomplete of the orator input)
-      this.recordService.searchQuery($event.target.value);
+      //this.recordService.searchQuery($event.target.value);
   }
 }

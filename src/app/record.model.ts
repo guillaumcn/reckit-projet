@@ -6,13 +6,13 @@ export class Record {
   duration: number;
   type: string;
   recorderMail: string;
-  tags: {};
+  tags: string[];
   annotations: { time: number, content: string }[];
   filenames: string[];
   lastUpdate: number;
   validate: boolean;
   validationKey: string;
-  searchRef?: string;
+  searchRef: {};
 
   constructor() {
     this.name = '';
@@ -21,13 +21,13 @@ export class Record {
     this.duration = 0;
     this.type = 'Cours';
     this.recorderMail = '';
-    this.tags = {};
+    this.tags = [];
     this.annotations = [];
     this.filenames = [];
     this.lastUpdate = 0;
     this.validate = false;
     this.validationKey = '';
-    this.searchRef = '';
+    this.searchRef = {};
   }
 
   static unprettyPrintDuration(duration: string): number {

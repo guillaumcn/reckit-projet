@@ -75,13 +75,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       const recordKey = params['key'];
 
       this.subscriptions.push(this.recordService.recordByKey(recordKey).subscribe((record) => {
-          if (record != null) {
-            this.selectedRecord = record;
+        this.selectedRecord = record;
 
-            // Patch all values with new record selected
-            this.loadDataFromSelectedRecord();
-          }
-        }));
+        // Patch all values with new record selected
+        this.loadDataFromSelectedRecord();
+      }));
     }));
 
     this.subscriptions.push(
@@ -157,7 +155,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
       // patch tags
       if (this.selectedRecord.tags == null) {
-        this.selectedRecord.tags = {};
+        this.selectedRecord.tags = [];
       }
 
       // patch annotations
@@ -250,12 +248,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   // Update tag Array on button clicks (+ or -)
 
   addTag(tagInput) {
-    this.selectedRecord.tags[tagInput.value] = true;
+    this.selectedRecord.tags.push(tagInput.value);
     tagInput.value = '';
   }
 
-  deleteTag(key) {
-    delete this.selectedRecord.tags[key];
+  deleteTag(index) {
+    this.selectedRecord.tags.splice(index, 1);
   }
 
   // Get files on input[type=file] change

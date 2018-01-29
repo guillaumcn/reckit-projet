@@ -62,9 +62,9 @@
 
       <!-- Tags  -->
 
-      <div *ngFor="let tagkey of objectKeys(selectedRecord.tags)" class="row">
+      <div *ngFor="let tag of selectedRecord.tags" class="row">
         <i class="material-icons col s1 offset-s1">local_offer</i>
-        <span class="col s10 clickable" (click)="selectTag(tagkey)">{{tagkey}}</span>
+        <span class="col s10 clickable" (click)="selectTag(tag)">{{tag}}</span>
       </div>
     </div>
 

@@ -35,7 +35,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   interval = null;
 
   prettyPrintDuration = Record.prettyPrintDuration;
-  objectKeys = Object.keys;
 
   constructor(public recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute, private router: Router) {
 
@@ -107,7 +106,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
     // patch tags
     if (this.selectedRecord.tags == null) {
-      this.selectedRecord.tags = {};
+      this.selectedRecord.tags = [];
     }
 
     // patch annotations

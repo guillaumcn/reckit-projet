@@ -6,4 +6,4 @@
   <a *ngIf="currentUser.followedTags[selectedTag]" (click)="unfollowTag()" class="btn col s3 indigo darken-1">Ne plus suivre</a>
 </div>
 
-<app-record-list></app-record-list>
+<app-record-list *ngIf="selectedTag" [searchValue]="selectedTag" searchBy="tags"></app-record-list>

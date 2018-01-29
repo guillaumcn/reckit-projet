@@ -4,6 +4,7 @@ import {Record} from '../record.model';
 import {LoadingService} from '../loading/loading.service';
 import {Subscription} from 'rxjs/Subscription';
 import {ActivatedRoute} from '@angular/router';
+import {AuthService} from '../authentication/auth.service';
 
 @Component({
   selector: 'app-record-list',
@@ -12,31 +13,26 @@ import {ActivatedRoute} from '@angular/router';
 })
 export class RecordListComponent implements OnInit, OnDestroy {
 
+  @Input('searchBy') searchBy: string;
+  @Input('searchValue') searchValue: string;
+
   // List of records
   records: Record[] = [];
 
   // We will add subscriptions to observable here and unsubscribe when destroying the component
   subscriptions: Subscription[] = [];
 
-  constructor(private recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute) {
+  constructor(private recordService: RecordService, private loadingService: LoadingService) {
   }
 
   ngOnInit() {
     // Subscribe to the list of records observable
-    this.subscriptions.push(this.recordService.recordList().subscribe(
+    this.subscriptions.push(this.recordService.recordList(this.searchValue, this.searchBy).subscribe(
       (records) => {
         this.records = records;
         this.loadingService.stopLoading();
       }
     ));
-
-    this.recordService.searchQuery('');
-
-    this.subscriptions.push(this.route.params.subscribe(params => {
-      if (params['tag']) {
-        this.recordService.searchQuery(params['tag']);
-      }
-    }));
   }
 
   ngOnDestroy() {
