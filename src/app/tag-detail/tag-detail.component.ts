@@ -30,19 +30,19 @@ export class TagDetailComponent implements OnInit, OnDestroy {
         this.currentUser = user;
 
         if (!this.currentUser.followedTags) {
-          this.currentUser.followedTags = {};
+          this.currentUser.followedTags = [];
         }
       })
     );
   }
 
   followTag() {
-    this.currentUser.followedTags[this.selectedTag] = true;
+    this.currentUser.followedTags.push(this.selectedTag);
     this.userService.updateUserFollowedTags(this.authService.userDetails.uid, this.currentUser.followedTags);
   }
 
   unfollowTag() {
-    delete this.currentUser.followedTags[this.selectedTag];
+    this.currentUser.followedTags.splice(this.currentUser.followedTags.indexOf(this.selectedTag), 1);
     this.userService.updateUserFollowedTags(this.authService.userDetails.uid, this.currentUser.followedTags);
   }
 

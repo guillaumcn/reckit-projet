@@ -1,11 +1,11 @@
 export class User {
   displayName: string;
   email: string;
-  followedTags?: {};
+  followedTags?: string[];
 
   constructor() {
     this.displayName = '';
     this.email = '';
-    this.followedTags = {};
+    this.followedTags = [];
   }
 }

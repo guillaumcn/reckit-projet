@@ -2,8 +2,8 @@
   <span class="col s9">
     <i class="material-icons">local_offer</i><h4>{{selectedTag}}</h4>
   </span>
-  <a *ngIf="!currentUser.followedTags[selectedTag]" (click)="followTag()" class="btn col s3 indigo darken-1">Suivre</a>
-  <a *ngIf="currentUser.followedTags[selectedTag]" (click)="unfollowTag()" class="btn col s3 indigo darken-1">Ne plus suivre</a>
+  <a *ngIf="currentUser.followedTags.indexOf(selectedTag) == -1" (click)="followTag()" class="btn col s3 indigo darken-1">Suivre</a>
+  <a *ngIf="currentUser.followedTags.indexOf(selectedTag) != -1" (click)="unfollowTag()" class="btn col s3 indigo darken-1">Ne plus suivre</a>
 </div>
 
-<app-record-list *ngIf="selectedTag" [searchValue]="selectedTag" searchBy="tags"></app-record-list>
+<app-record-list *ngIf="selectedTag" [searchValue]="selectedTag" searchBy="tags" limit="5"></app-record-list>

@@ -33,11 +33,13 @@ export class RecordService {
     this.recordListRef = this.afs.collection('/records');
   }
 
-  recordList(value: string, searchBy?: string) {
+  recordList(value: string, searchBy?: string, limit?: number, startAfter?: number) {
     return this.afs.collection('/records', ref =>
       ref
         .orderBy('searchRef.' + btoa(value))
-        .where('searchRef.' + btoa(value), '>', 0))
+        .where('searchRef.' + btoa(value), '>', 0)
+        .limit(limit || 5)
+        .startAfter(startAfter || 0))
       .snapshotChanges().map(actions => {
         const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
@@ -107,6 +109,7 @@ export class RecordService {
       annotations: record.annotations,
       filenames: record.filenames,
       lastUpdate: Date.now(),
+      lastUpdateType: 'create',
       validate: false,
       validationKey: validationKey,
       searchRef: searchRef
@@ -150,6 +153,7 @@ export class RecordService {
       annotations: record.annotations,
       filenames: record.filenames,
       lastUpdate: Date.now(),
+      lastUpdateType: 'update',
       validate: record.validate,
       validationKey: record.validationKey,
       searchRef: searchRef

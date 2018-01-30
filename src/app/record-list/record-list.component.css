@@ -9,3 +9,10 @@ li {
 .collection li:first-child {
   font-weight: bold;
 }
+
+.arrowdown {
+  text-align: center;
+  height: 20px;
+  padding-top: 0;
+  cursor:pointer;
+}

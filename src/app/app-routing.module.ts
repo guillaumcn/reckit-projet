@@ -11,10 +11,11 @@ import {RecordDetailComponent} from './record-detail/record-detail.component';
 import {ValidationComponent} from './validation/validation.component';
 import {TagDetailComponent} from './tag-detail/tag-detail.component';
 import {MyRecordsComponent} from './my-records/my-records.component';
+import {NewsComponent} from './news/news.component';
 
 
 const appRoutes: Routes = [
-  {path: '', redirectTo: 'record-form/new', pathMatch: 'full'},
+  {path: '', redirectTo: 'news', pathMatch: 'full'},
   {path: 'authentication', component: AuthenticationComponent, children: [
     {path: '', redirectTo: 'login', pathMatch: 'full'},
     {path: 'login', component: LoginComponent},
@@ -22,6 +23,7 @@ const appRoutes: Routes = [
     {path: 'reset-password', component: ResetPasswordComponent},
   ]},
   {path: 'record-form/:key', component: RecordFormComponent, canActivate: [AuthGuard]},
+  {path: 'news', component: NewsComponent, canActivate: [AuthGuard]},
   {path: 'my-records', component: MyRecordsComponent, canActivate: [AuthGuard]},
   {path: 'record-detail/:key', component: RecordDetailComponent, canActivate: [AuthGuard]},
   {path: 'tag-detail/:tag', component: TagDetailComponent, canActivate: [AuthGuard]},

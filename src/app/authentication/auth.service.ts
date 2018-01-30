@@ -24,7 +24,7 @@ export class AuthService {
             this.userDetails = user;
 
             if (this.router.url.indexOf('authentication') !== -1) {
-              const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/record-form/new';
+              const returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/news';
               this.router.navigate([returnUrl]);
             }
           } else {

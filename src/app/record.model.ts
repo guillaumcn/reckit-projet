@@ -10,6 +10,7 @@ export class Record {
   annotations: { time: number, content: string }[];
   filenames: string[];
   lastUpdate: number;
+  lastUpdateType: string;
   validate: boolean;
   validationKey: string;
   searchRef: {};

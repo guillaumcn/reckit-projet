@@ -23,7 +23,7 @@ export class UsersService {
     this.afs.doc<User>('/users/' + uid).set({email: email, displayName: displayName});
   }
 
-  updateUserFollowedTags(uid: string, followedTags: {}) {
+  updateUserFollowedTags(uid: string, followedTags: string[]) {
     this.afs.doc<User>('/users/' + uid).update({followedTags : followedTags});
   }
 
