@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 import {RecordService} from '../record.service';
 import {Record} from '../record.model';
 import {LoadingService} from '../loading/loading.service';
+import {Subscription} from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-header',
@@ -12,13 +13,16 @@ import {LoadingService} from '../loading/loading.service';
 })
 export class HeaderComponent implements OnInit {
 
-  // List of records
-  records: Record[] = [];
+  results = [];
 
-  constructor(public authService: AuthService, private loadingService: LoadingService, private router: Router, private recordService: RecordService) {
+  // We will add subscriptions to observable here and unsubscribe when destroying the component
+  subscriptions: Subscription[] = [];
+
+  constructor(public authService: AuthService, private recordService: RecordService) {
   }
 
   ngOnInit() {
+    this.results.push('blabla');
     /*this.recordService.recordList().subscribe(
       (records) => {
         this.records = records;
@@ -34,8 +38,14 @@ export class HeaderComponent implements OnInit {
     this.authService.logout();
   }
 
-  searchTags($event) {
+  search($event) {
+    // Unsubscribe all observables
+    this.subscriptions.forEach((subscription: Subscription) => {
+      subscription.unsubscribe();
+    });
+
     // Query the user service (for the autocomplete of the orator input)
-      //this.recordService.searchQuery($event.target.value);
+      this.recordService.recordList($event.target.value, null, 5, null)
+        .subscribe((records) => { console.log(records); });
   }
 }

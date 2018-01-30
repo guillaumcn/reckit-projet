@@ -17,11 +17,18 @@
     <div *ngIf="authService.isLoggedIn()" class="nav-wrapper right">
       <form>
         <div class="input-field">
-          <input id="search" type="search" name="search" (keyup)="searchTags($event)" autocomplete="off"
-                 materialize="autocomplete" placeholder="Recherche ..." [materializeParams]="[{'data': records}]"
+
+          <input id="search" type="search" name="search" (keyup)="search($event)" materialize="dropdown"
+                 data-activates='dropdown1' placeholder="Recherche ..."
                  (focus)="spaceActive=false" (blur)="spaceActive=true" search required>
           <label class="label-icon" for="search"><i class="material-icons center-block">search</i></label>
           <i class="material-icons">close</i>
+
+          <!-- Dropdown Structure -->
+          <ul id='dropdown1' class='dropdown-content'>
+            <li *ngFor="let result of results"><a href="#">{{result}}</a></li>
+
+          </ul>
         </div>
       </form>
     </div>
