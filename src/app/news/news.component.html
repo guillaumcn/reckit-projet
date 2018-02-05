@@ -1,4 +1,28 @@
 <div class="row">
-  <button class="btn indigo darken-4 col s2 offset-s5" (click)="reload()">Actualiser</button>
-  <p class="col s12" *ngFor="let record of records">{{record.name}} - {{record.lastUpdate}} - {{record.lastUpdateType}}</p>
+  <button class="btn indigo darken-4 col s2" (click)="reload()">Actualiser</button>
+  <!-- Dropdown Trigger -->
+  <a materialize="dropdown" class='dropdown-button red lighten-2 btn col s4 offset-s6' data-beloworigin="true"
+     data-activates='dropdownTags'>Les tags que je suis</a>
+  <!-- Dropdown Structure -->
+  <ul id='dropdownTags' class='dropdown-content'>
+    <li *ngFor="let tags of currentUser.followedTags"><a [routerLink]="['/tag-detail/'+tags]">{{tags}}</a></li>
+  </ul>
+  <div class="recordNewsBlock col s12">
+    <div *ngFor="let record of records" class="row recordNews">
+      <div class="col s8">
+        <h5 class="col s8">Derniers commentaires</h5>
+      </div>
+      <div class="col s4 rightpanel">
+        <img class="responsive-img"
+             src="https://camo.githubusercontent.com/56297e45ee17028f6608d6a47a9487c0980f9046/687474703a2f2f692e696d6775722e636f6d2f646e4838712e706e67">
+        <h5 class="center">{{record.name}}</h5>
+        <h6 class="center">{{prettyPrintDuration(record.duration)}}</h6>
+        <div class="col s12" *ngIf="record.tags.length != 0">
+          <i class="material-icons hashtag">local_offer</i>
+          <span class="tagText" *ngFor="let tag of record.tags; let i = index">{{tag}}{{i != record.tags.length - 1 ? ' , ' : ''}}</span>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
+

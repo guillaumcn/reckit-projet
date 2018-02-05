@@ -1,0 +1,29 @@
+.recordNews {
+  border: 2px black solid;
+  padding-bottom: 10px;
+}
+
+.recordNewsBlock {
+  margin-top: 40px;
+}
+
+.rightpanel {
+  padding-right: 0 !important;
+}
+
+img {
+  border-bottom: 2px black solid;
+  border-left: 2px black solid;
+}
+
+.hashtag {
+  color: #0277bd;
+  top: 5px;
+}
+
+
+.tagText {
+  font-weight: bold;
+  font-size: 15px;
+  color: #0277bd;
+}

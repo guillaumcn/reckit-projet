@@ -24,8 +24,11 @@ export class NewsComponent implements OnInit, OnDestroy {
   displayedRecordKeys: string[] = [];
   interval = null;
   nbFinish = 0;
+  nbNew = 0;
 
   currentDisplay: number;
+
+  prettyPrintDuration = Record.prettyPrintDuration;
 
   constructor(private userService: UsersService, private authService: AuthService, private recordService: RecordService) {
   }
@@ -49,6 +52,7 @@ export class NewsComponent implements OnInit, OnDestroy {
         this.tempRecords = [];
         this.displayedRecordKeys = [];
         this.nbFinish = 0;
+        this.nbNew = 0;
         clearInterval(this.interval);
 
         if (!this.currentUser.followedTags) {
@@ -58,11 +62,6 @@ export class NewsComponent implements OnInit, OnDestroy {
         // When all records loaded, sort all and get only currentDisplay number
         this.interval = setInterval(() => {
           if (this.nbFinish === this.currentUser.followedTags.length) {
-            // Unsubscribe all observables
-            this.subscriptions.forEach((subscription: Subscription) => {
-              subscription.unsubscribe();
-            });
-
             this.tempRecords.sort((a, b) => {
               if (a.lastUpdate < b.lastUpdate) {
                 return 1;
@@ -97,7 +96,11 @@ export class NewsComponent implements OnInit, OnDestroy {
                   this.displayedRecordKeys.push(records[j].key);
                 }
               }
-              this.nbFinish++;
+              if (this.nbFinish !== this.currentUser.followedTags.length) {
+                this.nbFinish++;
+              } else {
+                this.nbNew++;
+              }
             }
           ));
         }
