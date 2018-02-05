@@ -177,6 +177,15 @@ export class RecordService {
   removeRecord(record: Record) {
     this.loadingService.startLoading();
 
+    this.recordListRef.doc(record.key).collection('comments').snapshotChanges().map(actions => {
+      actions.map(action => {
+        const key = action.payload.doc.id;
+          return key;
+      });
+    }).subscribe((comments) => {
+      console.log(comments);
+    });
+
     this.recordListRef.doc(record.key).delete().then(() => {
       this.removeFiles(record.key, record.filenames);
     });
@@ -256,7 +265,7 @@ export class RecordService {
   }
 
   addQuestion(recordKey: string, question: string) {
-    const comList = this.recordRef.collection('comments');
+    const comList = this.recordListRef.doc(recordKey).collection('comments');
     comList.add({
       textQuestion: question,
       date: Date.now(),
