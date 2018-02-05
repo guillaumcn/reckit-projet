@@ -6,7 +6,7 @@
      data-activates='dropdownTags'>Les tags que je suis</a>
   <!-- Dropdown Structure -->
   <ul id='dropdownTags' class='dropdown-content'>
-    <li *ngFor="let tags of currentUser.followedTags"><a [routerLink]="['/tag-detail/'+tags]">{{tags}}</a></li>
+    <li *ngFor="let tag of currentUser.followedTags"><a [routerLink]="['/tag-detail/'+tag]">{{tag}}</a><i (click)="unfollowTag(tag)" class="material-icons">remove_circle</i></li>
   </ul>
   <div class="recordNewsBlock col s12">
     <div *ngFor="let record of records" class="row recordNews card">
@@ -24,6 +24,7 @@
         </div>
       </div>
       <a class="btn-floating halfway-fab waves-effect waves-light red lighten-2" [routerLink]="['/record-detail/'+record.key]"><i class="material-icons">remove_red_eye</i></a>
+      <h6 class="lastUpdate">Dernière modification : {{timestampToLocaleString(record.lastUpdate)}}</h6>
     </div>
   </div>
 </div>

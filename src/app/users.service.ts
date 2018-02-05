@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AngularFireDatabase, AngularFireList} from 'angularfire2/database';
 import {Observable} from 'rxjs/Observable';
 import {Subject} from 'rxjs/Subject';
@@ -23,8 +23,12 @@ export class UsersService {
     this.afs.doc<User>('/users/' + uid).set({email: email, displayName: displayName});
   }
 
-  updateUserFollowedTags(uid: string, followedTags: string[]) {
-    this.afs.doc<User>('/users/' + uid).update({followedTags : followedTags});
+  updateUserFollowedTags(uid: string, followedTags: string[], callback?) {
+    this.afs.doc<User>('/users/' + uid).update({followedTags: followedTags}).then(() => {
+      if (callback) {
+        callback();
+      }
+    });
   }
 
   getUserObservable(uid: string) {

@@ -27,3 +27,19 @@
   margin-left: 10px !important;
   margin-top: 0.5em;
 }
+
+#dropdownTags a {
+  display: inline-block;
+}
+
+#dropdownTags i {
+  float: right;
+  margin-right: 2% !important;
+  margin-top: 12px;
+}
+
+.lastUpdate {
+  position: absolute;
+  bottom: 5px;
+  left: 10px;
+}

@@ -108,11 +108,22 @@ export class NewsComponent implements OnInit, OnDestroy {
     );
   }
 
+  unfollowTag(tag) {
+    this.currentUser.followedTags.splice(this.currentUser.followedTags.indexOf(tag), 1);
+    this.userService.updateUserFollowedTags(this.authService.userDetails.uid, this.currentUser.followedTags, () => {
+      this.reload();
+    });
+  }
+
   ngOnDestroy() {
     // Unsubscribe all observables
     this.subscriptions.forEach((subscription: Subscription) => {
       subscription.unsubscribe();
     });
+  }
+
+  timestampToLocaleString(timestamp: number) {
+    return new Date(timestamp).toLocaleString();
   }
 
 }
