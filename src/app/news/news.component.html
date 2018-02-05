@@ -1,7 +1,8 @@
 <div class="row">
   <button class="btn indigo darken-4 col s2" (click)="reload()">Actualiser</button>
+  <span class="new badge col s1 red lighten-2">{{nbNew}}</span>
   <!-- Dropdown Trigger -->
-  <a materialize="dropdown" class='dropdown-button red lighten-2 btn col s4 offset-s6' data-beloworigin="true"
+  <a materialize="dropdown" class='dropdown-button red lighten-2 btn col s4 right' data-beloworigin="true"
      data-activates='dropdownTags'>Les tags que je suis</a>
   <!-- Dropdown Structure -->
   <ul id='dropdownTags' class='dropdown-content'>

@@ -27,3 +27,8 @@ img {
   font-size: 15px;
   color: #0277bd;
 }
+
+.badge {
+  margin-left: 10px !important;
+  margin-top: 0.5em;
+}
