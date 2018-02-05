@@ -18,7 +18,7 @@
 
       <div class="valign-wrapper">
         <div class="row" >
-          <div id="waveform" class="z-depth-2" #waveform></div>
+          <div id="waveform" class="card" #waveform></div>
           <div id="timeline"></div>
         </div>
       </div>
@@ -136,7 +136,7 @@
 
       <!-- Tags -->
 
-      <div class="tagform z-depth-2">
+      <div class="z-depth-2 card tagform">
         <div *ngFor="let tag of selectedRecord.tags; let i=index" class="row">
           <i class="material-icons col s1 offset-s1">local_offer</i>
           <span class="col s6 offset-s1">{{tag}}</span>
@@ -154,7 +154,7 @@
 
       <!-- Attachment files -->
 
-      <div *ngIf="selectedRecord.filenames.length != 0" class="tagform z-depth-2">
+      <div *ngIf="selectedRecord.filenames.length != 0" class="fileform card">
         <div *ngFor="let filename of selectedRecord.filenames; let i = index" class="row">
           <i class="material-icons col s1 offset-s1">attach_file</i>
           <span class="col s6 offset-s1">{{filename}}</span>

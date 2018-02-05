@@ -1,6 +1,6 @@
 .recordNews {
-  border: 2px black solid;
   padding-bottom: 10px;
+  margin-top: 30px;
 }
 
 .recordNewsBlock {
@@ -11,13 +11,8 @@
   padding-right: 0 !important;
 }
 
-img {
-  border-bottom: 2px black solid;
-  border-left: 2px black solid;
-}
-
 .hashtag {
-  color: #0277bd;
+  color: #1a237e;
   top: 5px;
 }
 
@@ -25,7 +20,7 @@ img {
 .tagText {
   font-weight: bold;
   font-size: 15px;
-  color: #0277bd;
+  color: #1a237e;
 }
 
 .badge {

@@ -44,7 +44,7 @@ export class ValidationComponent implements OnInit {
 
   validateRecord() {
     if (this.validationKey === this.selectedRecord.validationKey) {
-      this.recordService.validateRecord();
+      this.recordService.validateRecord(this.selectedRecord);
     }
   }
 }

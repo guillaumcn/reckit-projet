@@ -76,8 +76,15 @@ export class RecordService {
     });
   }
 
-  validateRecord() {
-    this.recordRef.update({validate: true});
+  validateRecord(record: Record) {
+    const searchRef = {};
+    for (let i = 0; i < record.tags.length; i++) {
+      searchRef[btoa(record.tags[i])] = 1 / Date.now();
+    }
+    searchRef[btoa(this.authService.userDetails.email)] = 1 / Date.now();
+    searchRef[btoa(record.oratorMail)] = 1 / Date.now();
+
+    this.recordListRef.doc(record.key).update({validate: true, searchRef: searchRef});
   }
 
   addRecord(record: Record,
@@ -109,7 +116,6 @@ export class RecordService {
       annotations: record.annotations,
       filenames: record.filenames,
       lastUpdate: Date.now(),
-      lastUpdateType: 'create',
       validate: false,
       validationKey: validationKey,
       searchRef: searchRef
@@ -153,7 +159,6 @@ export class RecordService {
       annotations: record.annotations,
       filenames: record.filenames,
       lastUpdate: Date.now(),
-      lastUpdateType: 'update',
       validate: record.validate,
       validationKey: record.validationKey,
       searchRef: searchRef

@@ -103,8 +103,12 @@ textarea.materialize-textarea:focus:not([readonly]) + label {
 }
 
 .tagform {
-  border: 2px black solid;
   padding-top: 15px;
+}
+
+.fileform {
+  padding-top: 15px;
+  padding-bottom: 5px;
 }
 
 .tagform i {
@@ -215,7 +219,6 @@ h5 {
 
 #waveform {
   width: 95%;
-  border: 2px black solid;
 }
 
 .addFileButton {

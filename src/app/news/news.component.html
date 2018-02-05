@@ -9,13 +9,13 @@
     <li *ngFor="let tags of currentUser.followedTags"><a [routerLink]="['/tag-detail/'+tags]">{{tags}}</a></li>
   </ul>
   <div class="recordNewsBlock col s12">
-    <div *ngFor="let record of records" class="row recordNews">
-      <div class="col s8">
-        <h5 class="col s8">Derniers commentaires</h5>
+    <div *ngFor="let record of records" class="row recordNews card">
+      <div class="col s7">
+        <h5 class="col s12">Derniers commentaires</h5>
       </div>
-      <div class="col s4 rightpanel">
+      <div class="col s5 rightpanel">
         <img class="responsive-img"
-             src="https://camo.githubusercontent.com/56297e45ee17028f6608d6a47a9487c0980f9046/687474703a2f2f692e696d6775722e636f6d2f646e4838712e706e67">
+             src="/assets/wavesurfer.png">
         <h5 class="center">{{record.name}}</h5>
         <h6 class="center">{{prettyPrintDuration(record.duration)}}</h6>
         <div class="col s12" *ngIf="record.tags.length != 0">
@@ -23,6 +23,7 @@
           <span class="tagText" *ngFor="let tag of record.tags; let i = index">{{tag}}{{i != record.tags.length - 1 ? ' , ' : ''}}</span>
         </div>
       </div>
+      <a class="btn-floating halfway-fab waves-effect waves-light red lighten-2" [routerLink]="['/record-detail/'+record.key]"><i class="material-icons">remove_red_eye</i></a>
     </div>
   </div>
 </div>
