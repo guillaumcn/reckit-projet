@@ -1,0 +1,35 @@
+.materialize-textarea:focus {
+  border-bottom: 1px solid #0d47a1 !important;
+  box-shadow: 0 1px 0 0 #0d47a1 !important;
+}
+
+textarea.materialize-textarea:focus:not([readonly]) + label {
+  color: #0d47a1 !important;
+}
+
+form {
+  margin-top: 10em;
+}
+
+#questions {
+  margin-bottom: 2.5em;
+}
+
+#reply {
+  margin-left: 40%;
+}
+
+.btn-floating i {
+  font-size: 0.9rem !important;
+  line-height: 25px !important;
+}
+
+.btn-floating {
+  height: 25px !important;
+  width: 25px !important;
+  line-height: 25px !important;
+}
+
+h5 {
+  margin-bottom: 40px;
+}
