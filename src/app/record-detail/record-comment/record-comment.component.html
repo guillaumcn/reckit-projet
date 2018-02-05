@@ -4,7 +4,7 @@
   <div *ngFor="let comment of comments; let i = index" class="row">
     <i class="material-icons col s1">question_answer</i>
     <span class="col s10 push-s1" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</span>
-    <a class="btn-floating blue" id="reply"><i class="material-icons">reply</i></a>
+    <a class="btn-floating red lighten-2" id="reply"><i class="material-icons">reply</i></a>
   </div>
 </div>
 
