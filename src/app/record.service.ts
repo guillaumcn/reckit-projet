@@ -150,7 +150,7 @@ export class RecordService {
 
     this.recordListRef.doc(record.key).update({
       name: record.name,
-      recorder: record.oratorMail,
+      recorder: record.recorder,
       recorderMail: record.recorderMail,
       oratorMail: record.oratorMail,
       duration: record.duration,

@@ -21,12 +21,11 @@ export class NewsComponent implements OnInit, OnDestroy {
   // List of records
   records: Record[] = [];
   tempRecords: Record[] = [];
-  displayedRecordKeys: string[] = [];
+  foundedRecordKeys: string[] = [];
   interval = null;
   nbFinish = 0;
-  nbNew = 0;
-
-  currentDisplay: number;
+  nbWaiting = 0;
+  waitingKeys = [];
 
   prettyPrintDuration = Record.prettyPrintDuration;
 
@@ -34,25 +33,23 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.currentDisplay = 5;
-
     this.reload();
   }
 
   reload() {
-    // Unsubscribe all observables
-    this.subscriptions.forEach((subscription: Subscription) => {
-      subscription.unsubscribe();
-    });
-
-
     this.subscriptions.push(this.userService.getUserObservable(this.authService.userDetails.uid).subscribe((user: User) => {
+        // Unsubscribe all observables
+        this.subscriptions.forEach((subscription: Subscription) => {
+          subscription.unsubscribe();
+        });
+
         this.currentUser = user;
         this.records = [];
         this.tempRecords = [];
-        this.displayedRecordKeys = [];
+        this.foundedRecordKeys = [];
         this.nbFinish = 0;
-        this.nbNew = 0;
+        this.waitingKeys = [];
+        this.nbWaiting = 0;
         clearInterval(this.interval);
 
         if (!this.currentUser.followedTags) {
@@ -72,40 +69,67 @@ export class NewsComponent implements OnInit, OnDestroy {
 
               return 0;
             });
-            this.tempRecords.splice(this.currentDisplay, this.tempRecords.length);
-            this.records = this.tempRecords;
-            clearInterval(this.interval);
+            this.tempRecords.splice(10, this.tempRecords.length);
+            for (let i = 0; i < this.tempRecords.length; i++) {
+              this.records.push(this.tempRecords[i]);
+            }
+            this.tempRecords = [];
+            this.foundedRecordKeys = [];
+
+            // Unsubscribe all observables
+            this.subscriptions.forEach((subscription: Subscription) => {
+              subscription.unsubscribe();
+            });
+
+            // Waiting news count
+            for (let i = 0; i < this.currentUser.followedTags.length; i++) {
+              let firstInObservable = true;
+              // Subscribe to the list of records observable filtered by tag
+              this.subscriptions.push(this.recordService.recordList(this.currentUser.followedTags[i], 'tags', 1).subscribe(
+                (records) => {
+                  if (!firstInObservable) {
+                    if (this.waitingKeys.indexOf(records[0].key) === -1) {
+                      this.waitingKeys.push(records[0].key);
+                      this.nbWaiting++;
+                    }
+                  }
+                  firstInObservable = false;
+                }
+              ));
+            }
+
+            this.nbFinish = 0;
           }
         }, 200);
 
-        // Unsubscribe all observables
-        this.subscriptions.forEach((subscription: Subscription) => {
-          subscription.unsubscribe();
-        });
-
-        // For all followed tags
-        for (let i = 0; i < this.currentUser.followedTags.length; i++) {
-          // Subscribe to the list of records observable filtered by tag
-          this.subscriptions.push(this.recordService.recordList(this.currentUser.followedTags[i], 'tags', this.currentDisplay).subscribe(
-            (records) => {
-
-              // For each received records
-              for (let j = 0; j < records.length; j++) {
-                if (this.displayedRecordKeys.indexOf(records[j].key) === -1) {
-                  this.tempRecords.push(records[j]);
-                  this.displayedRecordKeys.push(records[j].key);
-                }
-              }
-              if (this.nbFinish !== this.currentUser.followedTags.length) {
-                this.nbFinish++;
-              } else {
-                this.nbNew++;
-              }
-            }
-          ));
-        }
+        this.getNextModif();
       })
     );
+  }
+
+  getNextModif() {
+    // For all followed tags
+    for (let i = 0; i < this.currentUser.followedTags.length; i++) {
+      // Subscribe to the list of records observable filtered by tag
+      this.subscriptions.push(this.recordService.recordList(this.currentUser.followedTags[i],
+        'tags',
+        10,
+        this.records.length !== 0 ? (1 / this.records[this.records.length - 1].lastUpdate) : 0)
+        .subscribe(
+          (records) => {
+            // For each received records
+            for (let j = 0; j < records.length; j++) {
+              if (this.foundedRecordKeys.indexOf(records[j].key) === -1) {
+                this.tempRecords.push(records[j]);
+                this.foundedRecordKeys.push(records[j].key);
+              }
+            }
+            if (this.nbFinish !== this.currentUser.followedTags.length) {
+              this.nbFinish++;
+            }
+          }
+        ));
+    }
   }
 
   unfollowTag(tag) {

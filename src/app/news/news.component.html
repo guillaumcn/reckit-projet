@@ -1,6 +1,6 @@
 <div class="row">
   <button class="btn indigo darken-4 col s2" (click)="reload()">Actualiser</button>
-  <span class="new badge col s1 red lighten-2">{{nbNew}}</span>
+  <span class="new badge col s1 red lighten-2">{{nbWaiting}}</span>
   <!-- Dropdown Trigger -->
   <a materialize="dropdown" class='dropdown-button red lighten-2 btn col s4 right' data-beloworigin="true"
      data-activates='dropdownTags'>Les tags que je suis</a>
@@ -27,5 +27,6 @@
       <h6 class="lastUpdate">Dernière modification : {{timestampToLocaleString(record.lastUpdate)}}</h6>
     </div>
   </div>
+  <button class="btn center col s4 offset-s4 indigo darken-4" (click)="getNextModif()">Voir la suite</button>
 </div>
 
