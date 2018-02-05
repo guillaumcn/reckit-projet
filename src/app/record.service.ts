@@ -144,8 +144,8 @@ export class RecordService {
 
     this.recordListRef.doc(record.key).update({
       name: record.name,
-      recorder: this.authService.userDetails.displayName,
-      recorderMail: this.authService.userDetails.email,
+      recorder: record.oratorMail,
+      recorderMail: record.recorderMail,
       oratorMail: record.oratorMail,
       duration: record.duration,
       type: record.type,

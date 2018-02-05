@@ -1,1 +1,4 @@
-<p *ngFor="let record of records">{{record.name}} - {{record.lastUpdate}} - {{record.lastUpdateType}}</p>
+<div class="row">
+  <button class="btn indigo darken-4 col s2 offset-s5" (click)="reload()">Actualiser</button>
+  <p class="col s12" *ngFor="let record of records">{{record.name}} - {{record.lastUpdate}} - {{record.lastUpdateType}}</p>
+</div>
