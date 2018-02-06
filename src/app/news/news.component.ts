@@ -1,4 +1,4 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {User} from '../user.model';
 import {Subscription} from 'rxjs/Subscription';
 import {UsersService} from '../users.service';
@@ -27,6 +27,8 @@ export class NewsComponent implements OnInit, OnDestroy {
   nbFinish = 0;
   nbWaiting = 0;
   waitingKeys = [];
+
+  isLoading = false;
 
   prettyPrintDuration = Record.prettyPrintDuration;
 
@@ -100,6 +102,7 @@ export class NewsComponent implements OnInit, OnDestroy {
             }
 
             this.loadingService.stopLoading();
+            this.isLoading = false;
             this.nbFinish = 0;
           }
         }, 200);
@@ -110,7 +113,10 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   getNextModif() {
-    this.loadingService.startLoading();
+    this.isLoading = true;
+    if (this.records.length === 0) {
+      this.loadingService.startLoading();
+    }
     // For all followed tags
     for (let i = 0; i < this.currentUser.followedTags.length; i++) {
       // Subscribe to the list of records observable filtered by tag
@@ -153,4 +159,16 @@ export class NewsComponent implements OnInit, OnDestroy {
     return new Date(timestamp).toLocaleString();
   }
 
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll(event) {
+    const body = document.body;
+    const html = document.documentElement;
+
+    const height = Math.max( body.scrollHeight, body.offsetHeight,
+      html.clientHeight, html.scrollHeight, html.offsetHeight );
+
+    if (window.pageYOffset + window.innerHeight >= height - 10 && !this.isLoading) {
+      this.getNextModif();
+    }
+  }
 }

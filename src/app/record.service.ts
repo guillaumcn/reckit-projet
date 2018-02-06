@@ -44,7 +44,6 @@ export class RecordService {
         const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
           const key = action.payload.doc.id;
-          console.log(data);
           if (!searchBy || (searchBy && data[searchBy] && data[searchBy].indexOf(value) !== -1)) {
             return {key, ...data};
           }
