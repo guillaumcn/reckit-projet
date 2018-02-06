@@ -116,7 +116,7 @@ export class RecordService {
       annotations: record.annotations,
       filenames: record.filenames,
       lastUpdate: Date.now(),
-      validate: false,
+      validate: true,
       validationKey: validationKey,
       searchRef: searchRef
     }).then((data) => {
