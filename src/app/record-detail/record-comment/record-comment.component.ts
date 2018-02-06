@@ -14,13 +14,27 @@ export class RecordCommentComponent implements OnInit {
   @Input('selectedRecord') selectedRecord: Record = new Record();
 
   comments: Comment[];
+  answers: {} = {};
 
   constructor(private recordService: RecordService) {
   }
 
   ngOnInit() {
-    this.recordService.recordCommentsRef.valueChanges().subscribe((comments) => {
-      this.comments = comments;
+    this.recordService.recordCommentsRef.snapshotChanges().map(actions => {
+      return actions.map(action => {
+        const data = action.payload.doc.data() as Comment;
+        const key = action.payload.doc.id;
+        return {key, ...data};
+      });
+    }).subscribe((comments) => {
+        this.comments = comments;
+    });
+  }
+
+  getAnswers(index: string) {
+    this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers').valueChanges().subscribe((answers) => {
+      this.answers[index] = answers;
+      console.log(this.answers);
     });
   }
 

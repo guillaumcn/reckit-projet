@@ -3,6 +3,7 @@
  */
 
 export class Comment {
+  key?: string;
   textQuestion: string;
   date: number; //timestamp
   questioner: string;
