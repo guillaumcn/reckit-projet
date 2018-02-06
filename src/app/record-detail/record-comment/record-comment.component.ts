@@ -56,4 +56,8 @@ export class RecordCommentComponent implements OnInit {
     });
     this.comments[index]['tempAnswer'] = '';
   }
+
+  timestampToLocaleString(timestamp) {
+    return new Date(timestamp).toLocaleString();
+  }
 }
