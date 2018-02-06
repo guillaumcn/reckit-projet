@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Record} from '../../record.model';
 import {Comment} from '../../comment.model';
 import {RecordService} from '../../record.service';
@@ -12,6 +12,7 @@ export class RecordCommentComponent implements OnInit {
 
   askaquestion = '';
   @Input('selectedRecord') selectedRecord: Record = new Record();
+
   comments: Comment[];
 
   constructor(private recordService: RecordService) {
@@ -23,8 +24,9 @@ export class RecordCommentComponent implements OnInit {
     });
   }
 
-  addQuestion(){
+  addQuestion() {
     this.recordService.addQuestion(this.selectedRecord.key, this.askaquestion);
+    this.askaquestion = '';
   }
 
 }
