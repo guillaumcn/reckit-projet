@@ -20,7 +20,18 @@
 .tagText {
   font-weight: bold;
   font-size: 15px;
-  color: #1a237e;
+  color: #1a237e !important;
+}
+
+.tagText p {
+  display: inline-block;
+  margin-left: 2px;
+}
+
+.tagText a {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #1a237e !important;
 }
 
 .badge {

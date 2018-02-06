@@ -5,6 +5,7 @@ import {UsersService} from '../users.service';
 import {AuthService} from '../authentication/auth.service';
 import {Record} from '../record.model';
 import {RecordService} from '../record.service';
+import {LoadingService} from '../loading/loading.service';
 
 @Component({
   selector: 'app-news',
@@ -29,7 +30,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
   prettyPrintDuration = Record.prettyPrintDuration;
 
-  constructor(private userService: UsersService, private authService: AuthService, private recordService: RecordService) {
+  constructor(private userService: UsersService, private authService: AuthService, private recordService: RecordService, private loadingService: LoadingService) {
   }
 
   ngOnInit() {
@@ -98,6 +99,7 @@ export class NewsComponent implements OnInit, OnDestroy {
               ));
             }
 
+            this.loadingService.stopLoading();
             this.nbFinish = 0;
           }
         }, 200);
@@ -108,6 +110,7 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   getNextModif() {
+    this.loadingService.startLoading();
     // For all followed tags
     for (let i = 0; i < this.currentUser.followedTags.length; i++) {
       // Subscribe to the list of records observable filtered by tag

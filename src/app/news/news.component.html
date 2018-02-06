@@ -20,7 +20,7 @@
         <h6 class="center">{{prettyPrintDuration(record.duration)}}</h6>
         <div class="col s12" *ngIf="record.tags.length != 0">
           <i class="material-icons hashtag">local_offer</i>
-          <span class="tagText" *ngFor="let tag of record.tags; let i = index">{{tag}}{{i != record.tags.length - 1 ? ' , ' : ''}}</span>
+          <span class="tagText" *ngFor="let tag of record.tags; let i = index"><a [routerLink]="['/tag-detail/' + tag]">{{tag}}</a><p *ngIf="i != record.tags.length - 1"> , </p></span>
         </div>
       </div>
       <a class="btn-floating halfway-fab waves-effect waves-light red lighten-2" [routerLink]="['/record-detail/'+record.key]"><i class="material-icons">remove_red_eye</i></a>
