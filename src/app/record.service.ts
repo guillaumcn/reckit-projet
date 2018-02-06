@@ -181,7 +181,7 @@ export class RecordService {
     this.recordListRef.doc(record.key).collection('comments').snapshotChanges().map(actions => {
       actions.map(action => {
         const key = action.payload.doc.id;
-          return key;
+        return key;
       });
     }).subscribe((comments) => {
       console.log(comments);
@@ -195,7 +195,7 @@ export class RecordService {
   uneditRecord() {
     this.beforeUpdateFileNames = [];
 
-    this.router.navigate(['/record-form/new']);
+    this.router.navigate(['/record-form/new?refresh=' + Math.random()]);
   }
 
   getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {
