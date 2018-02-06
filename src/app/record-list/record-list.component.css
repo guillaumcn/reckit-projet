@@ -16,3 +16,8 @@ li {
   padding-top: 0;
   cursor:pointer;
 }
+
+.collection {
+  max-height: 270px;
+  overflow-y: auto;
+}
