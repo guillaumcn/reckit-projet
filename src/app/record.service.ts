@@ -38,7 +38,7 @@ export class RecordService {
       ref
         .orderBy('searchRef.' + btoa(value))
         .where('searchRef.' + btoa(value), '>', 0)
-        .limit(limit || 5)
+        .limit(limit || Math.pow(10, 3))
         .startAfter(startAfter || 0))
       .snapshotChanges().map(actions => {
         const result = actions.map(action => {
@@ -180,7 +180,7 @@ export class RecordService {
     this.recordListRef.doc(record.key).collection('comments').snapshotChanges().map(actions => {
       actions.map(action => {
         const key = action.payload.doc.id;
-          return key;
+        return key;
       });
     }).subscribe((comments) => {
       console.log(comments);
@@ -194,7 +194,7 @@ export class RecordService {
   uneditRecord() {
     this.beforeUpdateFileNames = [];
 
-    this.router.navigate(['/record-form/new']);
+    this.router.navigate(['/record-form/new?refresh=' + Math.random()]);
   }
 
   getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {

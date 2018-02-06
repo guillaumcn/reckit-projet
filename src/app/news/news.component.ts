@@ -1,10 +1,11 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
+import {Component, HostListener, OnDestroy, OnInit} from '@angular/core';
 import {User} from '../user.model';
 import {Subscription} from 'rxjs/Subscription';
 import {UsersService} from '../users.service';
 import {AuthService} from '../authentication/auth.service';
 import {Record} from '../record.model';
 import {RecordService} from '../record.service';
+import {LoadingService} from '../loading/loading.service';
 
 @Component({
   selector: 'app-news',
@@ -27,9 +28,11 @@ export class NewsComponent implements OnInit, OnDestroy {
   nbWaiting = 0;
   waitingKeys = [];
 
+  isLoading = false;
+
   prettyPrintDuration = Record.prettyPrintDuration;
 
-  constructor(private userService: UsersService, private authService: AuthService, private recordService: RecordService) {
+  constructor(private userService: UsersService, private authService: AuthService, private recordService: RecordService, private loadingService: LoadingService) {
   }
 
   ngOnInit() {
@@ -98,6 +101,8 @@ export class NewsComponent implements OnInit, OnDestroy {
               ));
             }
 
+            this.loadingService.stopLoading();
+            this.isLoading = false;
             this.nbFinish = 0;
           }
         }, 200);
@@ -108,6 +113,10 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   getNextModif() {
+    this.isLoading = true;
+    if (this.records.length === 0) {
+      this.loadingService.startLoading();
+    }
     // For all followed tags
     for (let i = 0; i < this.currentUser.followedTags.length; i++) {
       // Subscribe to the list of records observable filtered by tag
@@ -150,4 +159,16 @@ export class NewsComponent implements OnInit, OnDestroy {
     return new Date(timestamp).toLocaleString();
   }
 
+  @HostListener('window:scroll', ['$event'])
+  onWindowScroll(event) {
+    const body = document.body;
+    const html = document.documentElement;
+
+    const height = Math.max( body.scrollHeight, body.offsetHeight,
+      html.clientHeight, html.scrollHeight, html.offsetHeight );
+
+    if (window.pageYOffset + window.innerHeight >= height - 10 && !this.isLoading) {
+      this.getNextModif();
+    }
+  }
 }

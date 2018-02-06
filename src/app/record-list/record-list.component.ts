@@ -30,7 +30,7 @@ export class RecordListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe to the list of records observable
-    this.subscriptions.push(this.recordService.recordList(this.searchValue, this.searchBy, parseInt(this.limit || 5, 10)).subscribe(
+    this.subscriptions.push(this.recordService.recordList(this.searchValue, this.searchBy, this.limit).subscribe(
       (records) => {
         this.records = records;
         this.loadingService.stopLoading();
@@ -38,25 +38,6 @@ export class RecordListComponent implements OnInit, OnDestroy {
     ));
 
     this.currentDisplay = this.limit || 5;
-  }
-
-  nextPage() {
-    if (this.records.length == this.currentDisplay) {
-      // Unsubscribe all observables
-      this.subscriptions.forEach((subscription: Subscription) => {
-        subscription.unsubscribe();
-      });
-
-      this.currentDisplay += (this.limit || 5);
-
-      // Subscribe to the list of records observable
-      this.subscriptions.push(this.recordService.recordList(this.searchValue, this.searchBy, parseInt(this.currentDisplay + '', 10)).subscribe(
-        (records) => {
-          this.records = records;
-          this.loadingService.stopLoading();
-        }
-      ));
-    }
   }
 
   ngOnDestroy() {
