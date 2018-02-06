@@ -4,8 +4,9 @@
   <div *ngFor="let comment of comments; let i = index" class="row">
     <i class="material-icons col s1">question_answer</i>
     <span class="col s10 push-s1" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</span>
-    <a class="viewMore" (click)="getAnswers(i)">Voir plus</a>
-    <a class="btn-floating red lighten-2" id="reply"><i class="material-icons">reply</i></a>
+    <a class="viewMore" (click)="getAnswers(i)">Voir les réponses</a>
+    <a class="btn-floating red lighten-2" *ngIf="comments[i]['answers']" id="reply" (click)="sendReply(i)"><i class="material-icons">reply</i></a>
+    <input *ngIf="comments[i]['answers']" [(ngModel)]="comments[i]['tempAnswer']" type="text" placeholder="Tamer"/>
   </div>
 </div>
 

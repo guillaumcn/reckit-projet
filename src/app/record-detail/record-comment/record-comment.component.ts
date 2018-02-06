@@ -2,6 +2,7 @@ import {Component, Input, OnInit, ViewChild} from '@angular/core';
 import {Record} from '../../record.model';
 import {Comment} from '../../comment.model';
 import {RecordService} from '../../record.service';
+import {AuthService} from '../../authentication/auth.service';
 
 @Component({
   selector: 'app-record-comment',
@@ -14,9 +15,8 @@ export class RecordCommentComponent implements OnInit {
   @Input('selectedRecord') selectedRecord: Record = new Record();
 
   comments: Comment[];
-  answers: {} = {};
 
-  constructor(private recordService: RecordService) {
+  constructor(private recordService: RecordService, private authService: AuthService) {
   }
 
   ngOnInit() {
@@ -33,14 +33,27 @@ export class RecordCommentComponent implements OnInit {
 
   getAnswers(index: string) {
     this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers').valueChanges().subscribe((answers) => {
-      this.answers[index] = answers;
-      console.log(this.answers);
+      if (!this.comments[index]['answers'])
+        this.comments[index]['answers'] = [];
+
+      if (!this.comments[index]['tempAnswer'])
+        this.comments[index]['tempAnswer'] = '';
+
+      this.comments[index]['answers'] = answers;
     });
   }
 
   addQuestion() {
     this.recordService.addQuestion(this.selectedRecord.key, this.askaquestion);
     this.askaquestion = '';
+  }
+
+  sendReply(index: string) {
+    this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers').add({
+      textAnswer: this.comments[index]['tempAnswer'],
+      date: Date.now(),
+      answerer: this.authService.userDetails.displayName
+    });
   }
 
 }
