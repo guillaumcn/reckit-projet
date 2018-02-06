@@ -54,6 +54,6 @@ export class RecordCommentComponent implements OnInit {
       date: Date.now(),
       answerer: this.authService.userDetails.displayName
     });
+    this.comments[index]['tempAnswer'] = '';
   }
-
 }

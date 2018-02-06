@@ -5,8 +5,9 @@
     <i class="material-icons col s1">question_answer</i>
     <span class="col s10 push-s1" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</span>
     <a class="viewMore" (click)="getAnswers(i)">Voir les réponses</a>
+    <p *ngFor="let answer of comments[i]['answers']">{{answer.textAnswer}}</p>
+    <input *ngIf="comments[i]['answers']" [(ngModel)]="comments[i]['tempAnswer']" type="text" placeholder="Répondre à la question..."/>
     <a class="btn-floating red lighten-2" *ngIf="comments[i]['answers']" id="reply" (click)="sendReply(i)"><i class="material-icons">reply</i></a>
-    <input *ngIf="comments[i]['answers']" [(ngModel)]="comments[i]['tempAnswer']" type="text" placeholder="Tamer"/>
   </div>
 </div>
 
