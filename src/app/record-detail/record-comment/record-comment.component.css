@@ -20,16 +20,19 @@ form {
   height: 25px !important;
   width: 25px !important;
   line-height: 25px !important;
-  margin-top: 20px !important;
-  position: absolute !important;
-  bottom: 3em !important;
-  right: 9px !important;
+  left: 90% !important;
+  bottom: 45px !important;
+  position: absolute;
 }
 
 .chip {
   margin-top: 10px !important;
   margin-left: 5px !important;
   margin-right: 5px !important;
+}
+
+#bubble .chip {
+  background-color: #fff !important;
 }
 
 h5 {
@@ -60,9 +63,15 @@ input:focus {
   margin-bottom: 2em;
 }
 
+#bubble {
+  position: relative;
+  background-color: #E5E4E9;
+  color: #363636;
+  border-radius: .4em;
+}
+
 #question {
   margin-top: 1.5em;
-  margin-bottom: 3em !important;
   font-size: 1.2em !important;
 }
 
@@ -72,12 +81,13 @@ input:focus {
   margin-left: 5px !important;
   font-size: 0.7em !important;
 }
+
 #answers {
   background-color: #2095FE;
   color: #fff;
   border-radius: 20px 20px 20px 20px;
-  margin-bottom: 5em;
-  padding: 15px 20px;
+  margin-top: 2em;
+  margin-bottom: 3em;
   position: relative;
 }
 
@@ -110,9 +120,9 @@ input:focus {
 
 .btn-floating.halfway-fab {
   bottom: -12px !important;
-  right: 50% !important;
+  left: 45% !important;
 }
 
 .card {
-  margin-bottom: 2em !important;
+  margin-bottom: 4em !important;
 }
