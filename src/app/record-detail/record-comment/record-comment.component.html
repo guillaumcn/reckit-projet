@@ -1,18 +1,17 @@
 <h5>Commentaires</h5>
 
 <div class="col s12" id="questions">
-  <div *ngFor="let comment of comments; let i = index" class="row">
-    <i class="material-icons col s1">question_answer</i>
-    <span class="col s10 push-s1" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</span>
-    <span>{{comment.questioner}}</span>
-    <span>{{timestampToLocaleString(comment.date)}}</span>
-    <a class="viewMore" (click)="getAnswers(i)">Voir les réponses</a>
-    <div *ngFor="let answer of comments[i]['answers']">
-    <p>{{answer.textAnswer}}</p>
-    <p>{{timestampToLocaleString(answer.date)}}</p>
-    <p>{{answer.answerer}}</p>
+  <div *ngFor="let comment of comments; let i = index" class="row card">
+    <div class="chip">{{comment.questioner}}</div>
+    <span class="right dateTime">Le {{timestampToLocaleString(comment.date)}}</span>
+    <p class="col s10 push-s1" id="question" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</p>
+    <a class="viewMore btn-floating halfway-fab waves-effect waves-light indigo darken-1" (click)="getAnswers(i)"><i class="material-icons">comment</i></a>
+    <div *ngFor="let answer of comments[i]['answers']" id="answers">
+      <p class="right col s10 push-s1">{{answer.textAnswer}}</p>
+      <span class="left dateTime">Le {{timestampToLocaleString(answer.date)}}</span>
+      <div class="chip right">{{answer.answerer}}</div>
     </div>
-    <input *ngIf="comments[i]['answers']" [(ngModel)]="comments[i]['tempAnswer']" type="text" placeholder="Répondre à la question..."/>
+    <input *ngIf="comments[i]['answers']" class="col s10 offset-s1" [(ngModel)]="comments[i]['tempAnswer']" type="text" placeholder="Répondre à la question..."/>
     <a class="btn-floating red lighten-2" *ngIf="comments[i]['answers']" id="reply" (click)="sendReply(i)"><i class="material-icons">reply</i></a>
   </div>
 </div>

@@ -15,8 +15,10 @@ form {
   margin-bottom: 2.5em;
 }
 
-#reply {
-  margin-left: 40%;
+#question {
+  margin-top: 1.5em;
+  margin-bottom: 2em;
+  font-size: 1.2em !important;
 }
 
 .btn-floating i {
@@ -28,10 +30,20 @@ form {
   height: 25px !important;
   width: 25px !important;
   line-height: 25px !important;
+  margin-top: 20px !important;
+  position: absolute !important;
+  bottom: 2.8em !important;
+  right: 9px !important;
+}
+
+.chip {
+  margin-top: 10px !important;
+  margin-left: 5px !important;
+  margin-right: 5px !important;
 }
 
 h5 {
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 /* label focus color */
@@ -48,4 +60,30 @@ input:focus {
 #questions {
   max-height: 400px;
   overflow-y: auto;
+}
+
+input {
+  margin-left: 25px !important;
+  margin-top: 30px !important;
+  margin-bottom: 40px !important;
+}
+
+.dateTime{
+  margin-right: 5px !important;
+  margin-top: 18px !important;
+  margin-left: 5px !important;
+  font-size: 0.8em !important;
+}
+
+.btn-floating.halfway-fab {
+  bottom: -12px !important;
+  right: 50% !important;
+}
+
+.card {
+  margin-bottom: 2em !important;
+}
+
+#answers .chip {
+  margin-bottom: 3em;
 }
