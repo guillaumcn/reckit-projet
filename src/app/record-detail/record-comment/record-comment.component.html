@@ -6,7 +6,6 @@
     <span class="right dateTime">Le {{timestampToLocaleString(comment.date)}}</span>
     <p class="col s10 push-s1" id="question" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</p>
     <a class="viewMore btn-floating halfway-fab waves-effect waves-light indigo darken-1" (click)="getAnswers(i)"><i class="material-icons">comment</i></a>
-    <div *ngIf="show">
       <div *ngFor="let answer of comments[i]['answers']" id="answers">
         <hr class="col s12"/>
         <p class="right col s10 push-s1">{{answer.textAnswer}}</p>
@@ -15,7 +14,6 @@
       </div>
       <input *ngIf="comments[i]['answers']" class="col s10 offset-s1" [(ngModel)]="comments[i]['tempAnswer']" type="text" placeholder="Répondre à la question..."/>
       <a class="btn-floating red lighten-2" *ngIf="comments[i]['answers']" id="reply" (click)="sendReply(i)"><i class="material-icons">reply</i></a>
-    </div>
   </div>
 </div>
 
