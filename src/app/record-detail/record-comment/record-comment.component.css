@@ -44,3 +44,8 @@ input:focus {
   border-bottom: 1px solid #0d47a1 !important;
   box-shadow: 0 1px 0 0 #0d47a1 !important;
 }
+
+#questions {
+  max-height: 400px;
+  overflow-y: auto;
+}

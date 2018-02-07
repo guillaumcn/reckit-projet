@@ -20,24 +20,20 @@ export class RecordCommentComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.recordService.recordCommentsRef.snapshotChanges().map(actions => {
-      return actions.map(action => {
-        const data = action.payload.doc.data() as Comment;
-        const key = action.payload.doc.id;
-        return {key, ...data};
-      });
-    }).subscribe((comments) => {
-        this.comments = comments;
+    this.recordService.commentsList(this.selectedRecord.key, 10).subscribe((comments) => {
+      this.comments = comments.reverse();
     });
   }
 
   getAnswers(index: string) {
     this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers').valueChanges().subscribe((answers) => {
-      if (!this.comments[index]['answers'])
+      if (!this.comments[index]['answers']) {
         this.comments[index]['answers'] = [];
+      }
 
-      if (!this.comments[index]['tempAnswer'])
+      if (!this.comments[index]['tempAnswer']) {
         this.comments[index]['tempAnswer'] = '';
+      }
 
       this.comments[index]['answers'] = answers;
     });

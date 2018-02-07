@@ -40,7 +40,7 @@
     <!-- Record comments -->
     <div class="row">
       <div class="col s10 offset-s1">
-        <app-record-comment [selectedRecord]="selectedRecord"></app-record-comment>
+        <app-record-comment *ngIf="selectedRecord.key" [selectedRecord]="selectedRecord"></app-record-comment>
       </div>
     </div>
 

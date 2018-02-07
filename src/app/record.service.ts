@@ -64,6 +64,20 @@ export class RecordService {
     return this.createRecordObservable();
   }
 
+  commentsList(recordKey: string, limit?: number, startAfter?: number) {
+    return this.afs.doc('/records/' + recordKey).collection('comments', ref =>
+      ref.orderBy('order')
+        .limit(limit || Math.pow(10, 3))
+        .startAfter(startAfter || 0))
+      .snapshotChanges().map(actions => {
+        return actions.map(action => {
+          const data = action.payload.doc.data() as Comment;
+          const key = action.payload.doc.id;
+          return {key, ...data};
+        });
+      });
+  }
+
   createRecordObservable() {
     return this.recordRef.snapshotChanges().map(action => {
       if (action.payload.exists) {
@@ -265,11 +279,12 @@ export class RecordService {
   }
 
   addQuestion(recordKey: string, question: string) {
-    const comList = this.recordListRef.doc(recordKey).collection('comments');
+    const comList = this.afs.doc('/records/' + recordKey).collection('comments');
     comList.add({
       textQuestion: question,
       date: Date.now(),
-      questioner: this.authService.userDetails.displayName
+      questioner: this.authService.userDetails.displayName,
+      order: 1 / Date.now()
     });
   }
 
