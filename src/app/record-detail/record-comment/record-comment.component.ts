@@ -26,18 +26,19 @@ export class RecordCommentComponent implements OnInit {
   }
 
   getAnswers(index: string) {
-	if (!this.comments[index]['answers']) {
-		this.comments[index]['answers'] = [];
-		this.comments[index]['tempAnswer'] = '';
-		this.comments[index]['subscription'] = this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers').valueChanges().subscribe((answers) => {
-			this.comments[index]['answers'] = answers;
-		});
-	} else {
-		delete this.comments[index]['answers'];
-		delete this.comments[index]['tempAnswer'];
-		this.comments[index]['subscription'].unsubscribe();
-		delete this.comments[index]['subscription'];
-	}
+    if (!this.comments[index]['answers']) {
+      this.comments[index]['answers'] = [];
+      this.comments[index]['tempAnswer'] = '';
+      this.comments[index]['subscription'] = this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers')
+        .valueChanges().subscribe((answers) => {
+        this.comments[index]['answers'] = answers;
+      });
+    } else {
+      delete this.comments[index]['answers'];
+      delete this.comments[index]['tempAnswer'];
+      this.comments[index]['subscription'].unsubscribe();
+      delete this.comments[index]['subscription'];
+    }
   }
 
   addQuestion() {

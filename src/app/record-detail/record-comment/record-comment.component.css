@@ -11,16 +11,6 @@ form {
   margin-top: 10em;
 }
 
-#questions {
-  margin-bottom: 2.5em;
-}
-
-#question {
-  margin-top: 1.5em;
-  margin-bottom: 2em;
-  font-size: 1.2em !important;
-}
-
 .btn-floating i {
   font-size: 0.9rem !important;
   line-height: 25px !important;
@@ -46,6 +36,12 @@ h5 {
   margin-bottom: 20px;
 }
 
+input {
+  margin-left: 25px !important;
+  margin-top: 20px !important;
+  margin-bottom: 40px !important;
+}
+
 /* label focus color */
 input:focus {
   color: #0d47a1 !important;
@@ -61,12 +57,13 @@ input:focus {
   max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
+  margin-bottom: 2em;
 }
 
-input {
-  margin-left: 25px !important;
-  margin-top: 60px !important;
-  margin-bottom: 40px !important;
+#question {
+  margin-top: 1.5em;
+  margin-bottom: 3em !important;
+  font-size: 1.2em !important;
 }
 
 .dateTime {
@@ -75,9 +72,40 @@ input {
   margin-left: 5px !important;
   font-size: 0.7em !important;
 }
+#answers {
+  background-color: #2095FE;
+  color: #fff;
+  border-radius: 20px 20px 20px 20px;
+  margin-bottom: 5em;
+  padding: 15px 20px;
+  position: relative;
+}
+
+#answers:after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 45%;
+  width: 0;
+  height: 0;
+  border: 22px solid transparent;
+  border-top-color: #2095FE;
+  border-bottom: 0;
+  border-right: 0;
+  margin-left: -11px;
+  margin-bottom: -22px;
+}
 
 #answers .dateTime {
-  margin-left: 28% !important;
+  margin-left: 4% !important;
+  margin-bottom: .7em;
+}
+
+#answers .chip {
+  margin-bottom: 1em;
+  position: absolute;
+  top: 95%;
+  left: 50%;
 }
 
 .btn-floating.halfway-fab {
@@ -87,8 +115,4 @@ input {
 
 .card {
   margin-bottom: 2em !important;
-}
-
-#answers .chip {
-  margin-bottom: 1em;
 }
