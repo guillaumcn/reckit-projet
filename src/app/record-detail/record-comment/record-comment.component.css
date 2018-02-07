@@ -32,7 +32,7 @@ form {
   line-height: 25px !important;
   margin-top: 20px !important;
   position: absolute !important;
-  bottom: 2.8em !important;
+  bottom: 3em !important;
   right: 9px !important;
 }
 
@@ -65,15 +65,19 @@ input:focus {
 
 input {
   margin-left: 25px !important;
-  margin-top: 30px !important;
+  margin-top: 60px !important;
   margin-bottom: 40px !important;
 }
 
-.dateTime{
+.dateTime {
   margin-right: 5px !important;
-  margin-top: 18px !important;
+  margin-top: 20px !important;
   margin-left: 5px !important;
-  font-size: 0.8em !important;
+  font-size: 0.7em !important;
+}
+
+#answers .dateTime {
+  margin-left: 9.8em !important;
 }
 
 .btn-floating.halfway-fab {
@@ -86,5 +90,5 @@ input {
 }
 
 #answers .chip {
-  margin-bottom: 3em;
+  margin-bottom: 1em;
 }

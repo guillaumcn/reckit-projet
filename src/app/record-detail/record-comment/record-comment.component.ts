@@ -1,4 +1,4 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {Record} from '../../record.model';
 import {Comment} from '../../comment.model';
 import {RecordService} from '../../record.service';
@@ -15,6 +15,7 @@ export class RecordCommentComponent implements OnInit {
   @Input('selectedRecord') selectedRecord: Record = new Record();
 
   comments: Comment[];
+  show = false;
 
   constructor(private recordService: RecordService, private authService: AuthService) {
   }
@@ -36,6 +37,7 @@ export class RecordCommentComponent implements OnInit {
       }
 
       this.comments[index]['answers'] = answers;
+      this.show = !this.show;
     });
   }
 
