@@ -123,7 +123,7 @@ export class NewsComponent implements OnInit, OnDestroy {
       this.subscriptions.push(this.recordService.recordList(this.currentUser.followedTags[i],
         'tags',
         10,
-        this.records.length !== 0 ? (1 / this.records[this.records.length - 1].lastUpdate) : 0)
+        this.records.length !== 0 ? (this.records[this.records.length - 1].lastUpdate) : Number.MAX_SAFE_INTEGER)
         .subscribe(
           (records) => {
             // For each received records
@@ -169,6 +169,7 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     if (window.pageYOffset + window.innerHeight >= height - 10 && !this.isLoading) {
       this.getNextModif();
+      console.log('aaa');
     }
   }
 }

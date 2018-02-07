@@ -222,6 +222,42 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     }
   }
 
+  creer20records() {
+    if (this.temporaryMP3) {
+      // Change mp3 filename
+      const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
+
+      for (let i = 0; i < 20; i++) {
+        const nom = Math.random() + '';
+
+        this.temporaryMP3 = new File([blob], nom + '.mp3', {type: blob.type});
+
+        this.newfiles = [];
+        this.newfiles.push(this.temporaryMP3);
+        this.selectedRecord.filenames = [];
+        this.selectedRecord.filenames.push(nom + '.mp3');
+
+        this.selectedRecord.name = nom;
+        this.selectedRecord.oratorMail = 'a@a';
+
+        this.selectedRecord.tags = [];
+        const nbTags = parseInt(((Math.random() * 8) + 1) + '', 10);
+        for (let j = 0; j < nbTags; j++) {
+          const tag = parseInt(((Math.random() * 8) + 1) + '', 10) + '';
+          if (this.selectedRecord.tags.indexOf(tag) === -1) {
+            this.selectedRecord.tags.push(tag);
+          }
+        }
+
+        // Pass data to the record service
+        this.recordService.addRecord(
+          this.selectedRecord,
+          this.newfiles,
+        );
+      }
+    }
+  }
+
   onUpdate() {
     if (this.recordForm.valid && this.selectedRecord != null) {
       // Change mp3 filename

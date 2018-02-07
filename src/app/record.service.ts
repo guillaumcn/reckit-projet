@@ -99,12 +99,14 @@ export class RecordService {
   }
 
   validateRecord(record: Record) {
+    const currentDate = Date.now();
+
     const searchRef = {};
     for (let i = 0; i < record.tags.length; i++) {
-      searchRef[btoa(record.tags[i])] = Date.now();
+      searchRef[btoa(record.tags[i])] = currentDate;
     }
-    searchRef[btoa(this.authService.userDetails.email)] = Date.now();
-    searchRef[btoa(record.oratorMail)] = Date.now();
+    searchRef[btoa(this.authService.userDetails.email)] = currentDate;
+    searchRef[btoa(record.oratorMail)] = currentDate;
 
     this.recordListRef.doc(record.key).update({validate: true, searchRef: searchRef});
   }
@@ -120,12 +122,14 @@ export class RecordService {
       validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
     }
 
+    const currentDate = Date.now();
+
     const searchRef = {};
     for (let i = 0; i < record.tags.length; i++) {
-      searchRef[btoa(record.tags[i])] = Date.now();
+      searchRef[btoa(record.tags[i])] = currentDate;
     }
-    searchRef[btoa(this.authService.userDetails.email)] = Date.now();
-    searchRef[btoa(record.oratorMail)] = Date.now();
+    searchRef[btoa(this.authService.userDetails.email)] = currentDate;
+    searchRef[btoa(record.oratorMail)] = currentDate;
 
     this.recordListRef.add({
       name: record.name,
@@ -137,7 +141,7 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
-      lastUpdate: Date.now(),
+      lastUpdate: currentDate,
       validate: true,
       validationKey: validationKey,
       searchRef: searchRef
@@ -163,12 +167,14 @@ export class RecordService {
                files: File[]) {
     this.loadingService.startLoading();
 
+    const currentDate = Date.now();
+
     const searchRef = {};
     for (let i = 0; i < record.tags.length; i++) {
-      searchRef[btoa(record.tags[i])] = Date.now();
+      searchRef[btoa(record.tags[i])] = currentDate;
     }
-    searchRef[btoa(this.authService.userDetails.email)] = Date.now();
-    searchRef[btoa(record.oratorMail)] = Date.now();
+    searchRef[btoa(this.authService.userDetails.email)] = currentDate;
+    searchRef[btoa(record.oratorMail)] = currentDate;
 
     this.recordListRef.doc(record.key).update({
       name: record.name,
@@ -180,7 +186,7 @@ export class RecordService {
       tags: record.tags,
       annotations: record.annotations,
       filenames: record.filenames,
-      lastUpdate: Date.now(),
+      lastUpdate: currentDate,
       validate: record.validate,
       validationKey: record.validationKey,
       searchRef: searchRef
