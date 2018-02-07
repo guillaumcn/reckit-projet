@@ -6,7 +6,6 @@ export class Comment {
   key?: string;
   textQuestion: string;
   date: number; //timestamp
-  order: number;
   questioner: string;
   answers?: {answerer: string, date: number, textAnswer: string}[];
 

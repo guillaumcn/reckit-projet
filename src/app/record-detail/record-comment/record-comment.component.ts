@@ -20,7 +20,7 @@ export class RecordCommentComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.recordService.commentsList(this.selectedRecord.key, 10).subscribe((comments) => {
+    this.recordService.commentsList(this.selectedRecord.key, 5).subscribe((comments) => {
       this.comments = comments.reverse();
     });
   }
@@ -29,9 +29,8 @@ export class RecordCommentComponent implements OnInit {
     if (!this.comments[index]['answers']) {
       this.comments[index]['answers'] = [];
       this.comments[index]['tempAnswer'] = '';
-      this.comments[index]['subscription'] = this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers')
-        .valueChanges().subscribe((answers) => {
-        this.comments[index]['answers'] = answers;
+      this.comments[index]['subscription'] = this.recordService.answersList(this.selectedRecord.key, this.comments[index].key, 5).subscribe((answers) => {
+        this.comments[index]['answers'] = answers.reverse();
       });
     } else {
       delete this.comments[index]['answers'];
@@ -46,12 +45,8 @@ export class RecordCommentComponent implements OnInit {
     this.askaquestion = '';
   }
 
-  sendReply(index: string) {
-    this.recordService.recordCommentsRef.doc(this.comments[index].key).collection('answers').add({
-      textAnswer: this.comments[index]['tempAnswer'],
-      date: Date.now(),
-      answerer: this.authService.userDetails.displayName
-    });
+  addReply(index: string) {
+    this.recordService.addAnswer(this.selectedRecord.key, this.comments[index].key, this.comments[index]['tempAnswer']);
     this.comments[index]['tempAnswer'] = '';
   }
 

@@ -8,7 +8,7 @@ textarea.materialize-textarea:focus:not([readonly]) + label {
 }
 
 form {
-  margin-top: 10em;
+  margin-top: 0em;
 }
 
 .btn-floating i {
@@ -31,12 +31,8 @@ form {
   margin-right: 5px !important;
 }
 
-#bubble .chip {
+.bubble .chip {
   background-color: #fff !important;
-}
-
-h5 {
-  margin-bottom: 20px;
 }
 
 input {
@@ -60,19 +56,40 @@ input:focus {
   max-height: 400px;
   overflow-y: auto;
   overflow-x: hidden;
-  margin-bottom: 2em;
+  padding: 5px 5px 5px 10px;
 }
 
-#bubble {
+/* width */
+#questions::-webkit-scrollbar {
+  width: 2px;
+}
+
+/* Track */
+#questions::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+/* Handle */
+#questions::-webkit-scrollbar-thumb {
+  background: #888;
+}
+
+/* Handle on hover */
+#questions::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+.bubble {
   position: relative;
   background-color: #E5E4E9;
   color: #363636;
   border-radius: .4em;
+  margin-right: 2px;
 }
 
-#question {
-  margin-top: 1.5em;
-  font-size: 1.2em !important;
+.question {
+  margin-top: 0.75em !important;
+  font-size: 1em !important;
 }
 
 .dateTime {
@@ -82,7 +99,7 @@ input:focus {
   font-size: 0.7em !important;
 }
 
-#answers {
+.answer {
   background-color: #2095FE;
   color: #fff;
   border-radius: 20px 20px 20px 20px;
@@ -91,7 +108,7 @@ input:focus {
   position: relative;
 }
 
-#answers:after {
+.answer:after {
   content: '';
   position: absolute;
   bottom: 0;
@@ -106,12 +123,12 @@ input:focus {
   margin-bottom: -22px;
 }
 
-#answers .dateTime {
+.answer .dateTime {
   margin-left: 4% !important;
   margin-bottom: .7em;
 }
 
-#answers .chip {
+.answer .chip {
   margin-bottom: 1em;
   position: absolute;
   top: 95%;
@@ -124,5 +141,5 @@ input:focus {
 }
 
 .card {
-  margin-bottom: 4em !important;
+  margin-bottom: 2em !important;
 }

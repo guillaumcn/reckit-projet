@@ -36,10 +36,10 @@ export class RecordService {
   recordList(value: string, searchBy?: string, limit?: number, startAfter?: number) {
     return this.afs.collection('/records', ref =>
       ref
-        .orderBy('searchRef.' + btoa(value))
+        .orderBy('searchRef.' + btoa(value), 'desc')
         .where('searchRef.' + btoa(value), '>', 0)
         .limit(limit || Math.pow(10, 3))
-        .startAfter(startAfter || 0))
+        .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
       .snapshotChanges().map(actions => {
         const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
@@ -66,9 +66,9 @@ export class RecordService {
 
   commentsList(recordKey: string, limit?: number, startAfter?: number) {
     return this.afs.doc('/records/' + recordKey).collection('comments', ref =>
-      ref.orderBy('order')
+      ref.orderBy('date', 'desc')
         .limit(limit || Math.pow(10, 3))
-        .startAfter(startAfter || 0))
+        .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
       .snapshotChanges().map(actions => {
         return actions.map(action => {
           const data = action.payload.doc.data() as Comment;
@@ -76,6 +76,14 @@ export class RecordService {
           return {key, ...data};
         });
       });
+  }
+
+  answersList(recordKey: string, commentKey: string, limit?: number, startAfter?: number) {
+    return this.afs.doc('/records/' + recordKey).collection('comments').doc(commentKey).collection('answers', ref =>
+      ref.orderBy('date', 'desc')
+        .limit(limit || Math.pow(10, 3))
+        .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
+      .valueChanges();
   }
 
   createRecordObservable() {
@@ -93,10 +101,10 @@ export class RecordService {
   validateRecord(record: Record) {
     const searchRef = {};
     for (let i = 0; i < record.tags.length; i++) {
-      searchRef[btoa(record.tags[i])] = 1 / Date.now();
+      searchRef[btoa(record.tags[i])] = Date.now();
     }
-    searchRef[btoa(this.authService.userDetails.email)] = 1 / Date.now();
-    searchRef[btoa(record.oratorMail)] = 1 / Date.now();
+    searchRef[btoa(this.authService.userDetails.email)] = Date.now();
+    searchRef[btoa(record.oratorMail)] = Date.now();
 
     this.recordListRef.doc(record.key).update({validate: true, searchRef: searchRef});
   }
@@ -114,10 +122,10 @@ export class RecordService {
 
     const searchRef = {};
     for (let i = 0; i < record.tags.length; i++) {
-      searchRef[btoa(record.tags[i])] = 1 / Date.now();
+      searchRef[btoa(record.tags[i])] = Date.now();
     }
-    searchRef[btoa(this.authService.userDetails.email)] = 1 / Date.now();
-    searchRef[btoa(record.oratorMail)] = 1 / Date.now();
+    searchRef[btoa(this.authService.userDetails.email)] = Date.now();
+    searchRef[btoa(record.oratorMail)] = Date.now();
 
     this.recordListRef.add({
       name: record.name,
@@ -157,10 +165,10 @@ export class RecordService {
 
     const searchRef = {};
     for (let i = 0; i < record.tags.length; i++) {
-      searchRef[btoa(record.tags[i])] = 1 / Date.now();
+      searchRef[btoa(record.tags[i])] = Date.now();
     }
-    searchRef[btoa(this.authService.userDetails.email)] = 1 / Date.now();
-    searchRef[btoa(record.oratorMail)] = 1 / Date.now();
+    searchRef[btoa(this.authService.userDetails.email)] = Date.now();
+    searchRef[btoa(record.oratorMail)] = Date.now();
 
     this.recordListRef.doc(record.key).update({
       name: record.name,
@@ -283,8 +291,16 @@ export class RecordService {
     comList.add({
       textQuestion: question,
       date: Date.now(),
-      questioner: this.authService.userDetails.displayName,
-      order: 1 / Date.now()
+      questioner: this.authService.userDetails.displayName
+    });
+  }
+
+  addAnswer(recordKey: string, commentKey: string, answer: string) {
+    const answersList = this.afs.doc('/records/' + recordKey).collection('comments').doc(commentKey).collection('answers');
+    answersList.add({
+      textAnswer: answer,
+      date: Date.now(),
+      answerer: this.authService.userDetails.displayName
     });
   }
 
