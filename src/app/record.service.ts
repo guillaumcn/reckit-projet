@@ -21,7 +21,6 @@ export class RecordService {
   storageRef: Reference;
 
   recordRef: AngularFirestoreDocument<Record>;
-  recordCommentsRef: AngularFirestoreCollection<Comment>;
 
   beforeUpdateFileNames = [];
 
@@ -59,9 +58,15 @@ export class RecordService {
   }
 
   recordByKey(recordKey: string) {
-    this.recordRef = this.afs.doc('/records/' + recordKey);
-    this.recordCommentsRef = this.recordRef.collection('comments');
-    return this.createRecordObservable();
+    return this.afs.doc('/records/' + recordKey).snapshotChanges().map(action => {
+      if (action.payload.exists) {
+        const data = action.payload.data() as Record;
+        const key = action.payload.id;
+        return {key, ...data};
+      } else {
+        return null;
+      }
+    });
   }
 
   commentsList(recordKey: string, limit?: number, startAfter?: number) {
@@ -84,18 +89,6 @@ export class RecordService {
         .limit(limit || Math.pow(10, 3))
         .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
       .valueChanges();
-  }
-
-  createRecordObservable() {
-    return this.recordRef.snapshotChanges().map(action => {
-      if (action.payload.exists) {
-        const data = action.payload.data() as Record;
-        const key = action.payload.id;
-        return {key, ...data};
-      } else {
-        return null;
-      }
-    });
   }
 
   validateRecord(record: Record) {
@@ -292,8 +285,8 @@ export class RecordService {
     });
   }
 
-  addQuestion(recordKey: string, question: string) {
-    const comList = this.afs.doc('/records/' + recordKey).collection('comments');
+  addQuestion(record: Record, question: string) {
+    const comList = this.afs.doc('/records/' + record.key).collection('comments');
     comList.add({
       textQuestion: question,
       date: Date.now(),
@@ -301,8 +294,8 @@ export class RecordService {
     });
   }
 
-  addAnswer(recordKey: string, commentKey: string, answer: string) {
-    const answersList = this.afs.doc('/records/' + recordKey).collection('comments').doc(commentKey).collection('answers');
+  addAnswer(record: Record, commentKey: string, answer: string) {
+    const answersList = this.afs.doc('/records/' + record.key).collection('comments').doc(commentKey).collection('answers');
     answersList.add({
       textAnswer: answer,
       date: Date.now(),

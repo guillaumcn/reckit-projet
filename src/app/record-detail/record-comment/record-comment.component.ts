@@ -41,12 +41,12 @@ export class RecordCommentComponent implements OnInit {
   }
 
   addQuestion() {
-    this.recordService.addQuestion(this.selectedRecord.key, this.askaquestion);
+    this.recordService.addQuestion(this.selectedRecord, this.askaquestion);
     this.askaquestion = '';
   }
 
   addReply(index: string) {
-    this.recordService.addAnswer(this.selectedRecord.key, this.comments[index].key, this.comments[index]['tempAnswer']);
+    this.recordService.addAnswer(this.selectedRecord, this.comments[index].key, this.comments[index]['tempAnswer']);
     this.comments[index]['tempAnswer'] = '';
   }
 
