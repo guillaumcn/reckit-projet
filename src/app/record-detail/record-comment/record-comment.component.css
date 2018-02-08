@@ -106,7 +106,7 @@ input:focus {
   margin-top: 2em;
   margin-bottom: 3em;
   position: relative;
-  box-shadow: #555555 2px 2px;
+  box-shadow: #9e9e9e 2px 2px;
 }
 
 .answer:after {
