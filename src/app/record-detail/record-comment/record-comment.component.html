@@ -6,7 +6,7 @@
       <p class="col s12 question" #annotationText  (focus)="spaceActive=false" (blur)="spaceActive=true" >{{comment.textQuestion}}</p>
     </div>
     <a class="viewMore btn-floating halfway-fab waves-effect waves-light indigo darken-1" (click)="getAnswers(i)"><i class="material-icons">comment</i></a>
-    <div *ngFor="let answer of comments[i]['answers']" class="col s10 push-s2 answer">
+    <div *ngFor="let answer of comments[i]['answers']" class="col s9 push-s3 answer">
         <p class="right col s12">{{answer.textAnswer}}</p>
         <span class="left dateTime">Le {{timestampToLocaleString(answer.date)}}</span>
         <div class="chip right">{{answer.answerer}}</div>

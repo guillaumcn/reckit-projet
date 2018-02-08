@@ -125,6 +125,7 @@ input:focus {
 
 .answer .dateTime {
   margin-left: 4% !important;
+  margin-top: 0px !important;
   margin-bottom: .7em;
 }
 
