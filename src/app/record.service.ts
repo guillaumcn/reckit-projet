@@ -16,20 +16,12 @@ import {Subject} from 'rxjs/Subject';
 @Injectable()
 export class RecordService {
 
-  // Chaque élément du tableau de Record[] est une ligne de Firebase
-  recordListRef: AngularFirestoreCollection<Record>;
-  storageRef: Reference;
-
-  recordRef: AngularFirestoreDocument<Record>;
-
   beforeUpdateFileNames = [];
 
   constructor(private afs: AngularFirestore, private toastService: ToastService,
               private loadingService: LoadingService, private authService: AuthService,
               private router: Router,
               private http: HttpClient) {
-    this.storageRef = firebase.storage().ref();
-    this.recordListRef = this.afs.collection('/records');
   }
 
   recordList(value: string, searchBy?: string, limit?: number, startAfter?: number) {
@@ -101,12 +93,15 @@ export class RecordService {
     searchRef[btoa(this.authService.userDetails.email)] = currentDate;
     searchRef[btoa(record.oratorMail)] = currentDate;
 
-    this.recordListRef.doc(record.key).update({validate: true, searchRef: searchRef});
+    this.afs.collection('/records').doc(record.key).update({validate: true, searchRef: searchRef});
   }
 
   addRecord(record: Record,
             files: File[]) {
     this.loadingService.startLoading();
+
+    record.recorderMail = this.authService.userDetails.email;
+    record.recorder = this.authService.userDetails.displayName;
 
     const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
     let validationKey = '';
@@ -121,13 +116,13 @@ export class RecordService {
     for (let i = 0; i < record.tags.length; i++) {
       searchRef[btoa(record.tags[i])] = currentDate;
     }
-    searchRef[btoa(this.authService.userDetails.email)] = currentDate;
+    searchRef[btoa(record.recorderMail)] = currentDate;
     searchRef[btoa(record.oratorMail)] = currentDate;
 
-    this.recordListRef.add({
+    this.afs.collection('/records').add({
       name: record.name,
-      recorder: this.authService.userDetails.displayName,
-      recorderMail: this.authService.userDetails.email,
+      recorder: record.recorder,
+      recorderMail: record.recorderMail,
       oratorMail: record.oratorMail,
       duration: record.duration,
       type: record.type,
@@ -150,9 +145,12 @@ export class RecordService {
         .subscribe();
 
       this.uneditRecord();
-      this.loadingService.stopLoading();
+
+      this.updateSearchReferences(null, record);
 
       this.uploadFiles(data.id, files);
+
+      this.loadingService.stopLoading();
     });
   }
 
@@ -169,7 +167,7 @@ export class RecordService {
     searchRef[btoa(this.authService.userDetails.email)] = currentDate;
     searchRef[btoa(record.oratorMail)] = currentDate;
 
-    this.recordListRef.doc(record.key).update({
+    this.afs.collection('/records').doc(record.key).update({
       name: record.name,
       recorder: record.recorder,
       recorderMail: record.recorderMail,
@@ -185,20 +183,22 @@ export class RecordService {
       searchRef: searchRef
     }).then((data) => {
 
-      this.loadingService.stopLoading();
-
       this.uploadFiles(record.key, files);
 
       this.removeFiles(record.key, Record.fileDiff(this.beforeUpdateFileNames, record.filenames));
 
+      this.updateSearchReferences(null, record);
+
       this.uneditRecord();
+
+      this.loadingService.stopLoading();
     });
   }
 
   removeRecord(record: Record) {
     this.loadingService.startLoading();
 
-    this.recordListRef.doc(record.key).collection('comments').snapshotChanges().map(actions => {
+    this.afs.collection('/records').doc(record.key).collection('comments').snapshotChanges().map(actions => {
       actions.map(action => {
         const key = action.payload.doc.id;
         return key;
@@ -207,7 +207,7 @@ export class RecordService {
       console.log(comments);
     });
 
-    this.recordListRef.doc(record.key).delete().then(() => {
+    this.afs.collection('/records').doc(record.key).delete().then(() => {
       this.removeFiles(record.key, record.filenames);
     });
   }
@@ -219,7 +219,7 @@ export class RecordService {
   }
 
   getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {
-    return this.storageRef.child('/records/' + recordKey + '/' + filename).getDownloadURL();
+    return firebase.storage().ref().child('/records/' + recordKey + '/' + filename).getDownloadURL();
   }
 
   editRecord(record: Record) {
@@ -252,7 +252,7 @@ export class RecordService {
     }
 
     this.loadingService.startUploading(fileList[currentIndex].name);
-    const uploadTask = this.storageRef.child('/records/' + recordKey + '/' + fileList[currentIndex].name).put(fileList[currentIndex]);
+    const uploadTask = firebase.storage().ref().child('/records/' + recordKey + '/' + fileList[currentIndex].name).put(fileList[currentIndex]);
     uploadTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot: UploadTaskSnapshot) => {
         const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         this.loadingService.progressUploading(progress);
@@ -280,7 +280,7 @@ export class RecordService {
     }
 
     const filename = filenames[currentIndex];
-    this.storageRef.child('/records/' + recordKey + '/' + filename).delete().then(() => {
+    firebase.storage().ref().child('/records/' + recordKey + '/' + filename).delete().then(() => {
       this.removeFile(recordKey, filenames, currentIndex + 1);
     });
   }
@@ -300,6 +300,48 @@ export class RecordService {
       textAnswer: answer,
       date: Date.now(),
       answerer: this.authService.userDetails.displayName
+    });
+
+    this.searchAll('reckit.projet@gmail.com', (result) => {
+      console.log(result);
+    });
+  }
+
+  searchAll(value: string, callback, limit?: number) {
+    this.afs.collection('/search')
+      .ref.orderBy('value')
+      .limit(limit || Math.pow(10, 3))
+      .startAt(value)
+      .endAt(value + '\uf8ff')
+      .get().then((result) => {
+      callback(result.docs.map((item) => {
+        return item.data();
+      }));
+    });
+  }
+
+  updateSearchReferences(previousRecord: Record, newRecord: Record) {
+    this.addSearchReference(newRecord.recorderMail, 'recorderMail');
+    this.addSearchReference(newRecord.oratorMail, 'oratorMail');
+    this.addSearchReference(newRecord.name, 'name');
+    for (let i = 0; i < newRecord.tags.length; i++) {
+      this.addSearchReference(newRecord.tags[i], 'tag');
+    }
+  }
+
+  addSearchReference(reference: string, refType: string) {
+    this.afs.collection('/search')
+      .ref
+      .where('value', '==', reference).get().then((result) => {
+      if (result.docs.length === 0) {
+        this.afs.collection('/search').add({value: reference, types: [refType]});
+      } else {
+        const currentTypes = result.docs[0].data().types;
+        if (currentTypes.indexOf(refType) === -1) {
+          currentTypes.push(refType);
+          this.afs.collection('/search').doc(result.docs[0].id).update({types: currentTypes});
+        }
+      }
     });
   }
 

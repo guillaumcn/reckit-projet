@@ -32,6 +32,7 @@ import { TagDetailComponent } from './tag-detail/tag-detail.component';
 import { NewsComponent } from './news/news.component';
 import {AngularFirestore, AngularFirestoreModule} from 'angularfire2/firestore';
 import { MyRecordsComponent } from './my-records/my-records.component';
+import { SearchComponent } from './search/search.component';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { MyRecordsComponent } from './my-records/my-records.component';
     TagDetailComponent,
     NewsComponent,
     MyRecordsComponent,
+    SearchComponent,
 ],
   imports: [
     BrowserModule,

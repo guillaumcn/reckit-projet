@@ -20,14 +20,13 @@
 
           <input id="search" type="search" name="search" (keyup)="search($event)" materialize="dropdown"
                  data-activates='dropdown1' placeholder="Recherche ..."
-                 (focus)="spaceActive=false" (blur)="spaceActive=true" search required>
+                 (focus)="spaceActive=false" (blur)="spaceActive=true" autocomplete="off" search required>
           <label class="label-icon" for="search"><i class="material-icons center-block">search</i></label>
           <i class="material-icons">close</i>
 
           <!-- Dropdown Structure -->
           <ul id='dropdown1' class='dropdown-content'>
-            <li *ngFor="let result of results"><a href="#">{{result}}</a></li>
-
+            <li *ngFor="let result of results" class="searchResult"><a [routerLink]="['/search/' + result.value]"><i class="material-icons right">keyboard_arrow_right</i>{{result.value}}</a></li>
           </ul>
         </div>
       </form>
