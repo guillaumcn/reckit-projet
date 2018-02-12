@@ -169,7 +169,6 @@ export class NewsComponent implements OnInit, OnDestroy {
 
     if (window.pageYOffset + window.innerHeight >= height - 10 && !this.isLoading) {
       this.getNextModif();
-      console.log('aaa');
     }
   }
 }

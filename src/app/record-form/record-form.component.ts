@@ -212,6 +212,11 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   onCreate() {
     if (this.recordForm.valid && this.temporaryMP3) {
 
+      // Unsubscribe all observables
+      this.subscriptions.forEach((subscription: Subscription) => {
+        subscription.unsubscribe();
+      });
+
       this.loadingService.startLoading();
 
       // Change mp3 filename
@@ -262,9 +267,9 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.selectedRecord.tags = [];
       const nbTags = parseInt(((Math.random() * 8) + 1) + '', 10);
       for (let j = 0; j < nbTags; j++) {
-        const possibleTags = 'ABCD';
+        const possibleTags = 'ABC';
         let tag = '';
-        for (let k = 0; k < 4; k++) {
+        for (let k = 0; k < 3; k++) {
           tag += possibleTags.charAt(Math.floor(Math.random() * possibleTags.length));
         }
         if (this.selectedRecord.tags.indexOf(tag) === -1) {
@@ -286,6 +291,13 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   onUpdate() {
     if (this.recordForm.valid && this.selectedRecord != null) {
+      // Unsubscribe all observables
+      this.subscriptions.forEach((subscription: Subscription) => {
+        subscription.unsubscribe();
+      });
+
+      this.loadingService.startLoading();
+
       // Change mp3 filename
       const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
       this.temporaryMP3 = new File([blob], this.selectedRecord.name + '.mp3', {type: blob.type});

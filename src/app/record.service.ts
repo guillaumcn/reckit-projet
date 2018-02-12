@@ -224,7 +224,6 @@ export class RecordService {
       }).then((data) => {
         this.updateSearchReferences(this.recordBeforeChanges, record).then(() => {
           this.removeFiles(record.key, Record.fileDiff(this.beforeUpdateFileNames, record.filenames)).then(() => {
-
             this.uploadFiles(record.key, files).then(() => {
               resolve();
             }, () => {
@@ -344,6 +343,7 @@ export class RecordService {
   removeFiles(recordKey, filenames: string[]) {
     return new Promise((resolve, reject) => {
       this.removeFile(recordKey, filenames, 0, (result) => {
+        console.log('je suis dans le callback');
         if (result) {
           resolve();
         } else {
@@ -363,7 +363,7 @@ export class RecordService {
 
     const filename = filenames[currentIndex];
     firebase.storage().ref().child('/records/' + recordKey + '/' + filename).delete().then(() => {
-      this.removeFile(recordKey, filenames, currentIndex + 1);
+      this.removeFile(recordKey, filenames, currentIndex + 1, callback);
     }, () => {
       if (callback) {
         callback(false);
