@@ -72,12 +72,10 @@ export class NewsComponent implements OnInit, OnDestroy {
 
               return 0;
             });
-            this.tempRecords.splice(10, this.tempRecords.length);
-            for (let i = 0; i < this.tempRecords.length; i++) {
+            this.tempRecords.splice(11, this.tempRecords.length);
+            for (let i = 0; i < (this.tempRecords.length > 10 ? 10 : this.tempRecords.length); i++) {
               this.records.push(this.tempRecords[i]);
             }
-            this.tempRecords = [];
-            this.foundedRecordKeys = [];
 
             // Unsubscribe all observables
             this.subscriptions.forEach((subscription: Subscription) => {
@@ -129,31 +127,35 @@ export class NewsComponent implements OnInit, OnDestroy {
   }
 
   getNextModif() {
-    this.isLoading = true;
-    if (this.records.length === 0) {
-      this.loadingService.startLoading();
-    }
-    // For all followed tags
-    for (let i = 0; i < this.currentUser.followedTags.length; i++) {
-      // Subscribe to the list of records observable filtered by tag
-      this.subscriptions.push(this.recordService.recordListObservable(this.currentUser.followedTags[i],
-        'tags',
-        10,
-        this.records.length !== 0 ? (this.records[this.records.length - 1].lastUpdate) : null)
-        .subscribe(
-          (records) => {
-            // For each received records
-            for (let j = 0; j < records.length; j++) {
-              if (this.foundedRecordKeys.indexOf(records[j].key) === -1) {
-                this.tempRecords.push(records[j]);
-                this.foundedRecordKeys.push(records[j].key);
+    if (!this.isLoading && (this.tempRecords.length === 0 || this.tempRecords.length === 11)) {
+      this.isLoading = true;
+      this.tempRecords = [];
+      this.foundedRecordKeys = [];
+      if (this.records.length === 0) {
+        this.loadingService.startLoading();
+      }
+      // For all followed tags
+      for (let i = 0; i < this.currentUser.followedTags.length; i++) {
+        // Subscribe to the list of records observable filtered by tag
+        this.subscriptions.push(this.recordService.recordListObservable(this.currentUser.followedTags[i],
+          'tags',
+          11,
+          this.records.length !== 0 ? (this.records[this.records.length - 1].lastUpdate) : null)
+          .subscribe(
+            (records) => {
+              // For each received records
+              for (let j = 0; j < records.length; j++) {
+                if (this.foundedRecordKeys.indexOf(records[j].key) === -1) {
+                  this.tempRecords.push(records[j]);
+                  this.foundedRecordKeys.push(records[j].key);
+                }
+              }
+              if (this.nbFinish !== this.currentUser.followedTags.length) {
+                this.nbFinish++;
               }
             }
-            if (this.nbFinish !== this.currentUser.followedTags.length) {
-              this.nbFinish++;
-            }
-          }
-        ));
+          ));
+      }
     }
   }
 
