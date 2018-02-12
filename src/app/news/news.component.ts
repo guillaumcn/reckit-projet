@@ -123,7 +123,7 @@ export class NewsComponent implements OnInit, OnDestroy {
       this.subscriptions.push(this.recordService.recordListObservable(this.currentUser.followedTags[i],
         'tags',
         10,
-        this.records.length !== 0 ? (this.records[this.records.length - 1].lastUpdate) : Number.MAX_SAFE_INTEGER)
+        this.records.length !== 0 ? (this.records[this.records.length - 1].lastUpdate) : null)
         .subscribe(
           (records) => {
             // For each received records

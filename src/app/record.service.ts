@@ -3,15 +3,13 @@ import {ToastService} from './toast.service';
 import {Record} from './record.model';
 import {Comment} from './comment.model';
 import * as firebase from 'firebase';
-import Reference = firebase.storage.Reference;
 import {LoadingService} from './loading/loading.service';
 import {AuthService} from './authentication/auth.service';
 import {Router} from '@angular/router';
 import UploadTaskSnapshot = firebase.storage.UploadTaskSnapshot;
 import {HttpClient} from '@angular/common/http';
-import {AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument} from 'angularfire2/firestore';
-import {current} from 'codelyzer/util/syntaxKind';
-import {Subject} from 'rxjs/Subject';
+import {AngularFirestore} from 'angularfire2/firestore';
+import ServerValue = firebase.database.ServerValue;
 
 @Injectable()
 export class RecordService {
@@ -30,9 +28,9 @@ export class RecordService {
     return this.afs.collection('/records', ref =>
       ref
         .orderBy('ref.' + btoa(value), 'desc')
-        .where('ref.' + btoa(value), '>', 0)
+        .where('ref.' + btoa(value), '>', new Date(0))
         .limit(limit || Math.pow(10, 3))
-        .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
+        .startAfter(startAfter || new Date(7258118400000)))
       .snapshotChanges().map(actions => {
         const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
@@ -54,9 +52,9 @@ export class RecordService {
   recordList(value: string, searchBy?: string, limit?: number, startAfter?: number, callback?) {
     this.afs.collection('/records').ref
       .orderBy('ref.' + btoa(value), 'desc')
-      .where('ref.' + btoa(value), '>', 0)
+      .where('ref.' + btoa(value), '>', new Date(0))
       .limit(limit || Math.pow(10, 3))
-      .startAfter(startAfter || Number.MAX_SAFE_INTEGER)
+      .startAfter(startAfter || new Date(7258118400000))
       .get().then((results) => {
       const records = results.docs.map((result) => {
         const data = result.data() as Record;
@@ -93,7 +91,7 @@ export class RecordService {
     return this.afs.doc('/records/' + recordKey).collection('comments', ref =>
       ref.orderBy('date', 'desc')
         .limit(limit || Math.pow(10, 3))
-        .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
+        .startAfter(startAfter || new Date(7258118400000)))
       .snapshotChanges().map(actions => {
         return actions.map(action => {
           const data = action.payload.doc.data() as Comment;
@@ -107,13 +105,13 @@ export class RecordService {
     return this.afs.doc('/records/' + recordKey).collection('comments').doc(commentKey).collection('answers', ref =>
       ref.orderBy('date', 'desc')
         .limit(limit || Math.pow(10, 3))
-        .startAfter(startAfter || Number.MAX_SAFE_INTEGER))
+        .startAfter(startAfter || new Date(7258118400000)))
       .valueChanges();
   }
 
   validateRecord(record: Record) {
     return new Promise((resolve, reject) => {
-      const currentDate = firebase.database.ServerValue.TIMESTAMP;;
+      const currentDate = firebase.firestore.FieldValue.serverTimestamp();
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
@@ -146,7 +144,7 @@ export class RecordService {
         validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
       }
 
-      const currentDate = firebase.database.ServerValue.TIMESTAMP;;
+      const currentDate = firebase.firestore.FieldValue.serverTimestamp();
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
@@ -199,7 +197,7 @@ export class RecordService {
   updateRecord(record: Record,
                files: File[]) {
     return new Promise((resolve, reject) => {
-      const currentDate = firebase.database.ServerValue.TIMESTAMP;
+      const currentDate = firebase.firestore.FieldValue.serverTimestamp();
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
@@ -377,7 +375,7 @@ export class RecordService {
     const comList = this.afs.doc('/records/' + record.key).collection('comments');
     return comList.add({
       textQuestion: question,
-      date: firebase.database.ServerValue.TIMESTAMP,
+      date: firebase.firestore.FieldValue.serverTimestamp(),
       questioner: this.authService.userDetails.displayName
     });
   }
@@ -386,7 +384,7 @@ export class RecordService {
     const answersList = this.afs.doc('/records/' + record.key).collection('comments').doc(commentKey).collection('answers');
     return answersList.add({
       textAnswer: answer,
-      date: firebase.database.ServerValue.TIMESTAMP,
+      date: firebase.firestore.FieldValue.serverTimestamp(),
       answerer: this.authService.userDetails.displayName
     });
   }
