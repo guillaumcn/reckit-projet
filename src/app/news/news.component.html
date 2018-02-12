@@ -11,49 +11,31 @@
   <div class="recordNewsBlock col s12">
     <div *ngFor="let record of records" class="row recordNews card">
       <div class="col s7">
-        <h5 class="col s12">Derniers commentaires</h5>
-        <!-- peeeeeeeeeeeeeeeeeerle -->
-
+        <h5 class="col s12">Dernier commentaire</h5>
 
         <div *ngIf="record['lastComment']">
-          <p>
-            {{record['lastComment'].textQuestion}}
-          </p>
-          <p>
-            {{timestampToLocaleString(record['lastComment'].date)}}
-          </p>
-          <p>
-            {{record['lastComment'].questioner}}
-          </p>
+          <div class="col s12 question">
+            <p><b>{{record['lastComment'].questioner}} : </b>{{record['lastComment'].textQuestion}}</p>
 
-          <div *ngFor="let answer of record['lastComment']['lastAnswers']">
-            <p>
-              {{answer.textAnswer}}
-            </p>
-            <p>
-              {{timestampToLocaleString(answer.date)}}
-            </p>
-            <p>
-              {{answer.answerer}}
-            </p>
+            <div *ngFor="let answer of record['lastComment']['lastAnswers']">
+              <p class="col s10 push-s2"><b>{{answer.answerer}} : </b>{{answer.textAnswer}}</p>
+            </div>
           </div>
-
-        </div>
-        <!-- -------------------------- -->
-      </div>
-      <div class="col s5 rightpanel">
-        <img class="responsive-img"
-             src="/assets/wavesurfer.png">
-        <h5 class="center">{{record.name}}</h5>
-        <h6 class="center">{{prettyPrintDuration(record.duration)}}</h6>
-        <div class="col s12" *ngIf="record.tags.length != 0">
-          <i class="material-icons hashtag">local_offer</i>
-          <span class="tagText" *ngFor="let tag of record.tags; let i = index"><a [routerLink]="['/tag-detail/' + tag]">{{tag}}</a><p *ngIf="i != record.tags.length - 1"> , </p></span>
         </div>
       </div>
-      <a class="btn-floating halfway-fab waves-effect waves-light red lighten-2" [routerLink]="['/record-detail/'+record.key]"><i class="material-icons">remove_red_eye</i></a>
-      <h6 class="lastUpdate">Dernière modification : {{timestampToLocaleString(record.lastUpdate)}}</h6>
+    <div class="col s5 rightpanel">
+      <img class="responsive-img"
+           src="/assets/wavesurfer.png">
+      <h5 class="center">{{record.name}}</h5>
+      <h6 class="center">{{prettyPrintDuration(record.duration)}}</h6>
+      <div class="col s12" *ngIf="record.tags.length != 0">
+        <i class="material-icons hashtag">local_offer</i>
+        <span class="tagText" *ngFor="let tag of record.tags; let i = index"><a [routerLink]="['/tag-detail/' + tag]">{{tag}}</a><p *ngIf="i != record.tags.length - 1"> , </p></span>
+      </div>
     </div>
+    <a class="btn-floating halfway-fab waves-effect waves-light red lighten-2" [routerLink]="['/record-detail/'+record.key]"><i class="material-icons">remove_red_eye</i></a>
+    <h6 class="lastUpdate">Dernière modification : {{timestampToLocaleString(record.lastUpdate)}}</h6>
   </div>
+</div>
 </div>
 
