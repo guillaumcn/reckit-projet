@@ -13,6 +13,7 @@ import MicRecorder from 'mic-recorder-to-mp3/dist/index.min.js';
 import WaveSurfer from 'wavesurfer.js/dist/wavesurfer.min.js';
 import TimelinePlugin from 'wavesurfer.js/dist/plugin/wavesurfer.timeline.min.js';
 import {ActivatedRoute} from '@angular/router';
+import {ToastService} from '../toast.service';
 
 @Component({
   selector: 'app-record-form',
@@ -67,7 +68,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   prettyPrintDuration = Record.prettyPrintDuration;
 
-  constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService, private route: ActivatedRoute) {
+  constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService, private route: ActivatedRoute, private toastService: ToastService) {
 
     this.subscriptions.push(this.route.params.subscribe(params => {
       const recordKey = params['key'];
@@ -151,6 +152,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     // If one record selected, patch all values (inputs patches with [ngModel] binding)
     if (this.selectedRecord != null) {
 
+      this.loadingService.startLoading();
+
       // patch tags
       if (this.selectedRecord.tags == null) {
         this.selectedRecord.tags = [];
@@ -208,6 +211,9 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   onCreate() {
     if (this.recordForm.valid && this.temporaryMP3) {
+
+      this.loadingService.startLoading();
+
       // Change mp3 filename
       const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
       this.temporaryMP3 = new File([blob], this.selectedRecord.name + '.mp3', {type: blob.type});
@@ -218,43 +224,63 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.recordService.addRecord(
         this.selectedRecord,
         this.newfiles,
-      );
+      ).then(() => {
+        this.recordService.uneditRecord();
+        this.loadingService.stopLoading();
+        this.toastService.toast('Création réussie');
+      }, () => {
+        this.loadingService.stopLoading();
+        this.toastService.toast('Création échouée');
+      });
     }
   }
 
-  creer20records() {
+  creer1RecordRandom() {
     if (this.temporaryMP3) {
       // Change mp3 filename
       const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
 
-      for (let i = 0; i < 20; i++) {
-        const nom = Math.random() + '';
+      const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let nom = '';
 
-        this.temporaryMP3 = new File([blob], nom + '.mp3', {type: blob.type});
-
-        this.newfiles = [];
-        this.newfiles.push(this.temporaryMP3);
-        this.selectedRecord.filenames = [];
-        this.selectedRecord.filenames.push(nom + '.mp3');
-
-        this.selectedRecord.name = nom;
-        this.selectedRecord.oratorMail = 'a@a';
-
-        this.selectedRecord.tags = [];
-        const nbTags = parseInt(((Math.random() * 8) + 1) + '', 10);
-        for (let j = 0; j < nbTags; j++) {
-          const tag = parseInt(((Math.random() * 8) + 1) + '', 10) + '';
-          if (this.selectedRecord.tags.indexOf(tag) === -1) {
-            this.selectedRecord.tags.push(tag);
-          }
-        }
-
-        // Pass data to the record service
-        this.recordService.addRecord(
-          this.selectedRecord,
-          this.newfiles,
-        );
+      for (let l = 0; l < 16; l++) {
+        nom += possible.charAt(Math.floor(Math.random() * possible.length));
       }
+
+      this.temporaryMP3 = new File([blob], nom + '.mp3', {type: blob.type});
+
+      this.newfiles = [];
+      this.newfiles.push(this.temporaryMP3);
+      this.selectedRecord.filenames = [];
+      this.selectedRecord.filenames.push(nom + '.mp3');
+
+      this.selectedRecord.name = nom;
+      if (!this.selectedRecord.oratorMail) {
+        this.selectedRecord.oratorMail = 'a@a';
+      }
+
+      this.selectedRecord.tags = [];
+      const nbTags = parseInt(((Math.random() * 8) + 1) + '', 10);
+      for (let j = 0; j < nbTags; j++) {
+        const possibleTags = 'ABCD';
+        let tag = '';
+        for (let k = 0; k < 4; k++) {
+          tag += possibleTags.charAt(Math.floor(Math.random() * possibleTags.length));
+        }
+        if (this.selectedRecord.tags.indexOf(tag) === -1) {
+          this.selectedRecord.tags.push(tag);
+        }
+      }
+
+      // Pass data to the record service
+      this.recordService.addRecord(
+        this.selectedRecord,
+        this.newfiles,
+      ).then(() => {
+        this.toastService.toast('Création réussie !');
+      }, () => {
+        this.toastService.toast('Création échouée !');
+      });
     }
   }
 
@@ -270,7 +296,14 @@ export class RecordFormComponent implements OnInit, OnDestroy {
       this.recordService.updateRecord(
         this.selectedRecord,
         this.newfiles,
-      );
+      ).then(() => {
+        this.recordService.uneditRecord();
+        this.loadingService.stopLoading();
+        this.toastService.toast('Modification réussie');
+      }, () => {
+        this.loadingService.stopLoading();
+        this.toastService.toast('Modification échouée');
+      });
     }
   }
 

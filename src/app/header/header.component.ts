@@ -27,6 +27,7 @@ export class HeaderComponent implements OnInit {
   }
 
   search($event) {
+    this.results = [];
     this.recordService.searchAll($event.target.value, (results) => {
       this.results = results;
     }, 5);

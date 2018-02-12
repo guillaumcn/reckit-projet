@@ -38,7 +38,6 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   constructor(public recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute, private router: Router) {
 
-
     this.subscriptions.push(this.route.params.subscribe(params => {
       const recordKey = params['key'];
 
@@ -103,6 +102,8 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   }
 
   loadDataFromSelectedRecord() {
+
+    this.loadingService.startLoading();
 
     // patch tags
     if (this.selectedRecord.tags == null) {

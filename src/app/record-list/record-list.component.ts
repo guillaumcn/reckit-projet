@@ -30,7 +30,7 @@ export class RecordListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Subscribe to the list of records observable
-    this.subscriptions.push(this.recordService.recordList(this.searchValue, this.searchBy, this.limit).subscribe(
+    this.subscriptions.push(this.recordService.recordListObservable(this.searchValue, this.searchBy, this.limit).subscribe(
       (records) => {
         this.records = records;
         this.loadingService.stopLoading();

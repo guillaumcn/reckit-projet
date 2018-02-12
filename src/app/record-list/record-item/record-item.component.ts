@@ -1,6 +1,8 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {RecordService} from '../../record.service';
 import {Record} from '../../record.model';
+import {LoadingService} from '../../loading/loading.service';
+import {ToastService} from '../../toast.service';
 
 @Component({
   selector: 'app-record-item',
@@ -14,7 +16,7 @@ export class RecordItemComponent implements OnInit {
 
   prettyPrintDuration = Record.prettyPrintDuration;
 
-  constructor(private recordService: RecordService) {
+  constructor(private recordService: RecordService, private loadingService: LoadingService, private toastService: ToastService) {
   }
 
   ngOnInit() {
@@ -22,7 +24,14 @@ export class RecordItemComponent implements OnInit {
 
   // Transmit actions to the recordService
   removeRecord() {
-    this.recordService.removeRecord(this.record);
+    this.loadingService.startLoading();
+    this.recordService.removeRecord(this.record).then(() => {
+      this.loadingService.stopLoading();
+      this.toastService.toast('Suppression réussie');
+    }, () => {
+      this.loadingService.stopLoading();
+      this.toastService.toast('Suppression échouée');
+    });;
   }
 
   onEdit() {

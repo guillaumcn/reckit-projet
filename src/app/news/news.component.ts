@@ -88,7 +88,7 @@ export class NewsComponent implements OnInit, OnDestroy {
             for (let i = 0; i < this.currentUser.followedTags.length; i++) {
               let firstInObservable = true;
               // Subscribe to the list of records observable filtered by tag
-              this.subscriptions.push(this.recordService.recordList(this.currentUser.followedTags[i], 'tags', 1).subscribe(
+              this.subscriptions.push(this.recordService.recordListObservable(this.currentUser.followedTags[i], 'tags', 1).subscribe(
                 (records) => {
                   if (!firstInObservable) {
                     if (this.waitingKeys.indexOf(records[0].key) === -1) {
@@ -120,7 +120,7 @@ export class NewsComponent implements OnInit, OnDestroy {
     // For all followed tags
     for (let i = 0; i < this.currentUser.followedTags.length; i++) {
       // Subscribe to the list of records observable filtered by tag
-      this.subscriptions.push(this.recordService.recordList(this.currentUser.followedTags[i],
+      this.subscriptions.push(this.recordService.recordListObservable(this.currentUser.followedTags[i],
         'tags',
         10,
         this.records.length !== 0 ? (this.records[this.records.length - 1].lastUpdate) : Number.MAX_SAFE_INTEGER)

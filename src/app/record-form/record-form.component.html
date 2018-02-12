@@ -123,7 +123,7 @@
             <i class="material-icons prefix">mic_none</i>
             <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off"
                    [(ngModel)]="selectedRecord.oratorMail"
-                   materialize="autocomplete" [materializeParams]="[{'data': oratorList}]"  (focus)="spaceActive=false" (blur)="spaceActive=true" email required/>
+                   materialize="autocomplete" [materializeParams]="[{'data': oratorList}]"  (focus)="spaceActive=false; searchUsers($event)" (blur)="spaceActive=true" email required/>
             <label class="active" for="oratorMail">Mail
               Orateur</label>
           </div>
@@ -185,4 +185,4 @@
 
 </form>
 
-<button (click)="creer20records()">Creer 20 records</button>
+<button (click)="creer1RecordRandom()">Creer 1 record random</button>
