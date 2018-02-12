@@ -113,7 +113,7 @@ export class RecordService {
 
   validateRecord(record: Record) {
     return new Promise((resolve, reject) => {
-      const currentDate = Date.now();
+      const currentDate = firebase.database.ServerValue.TIMESTAMP;;
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
@@ -146,7 +146,7 @@ export class RecordService {
         validationKey += possible.charAt(Math.floor(Math.random() * possible.length));
       }
 
-      const currentDate = Date.now();
+      const currentDate = firebase.database.ServerValue.TIMESTAMP;;
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
@@ -199,7 +199,7 @@ export class RecordService {
   updateRecord(record: Record,
                files: File[]) {
     return new Promise((resolve, reject) => {
-      const currentDate = Date.now();
+      const currentDate = firebase.database.ServerValue.TIMESTAMP;
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
@@ -377,7 +377,7 @@ export class RecordService {
     const comList = this.afs.doc('/records/' + record.key).collection('comments');
     return comList.add({
       textQuestion: question,
-      date: Date.now(),
+      date: firebase.database.ServerValue.TIMESTAMP,
       questioner: this.authService.userDetails.displayName
     });
   }
@@ -386,7 +386,7 @@ export class RecordService {
     const answersList = this.afs.doc('/records/' + record.key).collection('comments').doc(commentKey).collection('answers');
     return answersList.add({
       textAnswer: answer,
-      date: Date.now(),
+      date: firebase.database.ServerValue.TIMESTAMP,
       answerer: this.authService.userDetails.displayName
     });
   }
