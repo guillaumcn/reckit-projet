@@ -12,6 +12,34 @@
     <div *ngFor="let record of records" class="row recordNews card">
       <div class="col s7">
         <h5 class="col s12">Derniers commentaires</h5>
+        <!-- peeeeeeeeeeeeeeeeeerle -->
+
+
+        <div *ngIf="record['lastComment']">
+          <p>
+            {{record['lastComment'].textQuestion}}
+          </p>
+          <p>
+            {{timestampToLocaleString(record['lastComment'].date)}}
+          </p>
+          <p>
+            {{record['lastComment'].questioner}}
+          </p>
+
+          <div *ngFor="let answer of record['lastComment']['lastAnswers']">
+            <p>
+              {{answer.textAnswer}}
+            </p>
+            <p>
+              {{timestampToLocaleString(answer.date)}}
+            </p>
+            <p>
+              {{answer.answerer}}
+            </p>
+          </div>
+
+        </div>
+        <!-- -------------------------- -->
       </div>
       <div class="col s5 rightpanel">
         <img class="responsive-img"

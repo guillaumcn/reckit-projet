@@ -101,6 +101,22 @@ export class NewsComponent implements OnInit, OnDestroy {
               ));
             }
 
+            for (let i = 0; i < this.records.length; i++) {
+              this.subscriptions.push(this.recordService.commentsList(this.records[i].key, 1).subscribe((comments) => {
+                if (this.records[i]['lastComment'] && this.records[i]['lastComment']['answersSubscription']) {
+                  this.records[i]['lastComment']['answersSubscription'].unsubscribe();
+                }
+                if (comments.length > 0) {
+                  this.records[i]['lastComment'] = comments[0];
+                  this.records[i]['lastComment']['answersSubscription'] = this.recordService.answersList(this.records[i].key, comments[0].key, 2)
+                    .subscribe((answers) => {
+                      this.records[i]['lastComment']['lastAnswers'] = answers.reverse();
+                    });
+                  this.subscriptions.push(this.records[i]['lastComment']['answersSubscription']);
+                }
+              }));
+            }
+
             this.loadingService.stopLoading();
             this.isLoading = false;
             this.nbFinish = 0;
@@ -164,8 +180,8 @@ export class NewsComponent implements OnInit, OnDestroy {
     const body = document.body;
     const html = document.documentElement;
 
-    const height = Math.max( body.scrollHeight, body.offsetHeight,
-      html.clientHeight, html.scrollHeight, html.offsetHeight );
+    const height = Math.max(body.scrollHeight, body.offsetHeight,
+      html.clientHeight, html.scrollHeight, html.offsetHeight);
 
     if (window.pageYOffset + window.innerHeight >= height - 10 && !this.isLoading) {
       this.getNextModif();
