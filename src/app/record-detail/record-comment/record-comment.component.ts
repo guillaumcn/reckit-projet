@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {Record} from '../../record.model';
 import {Comment} from '../../comment.model';
 import {RecordService} from '../../record.service';
@@ -15,6 +15,8 @@ export class RecordCommentComponent implements OnInit {
   @Input('selectedRecord') selectedRecord: Record = new Record();
 
   comments: Comment[];
+
+  @Output() spaceActive = new EventEmitter<boolean>();
 
   constructor(private recordService: RecordService, private authService: AuthService) {
   }
@@ -48,6 +50,14 @@ export class RecordCommentComponent implements OnInit {
   addReply(index: string) {
     this.recordService.addAnswer(this.selectedRecord, this.comments[index].key, this.comments[index]['tempAnswer']);
     this.comments[index]['tempAnswer'] = '';
+  }
+
+  focusInput() {
+    this.spaceActive.emit(false);
+  }
+
+  blurInput() {
+    this.spaceActive.emit(true);
   }
 
   timestampToLocaleString(timestamp) {

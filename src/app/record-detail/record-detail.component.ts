@@ -35,6 +35,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
   interval = null;
 
   prettyPrintDuration = Record.prettyPrintDuration;
+  spaceActive = true;
 
   constructor(public recordService: RecordService, private loadingService: LoadingService, private route: ActivatedRoute, private router: Router) {
 
@@ -168,7 +169,7 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   @HostListener('window:keyup', ['$event'])
   playPauseSpace(event: KeyboardEvent) {
-    if (event.keyCode === 32) {
+    if (event.keyCode === 32 && this.spaceActive) {
       this.wavesurfer.playPause();
     }
   }
@@ -188,6 +189,11 @@ export class RecordDetailComponent implements OnInit, OnDestroy {
 
   selectTag(tag: string) {
     this.recordService.viewTagDetails(tag);
+  }
+
+  onSpaceActive(val: boolean) {
+    console.log('bruh');
+    this.spaceActive = val;
   }
 
   // Update bounds value on window resize and resize the wavesurfer
