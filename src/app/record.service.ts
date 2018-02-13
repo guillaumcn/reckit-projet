@@ -418,102 +418,90 @@ export class RecordService {
 
   addSearchReferences(record: Record) {
     return new Promise((resolve, reject) => {
-      let nbFinish = 0;
-      let total = 0;
-      const promises = [];
       if (record) {
-        total += 3 + record.tags.length;
-        promises.push(this.addSearchReference(record.recorderMail));
-        promises.push(this.addSearchReference(record.oratorMail));
-        promises.push(this.addSearchReference(record.name));
+        const references = [record.recorderMail, record.oratorMail, record.name];
         for (let i = 0; i < record.tags.length; i++) {
-          promises.push(this.addSearchReference(record.tags[i]));
+          references.push(record.tags[i]);
         }
+        this.addSearchReference(0, references, (result) => {
+          if (result) {
+            resolve();
+          } else {
+            reject();
+          }
+        });
       } else {
         resolve();
       }
-      promises.map((promise) => {
-        promise.then(() => {
-          nbFinish++;
-          if (nbFinish === total) {
-            resolve();
-          }
-        }, () => {
-          reject();
-        });
-      });
     });
   }
 
   removeSearchReferences(record: Record) {
     return new Promise((resolve, reject) => {
-      let nbFinish = 0;
-      let total = 0;
-      const promises = [];
       if (record) {
-        total += 3 + record.tags.length;
-        promises.push(this.removeSearchReference(record.recorderMail));
-        promises.push(this.removeSearchReference(record.oratorMail));
-        promises.push(this.removeSearchReference(record.name));
+        const references = [record.recorderMail, record.oratorMail, record.name];
         for (let i = 0; i < record.tags.length; i++) {
-          promises.push(this.removeSearchReference(record.tags[i]));
+          references.push(record.tags[i]);
         }
+        this.removeSearchReference(0, references, (result) => {
+          if (result) {
+            resolve();
+          } else {
+            reject();
+          }
+        });
       } else {
         resolve();
       }
-      promises.map((promise) => {
-        promise.then(() => {
-          nbFinish++;
-          if (nbFinish === total) {
-            resolve();
-          }
-        }, () => {
-          reject();
-        });
-      });
     });
   }
 
-  addSearchReference(reference: string) {
-    return new Promise((resolve, reject) => {
-      this.afs.collection('/search')
-        .ref
-        .where('value', '==', reference).get().then((result) => {
-        if (result.docs.length === 0) {
-          this.afs.collection('/search').add({value: reference})
-            .then(() => {
-              resolve();
-            }, () => {
-              reject();
-            });
-        } else {
-          resolve();
-        }
-      });
-    });
-  }
+  addSearchReference(currentIndex: number, references: string[], callback) {
+    if (currentIndex === references.length) {
+      callback(true);
+      return;
+    }
 
-  removeSearchReference(reference: string) {
-    return new Promise((resolve, reject) => {
-      this.afs.collection('/search')
-        .ref
-        .where('value', '==', reference).get().then((result) => {
-        if (result.docs.length !== 0) {
-          this.recordList(reference, null, 2, null, (results) => {
-            if (results.length <= 1) {
-              this.afs.collection('/search').doc(result.docs[0].id).delete().then(() => {
-                resolve();
-              }, () => {
-                reject();
-              });
-            } else {
-              resolve();
-            }
+    this.afs.collection('/search')
+      .ref
+      .where('value', '==', references[currentIndex]).get().then((result) => {
+      if (result.docs.length === 0) {
+        this.afs.collection('/search').add({value: references[currentIndex]})
+          .then(() => {
+            this.addSearchReference(currentIndex + 1, references, callback);
+          }, () => {
+            callback(false);
           });
-        } else {
-          resolve();
-        }
-      });
+      } else {
+        this.addSearchReference(currentIndex + 1, references, callback);
+      }
+    });
+  }
+
+  removeSearchReference(currentIndex: number, references: string[], callback) {
+    if (currentIndex === references.length) {
+      callback(true);
+      return;
+    }
+
+    this.afs.collection('/search')
+      .ref
+      .where('value', '==', references[currentIndex]).get().then((result) => {
+      if (result.docs.length !== 0) {
+        this.recordList(references[currentIndex], null, 2, null, (results) => {
+          if (results.length <= 1) {
+            this.afs.collection('/search').doc(result.docs[0].id).delete().then(() => {
+              this.removeSearchReference(currentIndex + 1, references, callback);
+            }, () => {
+              callback(false);
+            });
+          } else {
+            this.removeSearchReference(currentIndex + 1, references, callback);
+          }
+        });
+      } else {
+        this.removeSearchReference(currentIndex + 1, references, callback);
+      }
     });
   }
 
