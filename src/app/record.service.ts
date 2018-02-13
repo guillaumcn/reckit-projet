@@ -117,7 +117,7 @@ export class RecordService {
       for (let i = 0; i < record.tags.length; i++) {
         searchRef[btoa(record.tags[i])] = currentDate;
       }
-      searchRef[btoa(this.authService.userDetails.email)] = currentDate;
+      searchRef[btoa(record.recorderMail)] = currentDate;
       searchRef[btoa(record.oratorMail)] = currentDate;
       searchRef[btoa(record.name)] = currentDate;
 
@@ -203,7 +203,7 @@ export class RecordService {
       for (let i = 0; i < record.tags.length; i++) {
         searchRef[btoa(record.tags[i])] = currentDate;
       }
-      searchRef[btoa(this.authService.userDetails.email)] = currentDate;
+      searchRef[btoa(record.recorderMail)] = currentDate;
       searchRef[btoa(record.oratorMail)] = currentDate;
       searchRef[btoa(record.name)] = currentDate;
 
