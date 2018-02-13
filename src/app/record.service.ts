@@ -150,6 +150,8 @@ export class RecordService {
       for (let i = 0; i < record.tags.length; i++) {
         searchRef[btoa(record.tags[i])] = currentDate;
       }
+      searchRef[btoa(record.recorder)] = currentDate;
+      searchRef[btoa(record.orator)] = currentDate;
       searchRef[btoa(record.recorderMail)] = currentDate;
       searchRef[btoa(record.oratorMail)] = currentDate;
       searchRef[btoa(record.name)] = currentDate;
@@ -157,6 +159,7 @@ export class RecordService {
       this.afs.collection('/records').add({
         name: record.name,
         recorder: record.recorder,
+        orator: record.orator,
         recorderMail: record.recorderMail,
         oratorMail: record.oratorMail,
         duration: record.duration,
@@ -203,23 +206,20 @@ export class RecordService {
       for (let i = 0; i < record.tags.length; i++) {
         searchRef[btoa(record.tags[i])] = currentDate;
       }
+      searchRef[btoa(record.recorder)] = currentDate;
+      searchRef[btoa(record.orator)] = currentDate;
       searchRef[btoa(record.recorderMail)] = currentDate;
       searchRef[btoa(record.oratorMail)] = currentDate;
       searchRef[btoa(record.name)] = currentDate;
 
       this.afs.collection('/records').doc(record.key).update({
         name: record.name,
-        recorder: record.recorder,
-        recorderMail: record.recorderMail,
-        oratorMail: record.oratorMail,
         duration: record.duration,
         type: record.type,
         tags: record.tags,
         annotations: record.annotations,
         filenames: record.filenames,
         lastUpdate: currentDate,
-        validate: record.validate,
-        validationKey: record.validationKey,
         ref: searchRef
       }).then((data) => {
         this.updateSearchReferences(this.recordBeforeChanges, record).then(() => {
@@ -274,12 +274,6 @@ export class RecordService {
         reject();
       });
     });
-  }
-
-  uneditRecord() {
-    this.beforeUpdateFileNames = [];
-
-    this.router.navigate(['/record-form/new?refresh=' + Math.random()]);
   }
 
   getAttachmentUrlPromise(recordKey: string, filename: string): Promise<any> {
@@ -343,7 +337,6 @@ export class RecordService {
   removeFiles(recordKey, filenames: string[]) {
     return new Promise((resolve, reject) => {
       this.removeFile(recordKey, filenames, 0, (result) => {
-        console.log('je suis dans le callback');
         if (result) {
           resolve();
         } else {
@@ -419,7 +412,7 @@ export class RecordService {
   addSearchReferences(record: Record) {
     return new Promise((resolve, reject) => {
       if (record) {
-        const references = [record.recorderMail, record.oratorMail, record.name];
+        const references = [record.recorderMail, record.oratorMail, record.name, record.orator, record.recorder];
         for (let i = 0; i < record.tags.length; i++) {
           references.push(record.tags[i]);
         }
@@ -439,7 +432,7 @@ export class RecordService {
   removeSearchReferences(record: Record) {
     return new Promise((resolve, reject) => {
       if (record) {
-        const references = [record.recorderMail, record.oratorMail, record.name];
+        const references = [record.recorderMail, record.oratorMail, record.name, record.orator, record.recorder];
         for (let i = 0; i < record.tags.length; i++) {
           references.push(record.tags[i]);
         }

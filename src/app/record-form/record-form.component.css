@@ -286,3 +286,24 @@ textarea {
 .align {
   margin-top: 3.4em;
 }
+
+#dropdownOrator {
+  margin-left: 15%;
+  overflow-x: hidden;
+  top: 43px !important;
+}
+
+#dropdownOrator p{
+  margin-top: 0 !important;
+  font-size: 8px;
+  padding-left: 8px;
+  font-weight: bold;
+}
+
+#dropdownOrator a {
+  font-size: 13px;
+  padding-bottom: 0;
+  padding-left: 8px;
+  padding-top: 5px;
+  font-weight: bold;
+}

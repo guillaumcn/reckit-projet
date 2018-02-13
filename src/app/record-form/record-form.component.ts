@@ -32,7 +32,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   subscriptions: Subscription[] = [];
 
   // Orator list (for the autocomplete of the orator input)
-  oratorList = {};
+  oratorList = [];
 
   @ViewChildren('annotationText') annotationsText;
   isEditing: number[] = [];
@@ -68,7 +68,8 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   prettyPrintDuration = Record.prettyPrintDuration;
 
-  constructor(public recordService: RecordService, private usersService: UsersService, public loadingService: LoadingService, private route: ActivatedRoute, private toastService: ToastService) {
+  constructor(public recordService: RecordService, private usersService: UsersService,
+              public loadingService: LoadingService, private route: ActivatedRoute, private toastService: ToastService) {
 
     this.subscriptions.push(this.route.params.subscribe(params => {
       const recordKey = params['key'];
@@ -84,11 +85,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       // Subscribe to usersQueryObservable (for the autocomplete of the orator input)
       this.usersService.usersQueryObservable.subscribe((searchResult) => {
-        this.oratorList = {};
-        for (let i = 0; i < searchResult.length; i++) {
-          const u: User = searchResult[i];
-          this.oratorList[u.email] = null;
-        }
+        this.oratorList = searchResult;
       }));
 
   }
@@ -150,7 +147,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
   loadDataFromSelectedRecord() {
     // If one record selected, patch all values (inputs patches with [ngModel] binding)
-    if (this.selectedRecord != null) {
+    if (this.selectedRecord && this.selectedRecord.key) {
 
       this.loadingService.startLoading();
 
@@ -219,6 +216,15 @@ export class RecordFormComponent implements OnInit, OnDestroy {
 
       this.loadingService.startLoading();
 
+      for (let i = 0; i < this.oratorList.length; i++) {
+        if (this.oratorList[i].email === this.selectedRecord.oratorMail) {
+          this.selectedRecord.orator = this.oratorList[i].displayName;
+        }
+      }
+      if (!this.selectedRecord.orator) {
+        this.selectedRecord.orator = this.selectedRecord.oratorMail.substr(0, this.selectedRecord.oratorMail.indexOf('@'));
+      }
+
       // Change mp3 filename
       const blob = this.temporaryMP3.slice(0, -1, this.temporaryMP3.type);
       this.temporaryMP3 = new File([blob], this.selectedRecord.name + '.mp3', {type: blob.type});
@@ -230,7 +236,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.selectedRecord,
         this.newfiles,
       ).then(() => {
-        this.recordService.uneditRecord();
+        this.uneditRecord();
         this.loadingService.stopLoading();
         this.toastService.toast('Création réussie');
       }, () => {
@@ -309,7 +315,7 @@ export class RecordFormComponent implements OnInit, OnDestroy {
         this.selectedRecord,
         this.newfiles,
       ).then(() => {
-        this.recordService.uneditRecord();
+        this.uneditRecord();
         this.loadingService.stopLoading();
         this.toastService.toast('Modification réussie');
       }, () => {
@@ -467,6 +473,12 @@ export class RecordFormComponent implements OnInit, OnDestroy {
   getAnnotationMarginLeft(annotation: { time: number, content: string }) {
     return this.waveformLeft +
       (this.waveformSize * (annotation.time / this.selectedRecord.duration));
+  }
+
+  uneditRecord() {
+    this.selectedRecord = new Record();
+    this.loadDataFromSelectedRecord();
+    this.recordService.beforeUpdateFileNames = [];
   }
 
   @HostListener('window:resize', ['$event'])

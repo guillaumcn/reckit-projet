@@ -123,7 +123,14 @@
             <i class="material-icons prefix">mic_none</i>
             <input id="oratorMail" type="text" name="oratorMail" (keyup)="searchUsers($event)" autocomplete="off"
                    [(ngModel)]="selectedRecord.oratorMail"
-                   materialize="autocomplete" [materializeParams]="[{'data': oratorList}]"  (focus)="spaceActive=false; searchUsers($event)" (blur)="spaceActive=true" email required/>
+                   materialize="dropdown" data-activates='dropdownOrator' data-beloworigin="true" (focus)="spaceActive=false; searchUsers($event)" (blur)="spaceActive=true" email required [readonly]="selectedRecord.key != null"/>
+            <!-- Dropdown Structure -->
+            <ul id='dropdownOrator' class='dropdown-content'>
+              <li *ngFor="let orator of oratorList" (click)="selectedRecord.oratorMail = orator.email">
+                <a>{{orator.email}}</a>
+                <p>{{orator.displayName}}</p>
+              </li>
+            </ul>
             <label class="active" for="oratorMail">Mail
               Orateur</label>
           </div>
@@ -177,12 +184,10 @@
 
       <!-- Reset form button -->
 
-      <i (click)="recordService.uneditRecord()" class="material-icons prefix col s2 resetForm">delete_sweep</i>
+      <i (click)="uneditRecord()" class="material-icons prefix col s2 resetForm">delete_sweep</i>
 
     </div>
 
   </div>
 
 </form>
-
-<button (click)="creer1RecordRandom()">Creer 1 record random</button>
