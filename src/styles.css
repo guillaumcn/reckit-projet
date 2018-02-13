@@ -5,3 +5,11 @@
 .autocomplete-content {
   position: absolute; z-index:30 !important;
 }
+
+html {
+  min-width: 972px;
+}
+
+body {
+  background-color: rgb(245, 245, 245);
+}

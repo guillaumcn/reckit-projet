@@ -1,4 +1,5 @@
 <div class="col s12" id="questions">
+  <a class="right" (click)="moreComments()" style="cursor: pointer">Voir plus...</a>
   <div *ngFor="let comment of comments; let i = index" class="row card bubble">
     <div class="col s12">
       <div class="chip">{{comment.questioner}}</div>
@@ -6,6 +7,7 @@
       <p class="col s12 question" #annotationText>{{comment.textQuestion}}</p>
     </div>
     <a class="viewMore btn-floating halfway-fab waves-effect waves-light indigo darken-1" (click)="getAnswers(i)"><i class="material-icons">comment</i></a>
+    <a *ngIf="comments[i]['answers']" (click)="moreAnswers(i)" class="col s12" style="text-align: right; cursor: pointer">Voir plus...</a>
     <div *ngFor="let answer of comments[i]['answers']" class="col s9 push-s3 answer">
         <p class="right col s12">{{answer.textAnswer}}</p>
         <span class="left dateTime">Le {{timestampToLocaleString(answer.date)}}</span>

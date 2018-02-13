@@ -1,16 +1,19 @@
 <!-- Name - Type  -->
 
 <div class="row">
-  <h5 class="center">{{selectedRecord ? selectedRecord.name : ''}}</h5>
+
 </div>
 
 <div class="row card">
 
   <div class="col s12">
-
     <!-- Duration  -->
+    <h5 class="left">{{selectedRecord ? selectedRecord.name : ''}}</h5>
 
-    <h5 class="center duration">{{prettyPrintDuration(currentPlayingTime) + ' / ' +  prettyPrintDuration(selectedRecord.duration)}}</h5>
+    <h5 class="right duration">{{prettyPrintDuration(currentPlayingTime) + ' / ' +  prettyPrintDuration(selectedRecord.duration)}}</h5>
+  </div>
+
+  <div class="col s12">
 
     <!-- Annotations -->
 

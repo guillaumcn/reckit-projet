@@ -3,10 +3,6 @@
   border-bottom: 1px black solid;
 }
 
-.duration {
-  margin-bottom: 20px !important;
-}
-
 .downloadbutton {
   cursor: pointer;
 }
