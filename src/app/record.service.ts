@@ -25,6 +25,7 @@ export class RecordService {
   }
 
   recordListObservable(value: string, searchBy?: string, limit?: number, startAfter?: number) {
+    value = value.toUpperCase();
     return this.afs.collection('/records', ref =>
       ref
         .orderBy('ref.' + btoa(value), 'desc')
@@ -35,7 +36,7 @@ export class RecordService {
         const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
           const key = action.payload.doc.id;
-          if (!searchBy || (searchBy && data[searchBy] && data[searchBy].indexOf(value) !== -1)) {
+          if (!searchBy || (searchBy && data[searchBy] && data[searchBy].toUpperCase().indexOf(value) !== -1)) {
             return {key, ...data};
           }
         });
@@ -50,6 +51,7 @@ export class RecordService {
   }
 
   recordList(value: string, searchBy?: string, limit?: number, startAfter?: number, callback?) {
+    value = value.toUpperCase();
     this.afs.collection('/records').ref
       .orderBy('ref.' + btoa(value), 'desc')
       .where('ref.' + btoa(value), '>', new Date(0))
@@ -59,7 +61,7 @@ export class RecordService {
       const records = results.docs.map((result) => {
         const data = result.data() as Record;
         const key = result.id;
-        if (!searchBy || (searchBy && data[searchBy] && data[searchBy].indexOf(value) !== -1)) {
+        if (!searchBy || (searchBy && data[searchBy] && data[searchBy].toUpperCase().indexOf(value) !== -1)) {
           return {key, ...data};
         }
       });
@@ -115,11 +117,13 @@ export class RecordService {
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
-        searchRef[btoa(record.tags[i])] = currentDate;
+        searchRef[btoa(record.tags[i].toUpperCase())] = currentDate;
       }
-      searchRef[btoa(record.recorderMail)] = currentDate;
-      searchRef[btoa(record.oratorMail)] = currentDate;
-      searchRef[btoa(record.name)] = currentDate;
+      searchRef[btoa(record.recorder.toUpperCase())] = currentDate;
+      searchRef[btoa(record.orator.toUpperCase())] = currentDate;
+      searchRef[btoa(record.recorderMail.toUpperCase())] = currentDate;
+      searchRef[btoa(record.oratorMail.toUpperCase())] = currentDate;
+      searchRef[btoa(record.name.toUpperCase())] = currentDate;
 
       this.afs.collection('/records').doc(record.key).update({validate: true, ref: searchRef})
         .then(() => {
@@ -148,13 +152,13 @@ export class RecordService {
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
-        searchRef[btoa(record.tags[i])] = currentDate;
+        searchRef[btoa(record.tags[i].toUpperCase())] = currentDate;
       }
-      searchRef[btoa(record.recorder)] = currentDate;
-      searchRef[btoa(record.orator)] = currentDate;
-      searchRef[btoa(record.recorderMail)] = currentDate;
-      searchRef[btoa(record.oratorMail)] = currentDate;
-      searchRef[btoa(record.name)] = currentDate;
+      searchRef[btoa(record.recorder.toUpperCase())] = currentDate;
+      searchRef[btoa(record.orator.toUpperCase())] = currentDate;
+      searchRef[btoa(record.recorderMail.toUpperCase())] = currentDate;
+      searchRef[btoa(record.oratorMail.toUpperCase())] = currentDate;
+      searchRef[btoa(record.name.toUpperCase())] = currentDate;
 
       this.afs.collection('/records').add({
         name: record.name,
@@ -204,13 +208,13 @@ export class RecordService {
 
       const searchRef = {};
       for (let i = 0; i < record.tags.length; i++) {
-        searchRef[btoa(record.tags[i])] = currentDate;
+        searchRef[btoa(record.tags[i].toUpperCase())] = currentDate;
       }
-      searchRef[btoa(record.recorder)] = currentDate;
-      searchRef[btoa(record.orator)] = currentDate;
-      searchRef[btoa(record.recorderMail)] = currentDate;
-      searchRef[btoa(record.oratorMail)] = currentDate;
-      searchRef[btoa(record.name)] = currentDate;
+      searchRef[btoa(record.recorder.toUpperCase())] = currentDate;
+      searchRef[btoa(record.orator.toUpperCase())] = currentDate;
+      searchRef[btoa(record.recorderMail.toUpperCase())] = currentDate;
+      searchRef[btoa(record.oratorMail.toUpperCase())] = currentDate;
+      searchRef[btoa(record.name.toUpperCase())] = currentDate;
 
       this.afs.collection('/records').doc(record.key).update({
         name: record.name,
@@ -457,9 +461,9 @@ export class RecordService {
 
     this.afs.collection('/search')
       .ref
-      .where('value', '==', references[currentIndex]).get().then((result) => {
+      .where('value', '==', references[currentIndex].toUpperCase()).get().then((result) => {
       if (result.docs.length === 0) {
-        this.afs.collection('/search').add({value: references[currentIndex]})
+        this.afs.collection('/search').add({value: references[currentIndex].toUpperCase()})
           .then(() => {
             this.addSearchReference(currentIndex + 1, references, callback);
           }, () => {
@@ -479,9 +483,9 @@ export class RecordService {
 
     this.afs.collection('/search')
       .ref
-      .where('value', '==', references[currentIndex]).get().then((result) => {
+      .where('value', '==', references[currentIndex].toUpperCase()).get().then((result) => {
       if (result.docs.length !== 0) {
-        this.recordList(references[currentIndex], null, 2, null, (results) => {
+        this.recordList(references[currentIndex].toUpperCase(), null, 2, null, (results) => {
           if (results.length <= 1) {
             this.afs.collection('/search').doc(result.docs[0].id).delete().then(() => {
               this.removeSearchReference(currentIndex + 1, references, callback);
