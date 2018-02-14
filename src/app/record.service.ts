@@ -36,7 +36,20 @@ export class RecordService {
         const result = actions.map(action => {
           const data = action.payload.doc.data() as Record;
           const key = action.payload.doc.id;
-          if (!searchBy || (searchBy && data[searchBy] && data[searchBy].toUpperCase().indexOf(value) !== -1)) {
+          if (searchBy) {
+            let resultValue = data[searchBy];
+            if (resultValue && Array.isArray(resultValue)) {
+              for (let i = 0; i < resultValue.length; i++) {
+                resultValue[i] = resultValue[i].toUpperCase();
+              }
+            }
+            if (resultValue && !Array.isArray(resultValue)) {
+              resultValue = resultValue.toUpperCase();
+            }
+            if (resultValue && resultValue.indexOf(value) !== -1) {
+              return {key, ...data};
+            }
+          } else {
             return {key, ...data};
           }
         });
@@ -61,7 +74,20 @@ export class RecordService {
       const records = results.docs.map((result) => {
         const data = result.data() as Record;
         const key = result.id;
-        if (!searchBy || (searchBy && data[searchBy] && data[searchBy].toUpperCase().indexOf(value) !== -1)) {
+        if (searchBy) {
+          let resultValue = data[searchBy];
+          if (resultValue && Array.isArray(resultValue)) {
+            for (let i = 0; i < resultValue.length; i++) {
+              resultValue[i] = resultValue[i].toUpperCase();
+            }
+          }
+          if (resultValue && !Array.isArray(resultValue)) {
+            resultValue = resultValue.toUpperCase();
+          }
+          if (resultValue && resultValue.indexOf(value) !== -1) {
+            return {key, ...data};
+          }
+        } else {
           return {key, ...data};
         }
       });
@@ -172,19 +198,19 @@ export class RecordService {
         annotations: record.annotations,
         filenames: record.filenames,
         lastUpdate: currentDate,
-        validate: false,
+        validate: true,
         validationKey: validationKey,
         ref: searchRef
       }).then((data) => {
         const _baseUrl = window.location.origin + '/validation?key=' + data.id;
 
-        this.http.get('https://www.guillaumelerda.com/inc/sendEmailReckit.php?' +
+        /*this.http.get('https://www.guillaumelerda.com/inc/sendEmailReckit.php?' +
           'email=' + record.oratorMail +
           '&recorder=' + this.authService.userDetails.displayName +
           '&recordname=' + record.name +
           '&validationKey=' + validationKey +
           '&validationURL=' + _baseUrl)
-          .subscribe();
+          .subscribe();*/
 
         this.updateSearchReferences(null, record).then(() => {
           this.uploadFiles(data.id, files).then(() => {
@@ -390,8 +416,8 @@ export class RecordService {
     this.afs.collection('/search')
       .ref.orderBy('value')
       .limit(limit || Math.pow(10, 3))
-      .startAt(value)
-      .endAt(value + '\uf8ff')
+      .startAt(value.toUpperCase())
+      .endAt(value.toUpperCase() + '\uf8ff')
       .get().then((result) => {
       callback(result.docs.map((item) => {
         return item.data();

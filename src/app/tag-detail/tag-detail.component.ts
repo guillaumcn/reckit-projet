@@ -23,7 +23,7 @@ export class TagDetailComponent implements OnInit, OnDestroy {
   constructor(public recordService: RecordService, private route: ActivatedRoute, private userService: UsersService, private authService: AuthService) {
 
     this.subscriptions.push(this.route.params.subscribe(params => {
-      this.selectedTag = params['tag'];
+      this.selectedTag = params['tag'].toUpperCase();
     }));
 
     this.subscriptions.push(this.userService.getUserObservable(this.authService.userDetails.uid).subscribe((user: User) => {
