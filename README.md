@@ -1,27 +1,36 @@
 # ReckitProjet
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 1.4.3.
+--- CHOIX 1 : EN INSTALLANT GRÂCE À UN CLONE DU DEPÔT GIT ---
 
-## Development server
+## Prérequis
+Il vous faudra nodeJS et npm installés sur votre machine pour lancer le projet
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+## Installer le CLI d'Angular
+npm install -g @angular/cli
 
-## Code scaffolding
+## Installer les dépendances
+npm install
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+## Lancer le projet
+npm start
 
-## Build
+## Lancer le navigateur sur localhost:4200
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory. Use the `-prod` flag for a production build.
+--- CHOIX 2 : ACCÉDER VIA URL ---
 
-## Running unit tests
+## Lien : https://reckit-4c2d3.firebaseapp.com
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Marche à suivre
 
-## Running end-to-end tests
+### Authentification
+Vous pouvez choisir de créer un compte via le formulaire ou de vous connecter avec Google.
+Déconnexion via le bouton du header à droite si vous êtes connecté(e).
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
+### Partie Enregistrements
+Liste des enregistrements et leurs caractéristiques avec possibilité de modifier celui sélectionné ou de le supprimer directement depuis la liste.
 
-## Further help
+### Partie création / modification
+Via les différents formulaires, il est possible de créer un enregistrement ou d'en modifier un en cliquant dessus sur la liste.
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+### Partie actualité 
+En fonction des enregistrements que vous avez parcouru, vous avez pu voir que la plupart ont des tags, en cliquant sur ces tags, il vous est possible de vous y abonner. La page des actualités regroupe par ordre anté chronologique de changement de contenu (commentaires, infos) les enregistrements liés à ces tags.
